@@ -28,13 +28,13 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 const GLuint WIDTH = 800, HEIGHT = 600;
 
 // Shaders
-const GLchar* vertexShaderSource = "#version 300 es\n"
+const GLchar* vertexShaderSource = "#version 410\n"
 "layout (location = 0) in vec3 position;\n"
 "void main()\n"
 "{\n"
 "gl_Position = vec4(position.x, position.y, position.z, 1.0);\n"
 "}\0";
-const GLchar* fragmentShaderSource = "#version 300 es\n"
+const GLchar* fragmentShaderSource = "#version 410\n"
 "uniform vec4 inputColor;\n"
 "out vec4 color;\n"
 "void main()\n"
