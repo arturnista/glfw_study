@@ -59,28 +59,41 @@ int main() {
 	glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
 
 	float points[] = {
-		// Positions           // Colors
-		 0.5f, -0.5f,  0.0f,   1.0f, 0.0f, 0.0f,
-		-0.5f, -0.5f,  0.0f,   0.0f, 1.0f, 0.0f,
-		 0.0f,  0.5f,  0.0f,   0.0f, 0.0f, 1.0f,
+		-0.3f,  0.3f,  0.0f,
+		0.0f, -0.3f,  0.0f,
+		-0.6f, -0.6f,  0.0f,
 	};
 
 	GLuint VBO_LEFT = 0;
 	glGenBuffers(1, &VBO_LEFT);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO_LEFT);
-	glBufferData(GL_ARRAY_BUFFER, 18 * sizeof(float), points, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 9 * sizeof(float), points, GL_STATIC_DRAW);
 
 	GLuint VAO_LEFT = 0;
 	glGenVertexArrays(1, &VAO_LEFT);
 	glBindVertexArray(VAO_LEFT);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO_LEFT);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_LEFT);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3* sizeof(float)));
-	glEnableVertexAttribArray(1);
 
+	float points1[] = {
+		0.3f,  0.3f,  0.0f,
+		0.6f, -0.3f,  0.0f,
+		0.0f, -0.3f,  0.0f
+	};
 
+	GLuint VBO_RIGHT = 0;
+	glGenBuffers(1, &VBO_RIGHT);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_RIGHT);
+	glBufferData(GL_ARRAY_BUFFER, 9 * sizeof(float), points1, GL_STATIC_DRAW);
+
+	GLuint VAO_RIGHT = 0;
+	glGenVertexArrays(1, &VAO_RIGHT);
+	glBindVertexArray(VAO_RIGHT);
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_RIGHT);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
 	const char* vertex_shader_program = readFile("shader.glsl");
 	const char* fragment_shader_program = readFile("fragment.glsl");
@@ -104,12 +117,18 @@ int main() {
 	while (!glfwWindowShouldClose(window)) {
 		// wipe the drawing surface clear
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glUseProgram(shaderProgramme);
 
 		glBindVertexArray(VAO_LEFT);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
+		// float timeValue = glfwGetTime();
+		// float greenValue = sin(timeValue) / 2.0f + 0.5f;
+		// int vertexColorLocation = glGetUniformLocation(shaderProgramme, "ourColor");
+		// glUniform4f(vertexColorLocation, 0.0f, greenValue, 1 - greenValue, 1.0f);
+
+		glBindVertexArray(VAO_RIGHT);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
 		// update other events like input handling
 		glfwPollEvents();
 		// put the stuff we've been drawing onto the display
