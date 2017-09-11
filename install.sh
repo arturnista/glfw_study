@@ -3,8 +3,8 @@ cd glfw_repository
 cmake -G "Unix Makefiles"
 make
 make install
-# apt-get install libglfw3-dev
 sudo apt-get install libglew-dev
+sudo apt-get install libglm-dev
 
 echo ""
 echo ""
