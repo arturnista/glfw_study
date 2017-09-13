@@ -34,6 +34,18 @@ const char* readFile(string filename) {
 	return writable;
 }
 
+void compileShader(GLuint shader) {
+	glCompileShader(shader);
+
+	int  success;
+	char infoLog[512];
+	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+	if(!success) {
+		glGetShaderInfoLog(shader, 512, NULL, infoLog);
+		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+	}
+}
+
 int main() {
 	// start GL context and O/S window using the GLFW helper library
 	if (!glfwInit()) {
@@ -109,11 +121,11 @@ int main() {
 
 	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertexShader, 1, &vertex_shader_program, NULL);
-	glCompileShader(vertexShader);
+	compileShader(vertexShader);
 
 	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragmentShader, 1, &fragment_shader_program, NULL);
-	glCompileShader(fragmentShader);
+	compileShader(fragmentShader);
 
 	GLuint shaderProgramme = glCreateProgram();
 	glAttachShader(shaderProgramme, vertexShader);
@@ -160,6 +172,6 @@ int main() {
 // Is called whenever a key is pressed/released via GLFW
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+	if ((key == GLFW_KEY_ESCAPE || key == 'q' || key == 'Q') && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
 }
