@@ -14,6 +14,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 using namespace std;
+using namespace glm;
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos);
 
@@ -53,40 +54,44 @@ typedef struct {
 	int vertexCounter;
 } gameObject;
 
-gameObject createCube(glm::vec3 center, float size) {
-	float halfSize = size / 2.0f;
+gameObject createCube(vec3 center, vec3 size) {
+	vec3 halfSize = vec3(
+		size.x / 2.0f,
+		size.y / 2.0f,
+		size.z / 2.0f
+	);
 
 	GLfloat points[] = {
 		// Positions           												// Colors
-		center.x + halfSize, center.y - halfSize, center.z + halfSize,   0.8f, 0.1f, 0.1f,  // Bottom right
-		center.x - halfSize, center.y - halfSize, center.z + halfSize,   0.8f, 0.1f, 0.1f,  // Bottom left
-		center.x + halfSize, center.y + halfSize, center.z + halfSize,   0.8f, 0.1f, 0.1f,  // Top right
-		center.x - halfSize, center.y + halfSize, center.z + halfSize,   0.8f, 0.1f, 0.1f,  // Top left
+		center.x + halfSize.x, center.y - halfSize.y, center.z + halfSize.z,   0.8f, 0.1f, 0.1f,  // Bottom right
+		center.x - halfSize.x, center.y - halfSize.y, center.z + halfSize.z,   0.8f, 0.1f, 0.1f,  // Bottom left
+		center.x + halfSize.x, center.y + halfSize.y, center.z + halfSize.z,   0.8f, 0.1f, 0.1f,  // Top right
+		center.x - halfSize.x, center.y + halfSize.y, center.z + halfSize.z,   0.8f, 0.1f, 0.1f,  // Top left
 
-		center.x + halfSize, center.y - halfSize, center.z - halfSize,   0.8f, 0.8f, 0.1f,  // Bottom right
-		center.x - halfSize, center.y - halfSize, center.z - halfSize,   0.8f, 0.8f, 0.1f,  // Bottom left
-		center.x + halfSize, center.y + halfSize, center.z - halfSize,   0.8f, 0.8f, 0.1f,  // Top right
-		center.x - halfSize, center.y + halfSize, center.z - halfSize,   0.8f, 0.8f, 0.1f,  // Top left
+		center.x + halfSize.x, center.y - halfSize.y, center.z - halfSize.z,   0.8f, 0.8f, 0.1f,  // Bottom right
+		center.x - halfSize.x, center.y - halfSize.y, center.z - halfSize.z,   0.8f, 0.8f, 0.1f,  // Bottom left
+		center.x + halfSize.x, center.y + halfSize.y, center.z - halfSize.z,   0.8f, 0.8f, 0.1f,  // Top right
+		center.x - halfSize.x, center.y + halfSize.y, center.z - halfSize.z,   0.8f, 0.8f, 0.1f,  // Top left
 
-		center.x + halfSize, center.y + halfSize, center.z - halfSize,   0.1f, 0.8f, 0.1f,  // Bottom right
-		center.x + halfSize, center.y - halfSize, center.z - halfSize,   0.1f, 0.8f, 0.1f,  // Bottom left
-		center.x + halfSize, center.y + halfSize, center.z + halfSize,   0.1f, 0.8f, 0.1f,  // Top right
-		center.x + halfSize, center.y - halfSize, center.z + halfSize,   0.1f, 0.8f, 0.1f,  // Top left
+		center.x + halfSize.x, center.y + halfSize.y, center.z - halfSize.z,   0.1f, 0.8f, 0.1f,  // Bottom right
+		center.x + halfSize.x, center.y - halfSize.y, center.z - halfSize.z,   0.1f, 0.8f, 0.1f,  // Bottom left
+		center.x + halfSize.x, center.y + halfSize.y, center.z + halfSize.z,   0.1f, 0.8f, 0.1f,  // Top right
+		center.x + halfSize.x, center.y - halfSize.y, center.z + halfSize.z,   0.1f, 0.8f, 0.1f,  // Top left
 
-		center.x - halfSize, center.y + halfSize, center.z - halfSize, 	 0.1f, 0.1f, 0.8f,  // Bottom right
-		center.x - halfSize, center.y - halfSize, center.z - halfSize, 	 0.1f, 0.1f, 0.8f,  // Bottom left
-		center.x - halfSize, center.y + halfSize, center.z + halfSize, 	 0.1f, 0.1f, 0.8f,  // Top righzt
-		center.x - halfSize, center.y - halfSize, center.z + halfSize, 	 0.1f, 0.1f, 0.8f,  // Top leftas
+		center.x - halfSize.x, center.y + halfSize.y, center.z - halfSize.z, 	 0.1f, 0.1f, 0.8f,  // Bottom right
+		center.x - halfSize.x, center.y - halfSize.y, center.z - halfSize.z, 	 0.1f, 0.1f, 0.8f,  // Bottom left
+		center.x - halfSize.x, center.y + halfSize.y, center.z + halfSize.z, 	 0.1f, 0.1f, 0.8f,  // Top righzt
+		center.x - halfSize.x, center.y - halfSize.y, center.z + halfSize.z, 	 0.1f, 0.1f, 0.8f,  // Top leftas
 
-		center.x + halfSize, center.y - halfSize, center.z - halfSize, 	 0.8f, 0.1f, 0.8f,  // Bottom right
-		center.x - halfSize, center.y - halfSize, center.z - halfSize, 	 0.8f, 0.1f, 0.8f,  // Bottom left
-		center.x + halfSize, center.y - halfSize, center.z + halfSize, 	 0.8f, 0.1f, 0.8f,  // Top right
-		center.x - halfSize, center.y - halfSize, center.z + halfSize, 	 0.8f, 0.1f, 0.8f,  // Top left
+		center.x + halfSize.x, center.y - halfSize.y, center.z - halfSize.z, 	 0.8f, 0.1f, 0.8f,  // Bottom right
+		center.x - halfSize.x, center.y - halfSize.y, center.z - halfSize.z, 	 0.8f, 0.1f, 0.8f,  // Bottom left
+		center.x + halfSize.x, center.y - halfSize.y, center.z + halfSize.z, 	 0.8f, 0.1f, 0.8f,  // Top right
+		center.x - halfSize.x, center.y - halfSize.y, center.z + halfSize.z, 	 0.8f, 0.1f, 0.8f,  // Top left
 
-	 	center.x + halfSize, center.y + halfSize, center.z - halfSize,   0.1f, 0.8f, 0.8f,  // Bottom right
-		center.x - halfSize, center.y + halfSize, center.z - halfSize,   0.1f, 0.8f, 0.8f,  // Bottom left
-		center.x + halfSize, center.y + halfSize, center.z + halfSize,   0.1f, 0.8f, 0.8f,  // Top right
-		center.x - halfSize, center.y + halfSize, center.z + halfSize,   0.1f, 0.8f, 0.8f,  // Top left
+	 	center.x + halfSize.x, center.y + halfSize.y, center.z - halfSize.z,   0.1f, 0.8f, 0.8f,  // Bottom right
+		center.x - halfSize.x, center.y + halfSize.y, center.z - halfSize.z,   0.1f, 0.8f, 0.8f,  // Bottom left
+		center.x + halfSize.x, center.y + halfSize.y, center.z + halfSize.z,   0.1f, 0.8f, 0.8f,  // Top right
+		center.x - halfSize.x, center.y + halfSize.y, center.z + halfSize.z,   0.1f, 0.8f, 0.8f,  // Top left
 	};
 	GLuint indexArray[] = {
 		0, 1, 3,
@@ -136,6 +141,10 @@ gameObject createCube(glm::vec3 center, float size) {
 	return {VAO, vertexCounter};
 }
 
+gameObject createCube(vec3 center, float size) {
+	return createCube(center, vec3(size, size, size));
+}
+
 int main() {
 	// start GL context and O/S window using the GLFW helper library
 	if (!glfwInit()) {
@@ -143,16 +152,17 @@ int main() {
 		return 1;
 	}
 
-	const float SCREEN_WIDTH = 800;
-	const float SCREEN_HEIGHT = 400;
+	glEnable(GL_CULL_FACE);
+	const float INITIAL_SCREEN_WIDTH = 1200;
+	const float INITIAL_SCREEN_HEIGHT = 800;
 
-
-	GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Hello Triangle", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(INITIAL_SCREEN_WIDTH, INITIAL_SCREEN_HEIGHT, "Hello Triangle", NULL, NULL);
 	if (!window) {
 		fprintf(stderr, "ERROR: could not open window with GLFW3\n");
 		glfwTerminate();
 		return 1;
 	}
+	// glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwMakeContextCurrent(window);
 	glfwSetKeyCallback(window, key_callback);
 	glfwSetCursorPosCallback(window, cursor_pos_callback);
@@ -171,12 +181,13 @@ int main() {
 	glEnable(GL_DEPTH_TEST); // enable depth-testing
 	glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
 
-	gameObject *cubes = new gameObject[5];
-	cubes[0] = createCube(glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
-	cubes[1] = createCube(glm::vec3(5.0f, 0.0f, 0.0f), 1.0f);
-	cubes[2] = createCube(glm::vec3(0.0f, 3.0f, 3.0f), 1.0f);
-	cubes[3] = createCube(glm::vec3(7.0f, 7.0f, 2.0f), 1.0f);
-	cubes[4] = createCube(glm::vec3(14.0f, 0.0f, -8.0f), 1.0f);
+	gameObject *cubes = new gameObject[6];
+	cubes[0] = createCube(vec3(0.0f, 0.0f, 0.0f), vec3(20.0f, 20.0f, 0.2f)); // Floor
+	cubes[1] = createCube(vec3(1.0f, -5.0f, 0.0f), 1.0f);
+	cubes[2] = createCube(vec3(5.0f, 1.0f, 0.0f), 1.0f);
+	cubes[3] = createCube(vec3(-2.0f, 3.0f, 3.0f), 1.0f);
+	cubes[4] = createCube(vec3(7.0f, 7.0f, 2.0f), 1.0f);
+	cubes[5] = createCube(vec3(3.0f, -2.0f, 8.0f), 1.0f);
 
 	const char* vertex_shader_program = readFile("shader.glsl");
 	const char* fragment_shader_program = readFile("fragment.glsl");
@@ -202,59 +213,80 @@ int main() {
 	float distanceY = 0.0f;
 	float distanceZ = 3.0f;
 
-	float mouseDiffX = 0.0f;
-	float mouseDiffY = 0.0f;
-
 	double lastMouseX = 0.0f;
 	double lastMouseY = 0.0f;
 
-	float mouseSens = 5.0f;
+	float mouseSens = 1.3f;
 
 	bool isFirstMouse = true;
 
 	float deltaTime = 0.0f;	// Time between current frame and last frame
 	float lastFrame = 0.0f; // Time of last frame
 
-	glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-	glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-	glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
-	glm::vec3 cameraDirection = glm::normalize(cameraPos - cameraTarget);
-	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
-	glm::vec3 cameraRight = glm::normalize(glm::cross(up, cameraDirection));
-	glm::vec3 cameraUp = glm::cross(cameraDirection, cameraRight);
+	vec3 cameraPos = vec3(0.0f, 0.0f, 3.0f);
+	vec3 cameraFront = vec3(0.0f, 0.0f, -1.0f);
+
+	vec3 cameraTarget = vec3(0.0f, 0.0f, 0.0f);
+	vec3 cameraDirection = normalize(cameraPos - cameraTarget);
+	vec3 up = vec3(0.0f, 1.0f, 0.0f);
+	vec3 cameraRight = normalize(cross(up, cameraDirection));
+	vec3 cameraUp = cross(cameraDirection, cameraRight);
+
+	float pitch = 0;
+	float yaw = 0;
 
 	while (!glfwWindowShouldClose(window)) {
+		// Updates the screen size
+		int width, height;
+		glfwGetWindowSize(window, &width, &height);
+		float SCREEN_WIDTH = width;
+		float SCREEN_HEIGHT = height;
+
+		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glUseProgram(shaderProgramme);
 
+		// Compute the delta time
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
-		// Create transformations
-		glm::mat4 transform;
-		// transform = glm::rotate(transform, (GLfloat)glfwGetTime() * rotateSpeed, glm::vec3(0.0f, 0.0f, 1.0f));
-
-
+		// Get the cursor position
 		double mouseX, mouseY;
 		glfwGetCursorPos(window, &mouseX, &mouseY);
 
-		if (lastMouseX != mouseX) {
-			if(!isFirstMouse) mouseDiffX += (mouseX - lastMouseX) / (SCREEN_WIDTH / mouseSens);
-			isFirstMouse = false;
-			lastMouseX = mouseX;
-		}
-		if (lastMouseY != mouseY) {
-			if(!isFirstMouse) mouseDiffY += (mouseY - lastMouseY) / (SCREEN_HEIGHT / mouseSens);
-			isFirstMouse = false;
-			lastMouseY = mouseY;
-		}
+		/*
+			OLD MOUSE MOVEMENT
+			Replaced because new movement accepts free move space
+		*/
+		// if (isFirstMouse) {
+		// 	lastMouseY = mouseY;
+		// 	lastMouseX = mouseX;
+		// 	isFirstMouse = false;
+		// }
+		// float mouseDiffX = (mouseX - lastMouseX) * mouseSens * (SCREEN_WIDTH / 2 - mouseX);
+		// float mouseDiffY = (lastMouseY - mouseY) * mouseSens * (SCREEN_HEIGHT / 2 - mouseY);
+		// lastMouseY = mouseY;
+		// lastMouseX = mouseX;
 
+		// Compute the mouse position
+		// Uses the screen center as reference
+		float mouseOffsetX = deltaTime * mouseSens * (SCREEN_WIDTH / 2 - mouseX);
+		float mouseOffsetY = deltaTime * mouseSens * (SCREEN_HEIGHT / 2 - mouseY);
 
-		glm::mat4 model;
-		glm::mat4 view;
-		glm::mat4 projection;
+		pitch += mouseOffsetY;
+		yaw += -mouseOffsetX;
+		if(pitch > 89.0f) pitch =  89.0f;
+		if(pitch < -89.0f) pitch = -89.0f;
+
+		vec3 lookingDirection = vec3(
+			cos(radians(pitch)) * cos(radians(yaw)),
+			sin(radians(pitch)),
+			cos(radians(pitch)) * sin(radians(yaw))
+		);
+
+		cameraFront = normalize(lookingDirection);
 
 		float cameraSpeed = 10.0f * deltaTime; // adjust accordingly
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
@@ -263,37 +295,43 @@ int main() {
 			cameraPos -= cameraSpeed * cameraFront;
 		}
 		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-			cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+			cameraPos -= normalize(cross(cameraFront, cameraUp)) * cameraSpeed;
 		} else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-			cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+			cameraPos += normalize(cross(cameraFront, cameraUp)) * cameraSpeed;
 		}
 
-		model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-		projection = glm::perspective(glm::radians(45.0f), SCREEN_WIDTH / SCREEN_HEIGHT, 0.1f, 100.0f);
+		// Create and compute the model view projection Camera's components
+		mat4 model;
+		mat4 view;
+		mat4 projection;
+
+		model = rotate(model, radians(-55.0f), vec3(1.0f, 0.0f, 0.0f));
+		view = lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+		projection = perspective(radians(45.0f), SCREEN_WIDTH / SCREEN_HEIGHT, 0.1f, 100.0f);
 
 		int modelLoc = glGetUniformLocation(shaderProgramme, "model");
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
 		int viewLoc = glGetUniformLocation(shaderProgramme, "view");
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
 		int projectionLoc = glGetUniformLocation(shaderProgramme, "projection");
-		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, value_ptr(projection));
 
-		// Get matrix's uniform location and set matrix
-		GLint transformLoc = glGetUniformLocation(shaderProgramme, "transform");
-		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
-
-		for (size_t i = 0; i < 5; i++) {
+		// Draw each component
+		for (size_t i = 0; i < 6; i++) {
 			glBindVertexArray(cubes[i].VAO);
 			glDrawElements(GL_TRIANGLES, cubes[i].vertexCounter, GL_UNSIGNED_INT, 0);
 		}
 
+		// Reset the vertex bind
 		glBindVertexArray(0);
 
 		// update other events like input handling
 		glfwPollEvents();
 		// put the stuff we've been drawing onto the display
 		glfwSwapBuffers(window);
+
+		// Set the cursor to the middle of the screen
+		glfwSetCursorPos(window, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 	}
 
 	// close GL context and any other GLFW resources
