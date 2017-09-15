@@ -153,8 +153,8 @@ int main() {
 	}
 
 	glEnable(GL_CULL_FACE);
-	const float INITIAL_SCREEN_WIDTH = 1200;
-	const float INITIAL_SCREEN_HEIGHT = 800;
+	const float INITIAL_SCREEN_WIDTH = 800;
+	const float INITIAL_SCREEN_HEIGHT = 600;
 
 	GLFWwindow* window = glfwCreateWindow(INITIAL_SCREEN_WIDTH, INITIAL_SCREEN_HEIGHT, "Hello Triangle", NULL, NULL);
 	if (!window) {
@@ -162,7 +162,6 @@ int main() {
 		glfwTerminate();
 		return 1;
 	}
-	// glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwMakeContextCurrent(window);
 	glfwSetKeyCallback(window, key_callback);
 	glfwSetCursorPosCallback(window, cursor_pos_callback);
@@ -223,8 +222,8 @@ int main() {
 	float deltaTime = 0.0f;	// Time between current frame and last frame
 	float lastFrame = 0.0f; // Time of last frame
 
-	vec3 cameraPos = vec3(0.0f, 0.0f, 3.0f);
-	vec3 cameraFront = vec3(0.0f, 0.0f, -1.0f);
+	vec3 cameraPos = vec3(0.0f, 0.0f, -3.0f);
+	vec3 cameraFront = vec3(0.0f, 0.0f, 0.0f);
 
 	vec3 cameraTarget = vec3(0.0f, 0.0f, 0.0f);
 	vec3 cameraDirection = normalize(cameraPos - cameraTarget);
@@ -265,8 +264,8 @@ int main() {
 		// 	lastMouseX = mouseX;
 		// 	isFirstMouse = false;
 		// }
-		// float mouseDiffX = (mouseX - lastMouseX) * mouseSens * (SCREEN_WIDTH / 2 - mouseX);
-		// float mouseDiffY = (lastMouseY - mouseY) * mouseSens * (SCREEN_HEIGHT / 2 - mouseY);
+		// float mouseOffsetY = (mouseX - lastMouseX) * deltaTime * mouseSens * (SCREEN_WIDTH / 2 - mouseX);
+		// float mouseOffsetX = (lastMouseY - mouseY) * deltaTime * mouseSens * (SCREEN_HEIGHT / 2 - mouseY);
 		// lastMouseY = mouseY;
 		// lastMouseX = mouseX;
 
@@ -279,6 +278,8 @@ int main() {
 		yaw += -mouseOffsetX;
 		if(pitch > 89.0f) pitch =  89.0f;
 		if(pitch < -89.0f) pitch = -89.0f;
+
+		std::cout << yaw << '\n';
 
 		vec3 lookingDirection = vec3(
 			cos(radians(pitch)) * cos(radians(yaw)),
