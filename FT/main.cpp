@@ -54,95 +54,112 @@ typedef struct {
 	int vertexCounter;
 } gameObject;
 
-gameObject createCube(vec3 center, vec3 size) {
-	vec3 halfSize = vec3(
-		size.x / 2.0f,
-		size.y / 2.0f,
-		size.z / 2.0f
-	);
+vec3 splitLine(string line) {
+	string::size_type sz;
+	string strNumber = "";
+	int idx = 0;
+	vec3 result;
 
-	GLfloat points[] = {
-		// Positions           												// Colors
-		center.x + halfSize.x, center.y - halfSize.y, center.z + halfSize.z,   0.8f, 0.1f, 0.1f,  // Bottom right
-		center.x - halfSize.x, center.y - halfSize.y, center.z + halfSize.z,   0.8f, 0.1f, 0.1f,  // Bottom left
-		center.x + halfSize.x, center.y + halfSize.y, center.z + halfSize.z,   0.8f, 0.1f, 0.1f,  // Top right
-		center.x - halfSize.x, center.y + halfSize.y, center.z + halfSize.z,   0.8f, 0.1f, 0.1f,  // Top left
+	bool digitFounded = false;
 
-		center.x + halfSize.x, center.y - halfSize.y, center.z - halfSize.z,   0.8f, 0.8f, 0.1f,  // Bottom right
-		center.x - halfSize.x, center.y - halfSize.y, center.z - halfSize.z,   0.8f, 0.8f, 0.1f,  // Bottom left
-		center.x + halfSize.x, center.y + halfSize.y, center.z - halfSize.z,   0.8f, 0.8f, 0.1f,  // Top right
-		center.x - halfSize.x, center.y + halfSize.y, center.z - halfSize.z,   0.8f, 0.8f, 0.1f,  // Top left
+	for (size_t i = 2; i < line.length(); i++) {
+		char character = line.at(i);
+		if(!digitFounded) {
+			if(character == ' ') continue;
+			digitFounded = true;
+		}
 
-		center.x + halfSize.x, center.y + halfSize.y, center.z - halfSize.z,   0.1f, 0.8f, 0.1f,  // Bottom right
-		center.x + halfSize.x, center.y - halfSize.y, center.z - halfSize.z,   0.1f, 0.8f, 0.1f,  // Bottom left
-		center.x + halfSize.x, center.y + halfSize.y, center.z + halfSize.z,   0.1f, 0.8f, 0.1f,  // Top right
-		center.x + halfSize.x, center.y - halfSize.y, center.z + halfSize.z,   0.1f, 0.8f, 0.1f,  // Top left
+		if(character != ' ') {
+			strNumber += character;
+		} else  {
+			std::cout << "a" << '\n';
+			float number = stof(strNumber, &sz);
+			strNumber = "";
+			if(idx == 0) result.x = number;
+			else if(idx == 1) result.y = number;
+			else if(idx == 2) result.z = number;
+			idx++;
+		}
+	}
+	if(idx == 2) {
+		float finalNumber = stof(strNumber, &sz);
+		result.z = finalNumber;
+	}
+	return result;
+}
 
-		center.x - halfSize.x, center.y + halfSize.y, center.z - halfSize.z, 	 0.1f, 0.1f, 0.8f,  // Bottom right
-		center.x - halfSize.x, center.y - halfSize.y, center.z - halfSize.z, 	 0.1f, 0.1f, 0.8f,  // Bottom left
-		center.x - halfSize.x, center.y + halfSize.y, center.z + halfSize.z, 	 0.1f, 0.1f, 0.8f,  // Top righzt
-		center.x - halfSize.x, center.y - halfSize.y, center.z + halfSize.z, 	 0.1f, 0.1f, 0.8f,  // Top leftas
+gameObject readObject(string filename, vec3 offset) {
+	string fullFileData;
 
-		center.x + halfSize.x, center.y - halfSize.y, center.z - halfSize.z, 	 0.8f, 0.1f, 0.8f,  // Bottom right
-		center.x - halfSize.x, center.y - halfSize.y, center.z - halfSize.z, 	 0.8f, 0.1f, 0.8f,  // Bottom left
-		center.x + halfSize.x, center.y - halfSize.y, center.z + halfSize.z, 	 0.8f, 0.1f, 0.8f,  // Top right
-		center.x - halfSize.x, center.y - halfSize.y, center.z + halfSize.z, 	 0.8f, 0.1f, 0.8f,  // Top left
+	std::vector<GLfloat> pointsVector = {};
+    std::vector<GLuint> indexVector = {};
 
-	 	center.x + halfSize.x, center.y + halfSize.y, center.z - halfSize.z,   0.1f, 0.8f, 0.8f,  // Bottom right
-		center.x - halfSize.x, center.y + halfSize.y, center.z - halfSize.z,   0.1f, 0.8f, 0.8f,  // Bottom left
-		center.x + halfSize.x, center.y + halfSize.y, center.z + halfSize.z,   0.1f, 0.8f, 0.8f,  // Top right
-		center.x - halfSize.x, center.y + halfSize.y, center.z + halfSize.z,   0.1f, 0.8f, 0.8f,  // Top left
-	};
-	GLuint indexArray[] = {
-		0, 1, 3,
-		3, 2, 0,
+	ifstream openedFile(filename.c_str());
+	if (openedFile.is_open()) {
+		string line;
+		while (getline(openedFile, line)) {
+			char first = '#';
+			if(line.length() > 0) first = line.at(0);
 
-		4, 5, 7,
-		7, 6, 4,
+			if(first == 'v') {
+				vec3 point = splitLine(line);
+				pointsVector.push_back(point.x + offset.x);
+				pointsVector.push_back(point.y + offset.y);
+				pointsVector.push_back(point.z + offset.z);
+			}
+			if(first == 'f') {
+				vec3 index = splitLine(line);
+				indexVector.push_back(index.x);
+				indexVector.push_back(index.y);
+				indexVector.push_back(index.z);
+			}
+		}
+		openedFile.close();
+	}
 
-		8, 9, 11,
-		11, 10, 8,
+	GLfloat *points = new GLfloat[pointsVector.size()];
+	copy(pointsVector.begin(), pointsVector.end(), points);
 
-		12, 13, 15,
-		15, 14, 12,
+	GLuint *indexArray = new GLuint[indexVector.size()];
+	copy(indexVector.begin(), indexVector.end(), indexArray);
 
-		16, 17, 19,
-		19, 18, 16,
-
-		20, 21, 23,
-		23, 22, 20,
-	};
+	int vertexCounter = indexVector.size();
+	for (size_t i = 0; i < vertexCounter; i++) indexArray[i] = indexArray[i] - 1;
 
 	GLuint VBO = 0;
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, 25 * 9 * sizeof(GLfloat), points, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 8 * 3 * sizeof(GLfloat), points, GL_STATIC_DRAW);
+	// With colors
+	// glBufferData(GL_ARRAY_BUFFER, 8 * 9 * sizeof(GLfloat), points, GL_STATIC_DRAW);
 
 	GLuint VAO = 0;
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
-	// Positions
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (void*)0);
+	// Positions without colors
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
 	glEnableVertexAttribArray(0);
 
+	// Positions
+	// glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (void*)0);
+	// glEnableVertexAttribArray(0);
+
 	// Colors
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(1);
+	// glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+	// glEnableVertexAttribArray(1);
 
 	GLuint EBO = 0;
 	glGenBuffers(1, &EBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indexArray), indexArray, GL_STATIC_DRAW);
-
-	int vertexCounter = sizeof(indexArray) / sizeof(GLuint);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * vertexCounter, indexArray, GL_STATIC_DRAW);
 
 	return {VAO, vertexCounter};
 }
 
-gameObject createCube(vec3 center, float size) {
-	return createCube(center, vec3(size, size, size));
+gameObject readObject(string filename) {
+	return readObject(filename, vec3(0.0f, 0.0f, 0.0f));
 }
 
 int main() {
@@ -180,13 +197,10 @@ int main() {
 	glEnable(GL_DEPTH_TEST); // enable depth-testing
 	glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
 
-	gameObject *cubes = new gameObject[6];
-	cubes[0] = createCube(vec3(0.0f, 0.0f, 0.0f), vec3(20.0f, 20.0f, 0.2f)); // Floor
-	cubes[1] = createCube(vec3(1.0f, -5.0f, 0.0f), 1.0f);
-	cubes[2] = createCube(vec3(5.0f, 1.0f, 0.0f), 1.0f);
-	cubes[3] = createCube(vec3(-2.0f, 3.0f, 3.0f), 1.0f);
-	cubes[4] = createCube(vec3(7.0f, 7.0f, 2.0f), 1.0f);
-	cubes[5] = createCube(vec3(3.0f, -2.0f, 8.0f), 1.0f);
+	int CUBES_COUNTER = 1;
+	gameObject *cubes = new gameObject[CUBES_COUNTER];
+	// cubes[0] = readObject("./Objects/elephant.obj");
+	cubes[0] = readObject("./Objects/cube.obj");
 
 	const char* vertex_shader_program = readFile("shader.glsl");
 	const char* fragment_shader_program = readFile("fragment.glsl");
@@ -255,20 +269,6 @@ int main() {
 		double mouseX, mouseY;
 		glfwGetCursorPos(window, &mouseX, &mouseY);
 
-		/*
-			OLD MOUSE MOVEMENT
-			Replaced because new movement accepts free move space
-		*/
-		// if (isFirstMouse) {
-		// 	lastMouseY = mouseY;
-		// 	lastMouseX = mouseX;
-		// 	isFirstMouse = false;
-		// }
-		// float mouseOffsetY = (mouseX - lastMouseX) * deltaTime * mouseSens * (SCREEN_WIDTH / 2 - mouseX);
-		// float mouseOffsetX = (lastMouseY - mouseY) * deltaTime * mouseSens * (SCREEN_HEIGHT / 2 - mouseY);
-		// lastMouseY = mouseY;
-		// lastMouseX = mouseX;
-
 		// Compute the mouse position
 		// Uses the screen center as reference
 		float mouseOffsetX = deltaTime * mouseSens * (SCREEN_WIDTH / 2 - mouseX);
@@ -279,7 +279,7 @@ int main() {
 		if(pitch > 89.0f) pitch =  89.0f;
 		if(pitch < -89.0f) pitch = -89.0f;
 
-		std::cout << yaw << '\n';
+		// std::cout << yaw << '\n';
 
 		vec3 lookingDirection = vec3(
 			cos(radians(pitch)) * cos(radians(yaw)),
@@ -318,7 +318,7 @@ int main() {
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, value_ptr(projection));
 
 		// Draw each component
-		for (size_t i = 0; i < 6; i++) {
+		for (size_t i = 0; i < CUBES_COUNTER; i++) {
 			glBindVertexArray(cubes[i].VAO);
 			glDrawElements(GL_TRIANGLES, cubes[i].vertexCounter, GL_UNSIGNED_INT, 0);
 		}
