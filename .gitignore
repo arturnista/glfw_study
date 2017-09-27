@@ -7,7 +7,7 @@ glfw_repository/
 *.slo
 *.lo
 *.o
-*.obj
+# *.obj
 
 # Precompiled Headers
 *.gch
