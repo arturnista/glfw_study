@@ -72,7 +72,6 @@ vec3 splitLine(string line) {
 		if(character != ' ') {
 			strNumber += character;
 		} else  {
-			std::cout << "a" << '\n';
 			float number = stof(strNumber, &sz);
 			strNumber = "";
 			if(idx == 0) result.x = number;
@@ -89,8 +88,6 @@ vec3 splitLine(string line) {
 }
 
 gameObject readObject(string filename, vec3 offset) {
-	string fullFileData;
-
 	std::vector<GLfloat> pointsVector = {};
     std::vector<GLuint> indexVector = {};
 
@@ -117,13 +114,18 @@ gameObject readObject(string filename, vec3 offset) {
 		openedFile.close();
 	}
 
-	GLfloat *points = new GLfloat[pointsVector.size()];
-	copy(pointsVector.begin(), pointsVector.end(), points);
-
-	GLuint *indexArray = new GLuint[indexVector.size()];
-	copy(indexVector.begin(), indexVector.end(), indexArray);
-
+	int pointsCounter = pointsVector.size();
 	int vertexCounter = indexVector.size();
+
+	cout << "vertex count = " << (pointsCounter / 3) << '\n';
+	cout << "face count = " << (vertexCounter / 3) << '\n';
+
+	GLfloat *points = new GLfloat[pointsCounter];
+	copy(pointsVector.begin(), pointsVector.end(), points);
+	for (size_t i = 0; i < pointsCounter; i++) points[i] = points[i] * 100;
+
+	GLuint *indexArray = new GLuint[vertexCounter];
+	copy(indexVector.begin(), indexVector.end(), indexArray);
 	for (size_t i = 0; i < vertexCounter; i++) indexArray[i] = indexArray[i] - 1;
 
 	GLuint VBO = 0;
@@ -199,8 +201,8 @@ int main() {
 
 	int CUBES_COUNTER = 1;
 	gameObject *cubes = new gameObject[CUBES_COUNTER];
-	// cubes[0] = readObject("./Objects/elephant.obj");
-	cubes[0] = readObject("./Objects/cube.obj");
+	cubes[0] = readObject("./Objects/bunny.obj");
+	// cubes[0] = readObject("./Objects/cube.obj");
 
 	const char* vertex_shader_program = readFile("shader.glsl");
 	const char* fragment_shader_program = readFile("fragment.glsl");
