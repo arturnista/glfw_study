@@ -87,7 +87,7 @@ vec3 splitLine(string line) {
 	return result;
 }
 
-gameObject readObject(string filename, vec3 offset) {
+gameObject readObject(string filename, float size, vec3 offset) {
 	std::vector<GLfloat> pointsVector = {};
     std::vector<GLuint> indexVector = {};
 
@@ -117,12 +117,12 @@ gameObject readObject(string filename, vec3 offset) {
 	int pointsCounter = pointsVector.size();
 	int vertexCounter = indexVector.size();
 
-	cout << "vertex count = " << (pointsCounter / 3) << '\n';
-	cout << "face count = " << (vertexCounter / 3) << '\n';
+	cout << "vertex count of " << filename << " = " << (pointsCounter / 3) << '\n';
+	cout << "face count of " << filename << " = " << (vertexCounter / 3) << '\n';
 
 	GLfloat *points = new GLfloat[pointsCounter];
 	copy(pointsVector.begin(), pointsVector.end(), points);
-	for (size_t i = 0; i < pointsCounter; i++) points[i] = points[i] * 100;
+	if(size != 1) for (size_t i = 0; i < pointsCounter; i++) points[i] = points[i] * size;
 
 	GLuint *indexArray = new GLuint[vertexCounter];
 	copy(indexVector.begin(), indexVector.end(), indexArray);
@@ -131,7 +131,7 @@ gameObject readObject(string filename, vec3 offset) {
 	GLuint VBO = 0;
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, 8 * 3 * sizeof(GLfloat), points, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, pointsCounter * sizeof(GLfloat), points, GL_STATIC_DRAW);
 	// With colors
 	// glBufferData(GL_ARRAY_BUFFER, 8 * 9 * sizeof(GLfloat), points, GL_STATIC_DRAW);
 
@@ -160,8 +160,8 @@ gameObject readObject(string filename, vec3 offset) {
 	return {VAO, vertexCounter};
 }
 
-gameObject readObject(string filename) {
-	return readObject(filename, vec3(0.0f, 0.0f, 0.0f));
+gameObject readObject(string filename, float size = 1) {
+	return readObject(filename, size, vec3(0.0f, 0.0f, 0.0f));
 }
 
 int main() {
@@ -199,10 +199,10 @@ int main() {
 	glEnable(GL_DEPTH_TEST); // enable depth-testing
 	glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
 
-	int CUBES_COUNTER = 1;
+	int CUBES_COUNTER = 2;
 	gameObject *cubes = new gameObject[CUBES_COUNTER];
-	cubes[0] = readObject("./Objects/bunny.obj");
-	// cubes[0] = readObject("./Objects/cube.obj");
+	cubes[0] = readObject("./Objects/bunny.obj", 10);
+	cubes[1] = readObject("./Objects/cube.obj", 1, vec3(10, 0, 0));
 
 	const char* vertex_shader_program = readFile("shader.glsl");
 	const char* fragment_shader_program = readFile("fragment.glsl");
