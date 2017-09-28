@@ -8,6 +8,7 @@
 #include <sstream>
 #include <vector>
 #include <math.h>
+#include <time.h>       /* time */
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -114,15 +115,26 @@ gameObject readObject(string filename, float size, vec3 offset) {
 		openedFile.close();
 	}
 
-	int pointsCounter = pointsVector.size();
+	int pointsCounter = pointsVector.size() * 2;
 	int vertexCounter = indexVector.size();
 
-	cout << "vertex count of " << filename << " = " << (pointsCounter / 3) << '\n';
-	cout << "face count of " << filename << " = " << (vertexCounter / 3) << '\n';
+	cout << "vertex count of " << filename << " = " << pointsCounter << '\n';
+	cout << "face count of " << filename << " = " << vertexCounter << '\n';
 
 	GLfloat *points = new GLfloat[pointsCounter];
-	copy(pointsVector.begin(), pointsVector.end(), points);
-	if(size != 1) for (size_t i = 0; i < pointsCounter; i++) points[i] = points[i] * size;
+	int counter = 0;
+	for (size_t i = 0; i < pointsCounter; i += 6) {
+		points[i] = pointsVector.at(counter) * size;
+		points[i + 1] = pointsVector.at(counter + 1) * size;
+		points[i + 2] = pointsVector.at(counter + 2) * size;
+		counter += 3;
+
+		points[i + 3] = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+		points[i + 4] = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+		points[i + 5] = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+	}
+	// copy(pointsVector.begin(), pointsVector.end(), points);
+	// if(size != 1) for (size_t i = 0; i < pointsCounter; i++) points[i] = points[i] * size;
 
 	GLuint *indexArray = new GLuint[vertexCounter];
 	copy(indexVector.begin(), indexVector.end(), indexArray);
@@ -141,16 +153,16 @@ gameObject readObject(string filename, float size, vec3 offset) {
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
 	// Positions without colors
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
-	glEnableVertexAttribArray(0);
-
-	// Positions
-	// glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (void*)0);
+	// glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
 	// glEnableVertexAttribArray(0);
 
+	// Positions
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (void*)0);
+	glEnableVertexAttribArray(0);
+
 	// Colors
-	// glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
-	// glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(1);
 
 	GLuint EBO = 0;
 	glGenBuffers(1, &EBO);
@@ -165,6 +177,7 @@ gameObject readObject(string filename, float size = 1) {
 }
 
 int main() {
+  	srand (time(NULL));
 	// start GL context and O/S window using the GLFW helper library
 	if (!glfwInit()) {
 		fprintf(stderr, "ERROR: could not start GLFW3\n");
