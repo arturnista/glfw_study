@@ -14,29 +14,14 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "common.h"
+#include "readFiles.h"
+
+
 using namespace std;
 using namespace glm;
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos);
-
-const char* readFile(string filename) {
-	string fullFileData;
-	ifstream openedFile(filename.c_str());
-	if (openedFile.is_open()) {
-		string line;
-		while (getline(openedFile, line)) {
-			fullFileData += line + '\n';
-		}
-		openedFile.close();
-	}
-
-	// Copy the string
-	char * writable = new char[fullFileData.size() + 1];
-	std::copy(fullFileData.begin(), fullFileData.end(), writable);
-	writable[fullFileData.size()] = '\0';
-
-	return writable;
-}
 
 void compileShader(GLuint shader) {
 	glCompileShader(shader);
@@ -48,132 +33,6 @@ void compileShader(GLuint shader) {
 		glGetShaderInfoLog(shader, 512, NULL, infoLog);
 		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
-}
-
-typedef struct {
-	GLuint VAO;
-	int vertexCounter;
-} gameObject;
-
-vec3 splitLine(string line) {
-	string::size_type sz;
-	string strNumber = "";
-	int idx = 0;
-	vec3 result;
-
-	bool digitFounded = false;
-
-	for (size_t i = 2; i < line.length(); i++) {
-		char character = line.at(i);
-		if(!digitFounded) {
-			if(character == ' ') continue;
-			digitFounded = true;
-		}
-
-		if(character != ' ') {
-			strNumber += character;
-		} else  {
-			float number = stof(strNumber, &sz);
-			strNumber = "";
-			if(idx == 0) result.x = number;
-			else if(idx == 1) result.y = number;
-			else if(idx == 2) result.z = number;
-			idx++;
-		}
-	}
-	if(idx == 2) {
-		float finalNumber = stof(strNumber, &sz);
-		result.z = finalNumber;
-	}
-	return result;
-}
-
-gameObject readObject(string filename, float size, vec3 offset) {
-	std::vector<GLfloat> pointsVector = {};
-    std::vector<GLuint> indexVector = {};
-
-	ifstream openedFile(filename.c_str());
-	if (openedFile.is_open()) {
-		string line;
-		while (getline(openedFile, line)) {
-			char first = '#';
-			if(line.length() > 0) first = line.at(0);
-
-			if(first == 'v') {
-				vec3 point = splitLine(line);
-				pointsVector.push_back(point.x + offset.x);
-				pointsVector.push_back(point.y + offset.y);
-				pointsVector.push_back(point.z + offset.z);
-			}
-			if(first == 'f') {
-				vec3 index = splitLine(line);
-				indexVector.push_back(index.x);
-				indexVector.push_back(index.y);
-				indexVector.push_back(index.z);
-			}
-		}
-		openedFile.close();
-	}
-
-	int pointsCounter = pointsVector.size() * 2;
-	int vertexCounter = indexVector.size();
-
-	cout << "vertex count of " << filename << " = " << pointsCounter << '\n';
-	cout << "face count of " << filename << " = " << vertexCounter << '\n';
-
-	GLfloat *points = new GLfloat[pointsCounter];
-	int counter = 0;
-	for (size_t i = 0; i < pointsCounter; i += 6) {
-		points[i] = pointsVector.at(counter) * size;
-		points[i + 1] = pointsVector.at(counter + 1) * size;
-		points[i + 2] = pointsVector.at(counter + 2) * size;
-		counter += 3;
-
-		points[i + 3] = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-		points[i + 4] = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-		points[i + 5] = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-	}
-	// copy(pointsVector.begin(), pointsVector.end(), points);
-	// if(size != 1) for (size_t i = 0; i < pointsCounter; i++) points[i] = points[i] * size;
-
-	GLuint *indexArray = new GLuint[vertexCounter];
-	copy(indexVector.begin(), indexVector.end(), indexArray);
-	for (size_t i = 0; i < vertexCounter; i++) indexArray[i] = indexArray[i] - 1;
-
-	GLuint VBO = 0;
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, pointsCounter * sizeof(GLfloat), points, GL_STATIC_DRAW);
-	// With colors
-	// glBufferData(GL_ARRAY_BUFFER, 8 * 9 * sizeof(GLfloat), points, GL_STATIC_DRAW);
-
-	GLuint VAO = 0;
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-	// Positions without colors
-	// glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
-	// glEnableVertexAttribArray(0);
-
-	// Positions
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (void*)0);
-	glEnableVertexAttribArray(0);
-
-	// Colors
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(1);
-
-	GLuint EBO = 0;
-	glGenBuffers(1, &EBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * vertexCounter, indexArray, GL_STATIC_DRAW);
-
-	return {VAO, vertexCounter};
-}
-
-gameObject readObject(string filename, float size = 1) {
-	return readObject(filename, size, vec3(0.0f, 0.0f, 0.0f));
 }
 
 int main() {
@@ -212,10 +71,12 @@ int main() {
 	glEnable(GL_DEPTH_TEST); // enable depth-testing
 	glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
 
-	int CUBES_COUNTER = 2;
-	gameObject *cubes = new gameObject[CUBES_COUNTER];
-	cubes[0] = readObject("./Objects/bunny.obj", 10);
-	cubes[1] = readObject("./Objects/cube.obj", 1, vec3(10, 0, 0));
+	int GAME_OBJECTS_COUNTER = 2;
+	gameObject *gameObjects = new gameObject[GAME_OBJECTS_COUNTER];
+	gameObjects[0] = readObjectFile("./Objects/bunny.obj", 10);
+	gameObjects[0].position = vec3(0, 0, 0);
+	gameObjects[1] = readObjectFile("./Objects/cube.obj", 1);
+	gameObjects[0].position = vec3(1, 1, 0);
 
 	const char* vertex_shader_program = readFile("shader.glsl");
 	const char* fragment_shader_program = readFile("fragment.glsl");
@@ -236,7 +97,7 @@ int main() {
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
-	float rotateSpeed = 1;
+	float rotateSpeed = .1;
 	float distanceX = 0.0f;
 	float distanceY = 0.0f;
 	float distanceZ = 3.0f;
@@ -273,7 +134,6 @@ int main() {
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glUseProgram(shaderProgramme);
 
 		// Compute the delta time
 		float currentFrame = glfwGetTime();
@@ -294,8 +154,6 @@ int main() {
 		if(pitch > 89.0f) pitch =  89.0f;
 		if(pitch < -89.0f) pitch = -89.0f;
 
-		// std::cout << yaw << '\n';
-
 		vec3 lookingDirection = vec3(
 			cos(radians(pitch)) * cos(radians(yaw)),
 			sin(radians(pitch)),
@@ -304,7 +162,7 @@ int main() {
 
 		cameraFront = normalize(lookingDirection);
 
-		float cameraSpeed = 10.0f * deltaTime; // adjust accordingly
+		float cameraSpeed = 10.0f * deltaTime;
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
 			cameraPos += cameraSpeed * cameraFront;
 		} else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
@@ -316,6 +174,50 @@ int main() {
 			cameraPos += normalize(cross(cameraFront, cameraUp)) * cameraSpeed;
 		}
 
+		/*
+			Bunny movement, rotation and scale
+		*/
+
+		float bunnySpeed = 5.0f * deltaTime;
+		if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS) {
+			gameObjects[0].position.z += bunnySpeed;
+		} else if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
+			gameObjects[0].position.z -= bunnySpeed;
+		}
+		if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
+			gameObjects[0].position.x -= bunnySpeed;
+		} else if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS) {
+			gameObjects[0].position.x += bunnySpeed;
+		}
+		if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS) {
+			gameObjects[0].position.y += bunnySpeed;
+		} else if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS) {
+			gameObjects[0].position.y -= bunnySpeed;
+		}
+
+		if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS) {
+			gameObjects[0].angle_front -= 1.0f * deltaTime;
+		} else if (glfwGetKey(window, GLFW_KEY_Y) == GLFW_PRESS) {
+			gameObjects[0].angle_front += 1.0f * deltaTime;
+		}
+		if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS) {
+			gameObjects[0].angle_side -= 1.0f * deltaTime;
+		} else if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS) {
+			gameObjects[0].angle_side += 1.0f * deltaTime;
+		}
+		if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
+			gameObjects[0].angle_back -= 1.0f * deltaTime;
+		} else if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS) {
+			gameObjects[0].angle_back += 1.0f * deltaTime;
+		}
+
+		if (glfwGetKey(window, GLFW_KEY_COMMA) == GLFW_PRESS) {
+			gameObjects[0].size -= 5.0f * deltaTime;
+			if(gameObjects[0].size < 0) gameObjects[0].size = 0;
+		} else if (glfwGetKey(window, GLFW_KEY_PERIOD) == GLFW_PRESS) {
+			gameObjects[0].size += 5.0f * deltaTime;
+		}
+
 		// Create and compute the model view projection Camera's components
 		mat4 model;
 		mat4 view;
@@ -325,17 +227,33 @@ int main() {
 		view = lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 		projection = perspective(radians(45.0f), SCREEN_WIDTH / SCREEN_HEIGHT, 0.1f, 100.0f);
 
-		int modelLoc = glGetUniformLocation(shaderProgramme, "model");
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
-		int viewLoc = glGetUniformLocation(shaderProgramme, "view");
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
-		int projectionLoc = glGetUniformLocation(shaderProgramme, "projection");
-		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, value_ptr(projection));
+		for (size_t i = 0; i < GAME_OBJECTS_COUNTER; i++) {
+			glUseProgram(shaderProgramme);
 
-		// Draw each component
-		for (size_t i = 0; i < CUBES_COUNTER; i++) {
-			glBindVertexArray(cubes[i].VAO);
-			glDrawElements(GL_TRIANGLES, cubes[i].vertexCounter, GL_UNSIGNED_INT, 0);
+			// Apply the model, view and projection on the shader created
+			int modelLoc = glGetUniformLocation(shaderProgramme, "model");
+			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
+			int viewLoc = glGetUniformLocation(shaderProgramme, "view");
+			glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
+			int projectionLoc = glGetUniformLocation(shaderProgramme, "projection");
+			glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, value_ptr(projection));
+
+			// Compute the transform for each object
+			glm::mat4 transform;
+			transform = translate(transform, gameObjects[i].position);
+
+			transform = rotate(transform, gameObjects[i].angle_front, vec3(0.0f, 0.0f, 1.0f));
+			transform = rotate(transform, gameObjects[i].angle_side, vec3(0.0f, 1.0f, 0.0f));
+			transform = rotate(transform, gameObjects[i].angle_back, vec3(1.0f, 0.0f, 0.0f));
+
+			transform = scale(transform, vec3(gameObjects[i].size, gameObjects[i].size, gameObjects[i].size));
+
+			// Apply the transform object
+			GLint transformLoc = glGetUniformLocation(shaderProgramme, "transform");
+			glUniformMatrix4fv(transformLoc, 1, GL_FALSE, value_ptr(transform));
+
+			glBindVertexArray(gameObjects[i].VAO);
+			glDrawElements(GL_TRIANGLES, gameObjects[i].vertexCounter, GL_UNSIGNED_INT, 0);
 		}
 
 		// Reset the vertex bind
@@ -357,8 +275,9 @@ int main() {
 
 // Is called whenever a key is pressed/released via GLFW
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode) {
-	if ((key == GLFW_KEY_ESCAPE || key == 'q' || key == 'Q') && action == GLFW_PRESS)
+	if ((key == GLFW_KEY_ESCAPE || key == GLFW_KEY_Q) && action == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, GL_TRUE);
+	}
 }
 
 void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos) {

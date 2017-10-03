@@ -1,4 +1,5 @@
 glfw_repository/
+build/
 
 # Prerequisites
 *.d
