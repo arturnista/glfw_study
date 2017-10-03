@@ -230,6 +230,10 @@ int main() {
 		for (size_t i = 0; i < GAME_OBJECTS_COUNTER; i++) {
 			glUseProgram(shaderProgramme);
 
+			vec3 lightColor = vec3(1.0f, 1.0f, 0.7f);
+			int lightColorLoc = glGetUniformLocation(shaderProgramme, "lightColor");
+			glUniform3fv(lightColorLoc, 1, value_ptr(lightColor));
+
 			// Apply the model, view and projection on the shader created
 			int modelLoc = glGetUniformLocation(shaderProgramme, "model");
 			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
