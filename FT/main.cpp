@@ -71,12 +71,18 @@ int main() {
 	glEnable(GL_DEPTH_TEST); // enable depth-testing
 	glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
 
-	int GAME_OBJECTS_COUNTER = 2;
+	vec3 lightPosition = vec3(5.0f, 5.0f, 0.0f);
+	int GAME_OBJECTS_COUNTER = 4;
 	gameObject *gameObjects = new gameObject[GAME_OBJECTS_COUNTER];
 	gameObjects[0] = readObjectFile("./Objects/bunny.obj", 10);
 	gameObjects[0].position = vec3(0, 0, 0);
-	gameObjects[1] = readObjectFile("./Objects/cube.obj", 1);
-	gameObjects[0].position = vec3(1, 1, 0);
+	gameObjects[1] = readObjectFile("./Objects/cube_b.obj", 10);
+	gameObjects[1].position = vec3(8, 0, 0);
+	gameObjects[2] = readObjectFile("./Objects/spheretri.obj", .3);
+	gameObjects[2].position = lightPosition;
+	gameObjects[3] = readObjectFile("./Objects/cube.obj", 1);
+	gameObjects[3].position = vec3(2, 0, 0);
+
 
 	const char* vertex_shader_program = readFile("shader.glsl");
 	const char* fragment_shader_program = readFile("fragment.glsl");
@@ -175,6 +181,33 @@ int main() {
 		}
 
 		/*
+			Light movement
+		*/
+
+		float lighSpeed = 5.0f * deltaTime;
+		if (glfwGetKey(window, GLFW_KEY_KP_8) == GLFW_PRESS) {
+			lightPosition.z += lighSpeed;
+			gameObjects[2].position = lightPosition;
+		} else if (glfwGetKey(window, GLFW_KEY_KP_5) == GLFW_PRESS) {
+			lightPosition.z -= lighSpeed;
+			gameObjects[2].position = lightPosition;
+		}
+		if (glfwGetKey(window, GLFW_KEY_KP_4) == GLFW_PRESS) {
+			lightPosition.x -= lighSpeed;
+			gameObjects[2].position = lightPosition;
+		} else if (glfwGetKey(window, GLFW_KEY_KP_6) == GLFW_PRESS) {
+			lightPosition.x += lighSpeed;
+			gameObjects[2].position = lightPosition;
+		}
+		if (glfwGetKey(window, GLFW_KEY_KP_1) == GLFW_PRESS) {
+			lightPosition.y += lighSpeed;
+			gameObjects[2].position = lightPosition;
+		} else if (glfwGetKey(window, GLFW_KEY_KP_3) == GLFW_PRESS) {
+			lightPosition.y -= lighSpeed;
+			gameObjects[2].position = lightPosition;
+		}
+
+		/*
 			Bunny movement, rotation and scale
 		*/
 
@@ -231,17 +264,11 @@ int main() {
 		for (size_t i = 0; i < GAME_OBJECTS_COUNTER; i++) {
 			glUseProgram(shaderProgramme);
 
-			vec3 lightColor = vec3(1.0f, 1.0f, 0.7f);
-			int lightColorLoc = glGetUniformLocation(shaderProgramme, "lightColor");
-			glUniform3fv(lightColorLoc, 1, value_ptr(lightColor));
-
-			vec3 lightPosition = vec3(1.0f, 1.0f, 0.7f);
-			int lightPositionLoc = glGetUniformLocation(shaderProgramme, "lightPosition");
-			glUniform3fv(lightPositionLoc, 1, value_ptr(lightPosition));
-
 			// Apply the model, view and projection on the shader created
 			int modelLoc = glGetUniformLocation(shaderProgramme, "model");
 			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
+			int inverseModelLoc = glGetUniformLocation(shaderProgramme, "inverseModel");
+			glUniformMatrix4fv(inverseModelLoc, 1, GL_FALSE, value_ptr(inverse(model)));
 			int viewLoc = glGetUniformLocation(shaderProgramme, "view");
 			glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
 			int projectionLoc = glGetUniformLocation(shaderProgramme, "projection");
@@ -260,6 +287,16 @@ int main() {
 			// Apply the transform object
 			GLint transformLoc = glGetUniformLocation(shaderProgramme, "transform");
 			glUniformMatrix4fv(transformLoc, 1, GL_FALSE, value_ptr(transform));
+
+			int viewPosLoc = glGetUniformLocation(shaderProgramme, "viewPos");
+			glUniformMatrix4fv(viewPosLoc, 1, GL_FALSE, value_ptr(cameraPos));
+
+			vec3 lightColor = vec3(1.0f, 1.0f, 1.0f);
+			int lightColorLoc = glGetUniformLocation(shaderProgramme, "lightColor");
+			glUniform3fv(lightColorLoc, 1, value_ptr(lightColor));
+
+			int lightPositionLoc = glGetUniformLocation(shaderProgramme, "lightPosition");
+			glUniform3fv(lightPositionLoc, 1, value_ptr(lightPosition));
 
 			glBindVertexArray(gameObjects[i].VAO);
 			glDrawElements(GL_TRIANGLES, gameObjects[i].vertexCounter, GL_UNSIGNED_INT, 0);

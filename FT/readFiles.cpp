@@ -19,7 +19,10 @@ const char* readFile(string filename) {
 	return writable;
 }
 
-void fetchFileData(string filename, vector<GLfloat>& pointsVector, vector<GLuint>& indexVector) {
+void fetchFileData(string filename,
+					vector<GLfloat>& pointsVector,
+					vector<GLuint>& indexVector,
+					vector<GLfloat>& normalVector) {
 	ifstream openedFile(filename.c_str());
 	if (openedFile.is_open()) {
 		string line;
@@ -35,6 +38,13 @@ void fetchFileData(string filename, vector<GLfloat>& pointsVector, vector<GLuint
 				pointsVector.push_back( stof(strNumber) );
 				openedFile >> strNumber;
 				pointsVector.push_back( stof(strNumber) );
+			} else if(line.compare("vn") == 0) {
+				openedFile >> strNumber;
+				normalVector.push_back( stof(strNumber) );
+				openedFile >> strNumber;
+				normalVector.push_back( stof(strNumber) );
+				openedFile >> strNumber;
+				normalVector.push_back( stof(strNumber) );
 			} else if(line.compare("f") == 0) {
 
 				int count = 3;
@@ -45,6 +55,7 @@ void fetchFileData(string filename, vector<GLfloat>& pointsVector, vector<GLuint
 						string fstNumber = strNumber.substr(0, doubleIdx);
 						string secNumber = strNumber.substr(doubleIdx + 2);
 						indexVector.push_back( stof(fstNumber) );
+						// normalVector.push_back( stof(secNumber) );
 					} else {
 						int singleIdx = strNumber.find("/");
 						if(singleIdx > 0) {
@@ -55,6 +66,7 @@ void fetchFileData(string filename, vector<GLfloat>& pointsVector, vector<GLuint
 							string trdNumber = nextString.substr(nextIndex + 1);
 
 							indexVector.push_back( stof(fstNumber) );
+							// normalVector.push_back( stof(trdNumber) );
 						} else {
 							indexVector.push_back( stof(strNumber) );
 						}
@@ -69,9 +81,10 @@ void fetchFileData(string filename, vector<GLfloat>& pointsVector, vector<GLuint
 
 gameObject readObjectFile(string filename, float size, vec3 offset) {
 	std::vector<GLfloat> pointsVector = {};
-    std::vector<GLuint> indexVector = {};
+	std::vector<GLuint> indexVector = {};
+	std::vector<GLfloat> normalVector = {};
 
-	fetchFileData(filename, pointsVector, indexVector);
+	fetchFileData(filename, pointsVector, indexVector, normalVector);
 
 	int pointsCounter = pointsVector.size() * 3;
 	int vertexCounter = indexVector.size();
@@ -86,29 +99,39 @@ gameObject readObjectFile(string filename, float size, vec3 offset) {
 		static_cast <float> (rand()) / static_cast <float> (RAND_MAX),
 		static_cast <float> (rand()) / static_cast <float> (RAND_MAX)
 	);
-	int counter = 0;
-	for (size_t i = 0; i < pointsCounter; i += 9) {
-		// Position
-		points[i + 0] = pointsVector.at(counter++);
-		points[i + 1] = pointsVector.at(counter++);
-		points[i + 2] = pointsVector.at(counter++);
 
-		// Normal
-		points[i + 3] = 1.0f;
-		points[i + 4] = 0.0f;
-		points[i + 5] = 0.0f;
+	float lineSize = 9;
+
+	int counter = 0;
+	for (size_t i = 0; i < pointsCounter; i += lineSize) {
+		// Position
+		points[i + 0] = pointsVector.at(counter);
+		points[i + 1] = pointsVector.at(counter + 1);
+		points[i + 2] = pointsVector.at(counter + 2);
 
 		// Color
-		points[i + 6] = color.x; // R
-		points[i + 7] = color.y; // G
-		points[i + 8] = color.z; // B
+		points[i + 3] = color.x;
+		points[i + 4] = color.y;
+		points[i + 5] = color.z;
+
+		if(normalVector.size() > 0) {
+			points[i + 6] = normalVector.at(counter);
+			points[i + 7] = normalVector.at(counter + 1);
+			points[i + 8] = normalVector.at(counter + 2);
+
+			std::cout << " x: " << points[i + 6];
+			std::cout << " y: " << points[i + 7];
+			std::cout << " z: " << points[i + 8] << '\n';
+		} else {
+			points[i + 6] = 1.0f;
+			points[i + 7] = 0.0f;
+			points[i + 8] = 0.0f;
+		}
+
+		counter += 3;
 	}
 	// copy(pointsVector.begin(), pointsVector.end(), points);
 	// if(size != 1) for (size_t i = 0; i < pointsCounter; i++) points[i] = points[i] * size;
-
-	GLuint *indexArray = new GLuint[vertexCounter];
-	copy(indexVector.begin(), indexVector.end(), indexArray);
-	for (size_t i = 0; i < vertexCounter; i++) indexArray[i] = indexArray[i] - 1;
 
 	GLuint VBO = 0;
 	glGenBuffers(1, &VBO);
@@ -120,24 +143,29 @@ gameObject readObjectFile(string filename, float size, vec3 offset) {
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
-	float lineSize = 9;
 
 	// Positions
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, lineSize * sizeof(GLfloat), (void*)0);
 	glEnableVertexAttribArray(0);
 
-	// Normal
+	// Colors
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, lineSize * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(1);
 
-	// Colors
+	// Normal
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, lineSize * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(2);
 
-	GLuint EBO = 0;
-	glGenBuffers(1, &EBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * vertexCounter, indexArray, GL_STATIC_DRAW);
+	if(vertexCounter > 0) {
+		GLuint *indexArray = new GLuint[vertexCounter];
+		copy(indexVector.begin(), indexVector.end(), indexArray);
+		for (size_t i = 0; i < vertexCounter; i++) indexArray[i] = indexArray[i] - 1;
+
+		GLuint EBO = 0;
+		glGenBuffers(1, &EBO);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * vertexCounter, indexArray, GL_STATIC_DRAW);
+	}
 
 	return {
 		VAO,
