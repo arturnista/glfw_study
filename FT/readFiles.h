@@ -24,8 +24,6 @@ using namespace glm;
 
 const char* readFile(string filename);
 
-vec3 splitLine(string line);
-
 gameObject readObjectFile(string filename, float size, vec3 offset);
 
 gameObject readObjectFile(string filename, float size = 1);

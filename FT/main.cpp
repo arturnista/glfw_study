@@ -178,44 +178,45 @@ int main() {
 			Bunny movement, rotation and scale
 		*/
 
+		const int bunnyIndex = 1;
 		float bunnySpeed = 5.0f * deltaTime;
 		if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS) {
-			gameObjects[0].position.z += bunnySpeed;
+			gameObjects[bunnyIndex].position.z += bunnySpeed;
 		} else if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
-			gameObjects[0].position.z -= bunnySpeed;
+			gameObjects[bunnyIndex].position.z -= bunnySpeed;
 		}
 		if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
-			gameObjects[0].position.x -= bunnySpeed;
+			gameObjects[bunnyIndex].position.x -= bunnySpeed;
 		} else if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS) {
-			gameObjects[0].position.x += bunnySpeed;
+			gameObjects[bunnyIndex].position.x += bunnySpeed;
 		}
 		if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS) {
-			gameObjects[0].position.y += bunnySpeed;
+			gameObjects[bunnyIndex].position.y += bunnySpeed;
 		} else if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS) {
-			gameObjects[0].position.y -= bunnySpeed;
+			gameObjects[bunnyIndex].position.y -= bunnySpeed;
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS) {
-			gameObjects[0].angle_front -= 1.0f * deltaTime;
+			gameObjects[bunnyIndex].angle_front -= 1.0f * deltaTime;
 		} else if (glfwGetKey(window, GLFW_KEY_Y) == GLFW_PRESS) {
-			gameObjects[0].angle_front += 1.0f * deltaTime;
+			gameObjects[bunnyIndex].angle_front += 1.0f * deltaTime;
 		}
 		if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS) {
-			gameObjects[0].angle_side -= 1.0f * deltaTime;
+			gameObjects[bunnyIndex].angle_side -= 1.0f * deltaTime;
 		} else if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS) {
-			gameObjects[0].angle_side += 1.0f * deltaTime;
+			gameObjects[bunnyIndex].angle_side += 1.0f * deltaTime;
 		}
 		if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
-			gameObjects[0].angle_back -= 1.0f * deltaTime;
+			gameObjects[bunnyIndex].angle_back -= 1.0f * deltaTime;
 		} else if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS) {
-			gameObjects[0].angle_back += 1.0f * deltaTime;
+			gameObjects[bunnyIndex].angle_back += 1.0f * deltaTime;
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_COMMA) == GLFW_PRESS) {
-			gameObjects[0].size -= 5.0f * deltaTime;
-			if(gameObjects[0].size < 0) gameObjects[0].size = 0;
+			gameObjects[bunnyIndex].size -= 5.0f * deltaTime;
+			if(gameObjects[bunnyIndex].size < 0) gameObjects[bunnyIndex].size = 0;
 		} else if (glfwGetKey(window, GLFW_KEY_PERIOD) == GLFW_PRESS) {
-			gameObjects[0].size += 5.0f * deltaTime;
+			gameObjects[bunnyIndex].size += 5.0f * deltaTime;
 		}
 
 		// Create and compute the model view projection Camera's components
@@ -233,6 +234,10 @@ int main() {
 			vec3 lightColor = vec3(1.0f, 1.0f, 0.7f);
 			int lightColorLoc = glGetUniformLocation(shaderProgramme, "lightColor");
 			glUniform3fv(lightColorLoc, 1, value_ptr(lightColor));
+
+			vec3 lightPosition = vec3(1.0f, 1.0f, 0.7f);
+			int lightPositionLoc = glGetUniformLocation(shaderProgramme, "lightPosition");
+			glUniform3fv(lightPositionLoc, 1, value_ptr(lightPosition));
 
 			// Apply the model, view and projection on the shader created
 			int modelLoc = glGetUniformLocation(shaderProgramme, "model");
