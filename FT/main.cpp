@@ -1,4 +1,6 @@
-// #pragma warning(disable:4996)
+#define _SCL_SECURE_NO_WARNINGS
+#pragma warning(disable:4996)
+
 #include <GL/glew.h> // include GLEW and new version of GL on Windows
 #include <GLFW/glfw3.h> // GLFW helper library
 #include <stdio.h>
@@ -56,6 +58,8 @@ int main() {
 	glfwMakeContextCurrent(window);
 	glfwSetKeyCallback(window, key_callback);
 	glfwSetCursorPosCallback(window, cursor_pos_callback);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
 
 	// start GLEW extension handler
 	glewExperimental = GL_TRUE;
@@ -72,17 +76,16 @@ int main() {
 	glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
 
 	vec3 lightPosition = vec3(5.0f, 5.0f, 0.0f);
-	int GAME_OBJECTS_COUNTER = 4;
-	gameObject *gameObjects = new gameObject[GAME_OBJECTS_COUNTER];
-	gameObjects[0] = readObjectFile("./Objects/bunny.obj", 10);
-	gameObjects[0].position = vec3(0, 0, 0);
-	gameObjects[1] = readObjectFile("./Objects/cube_b.obj", 10);
-	gameObjects[1].position = vec3(8, 0, 0);
-	gameObjects[2] = readObjectFile("./Objects/spheretri.obj", .3);
-	gameObjects[2].position = lightPosition;
-	gameObjects[3] = readObjectFile("./Objects/cube.obj", 1);
-	gameObjects[3].position = vec3(2, 0, 0);
 
+	int GAME_OBJECTS_COUNTER = 2;
+	gameObject *gameObjects = new gameObject[GAME_OBJECTS_COUNTER];
+	gameObjects[0] = readObjectFile("./Objects/bunny_normal.obj", 10, vec3(1.0f, 1.0f, 0.0f));
+	gameObjects[0].position = vec3(0, 0, 0);
+	gameObjects[1] = readObjectFile("./Objects/cube.obj", .3, vec3(1.0f));
+	gameObjects[1].position = lightPosition;
+
+	const int bunnyIndex = 0;
+	const int lampIndex = 1;
 
 	const char* vertex_shader_program = readFile("shader.glsl");
 	const char* fragment_shader_program = readFile("fragment.glsl");
@@ -111,8 +114,6 @@ int main() {
 	double lastMouseX = 0.0f;
 	double lastMouseY = 0.0f;
 
-	float mouseSens = 1.3f;
-
 	bool isFirstMouse = true;
 
 	float deltaTime = 0.0f;	// Time between current frame and last frame
@@ -130,6 +131,7 @@ int main() {
 	float pitch = 0;
 	float yaw = 0;
 
+	float mouseSens = 1.3f;
 	while (!glfwWindowShouldClose(window)) {
 		// Updates the screen size
 		int width, height;
@@ -151,12 +153,22 @@ int main() {
 		glfwGetCursorPos(window, &mouseX, &mouseY);
 
 		// Compute the mouse position
+
+		if (isFirstMouse) {
+			lastMouseY = mouseY;
+			lastMouseX = mouseX;
+			isFirstMouse = false;
+		}
+		float mouseOffsetX = (mouseX - lastMouseX) * deltaTime * mouseSens;
+		float mouseOffsetY = (lastMouseY - mouseY) * deltaTime * mouseSens;
+		lastMouseY = mouseY;
+		lastMouseX = mouseX;
 		// Uses the screen center as reference
-		float mouseOffsetX = deltaTime * mouseSens * (SCREEN_WIDTH / 2 - mouseX);
-		float mouseOffsetY = deltaTime * mouseSens * (SCREEN_HEIGHT / 2 - mouseY);
+		//float mouseOffsetX = deltaTime * mouseSens * (SCREEN_WIDTH / 2 - mouseX);
+		//float mouseOffsetY = deltaTime * mouseSens * (SCREEN_HEIGHT / 2 - mouseY);
 
 		pitch += mouseOffsetY;
-		yaw += -mouseOffsetX;
+		yaw += mouseOffsetX;
 		if(pitch > 89.0f) pitch =  89.0f;
 		if(pitch < -89.0f) pitch = -89.0f;
 
@@ -187,31 +199,30 @@ int main() {
 		float lighSpeed = 5.0f * deltaTime;
 		if (glfwGetKey(window, GLFW_KEY_KP_8) == GLFW_PRESS) {
 			lightPosition.z += lighSpeed;
-			gameObjects[2].position = lightPosition;
+			gameObjects[lampIndex].position = lightPosition;
 		} else if (glfwGetKey(window, GLFW_KEY_KP_5) == GLFW_PRESS) {
 			lightPosition.z -= lighSpeed;
-			gameObjects[2].position = lightPosition;
+			gameObjects[lampIndex].position = lightPosition;
 		}
 		if (glfwGetKey(window, GLFW_KEY_KP_4) == GLFW_PRESS) {
 			lightPosition.x -= lighSpeed;
-			gameObjects[2].position = lightPosition;
+			gameObjects[lampIndex].position = lightPosition;
 		} else if (glfwGetKey(window, GLFW_KEY_KP_6) == GLFW_PRESS) {
 			lightPosition.x += lighSpeed;
-			gameObjects[2].position = lightPosition;
+			gameObjects[lampIndex].position = lightPosition;
 		}
 		if (glfwGetKey(window, GLFW_KEY_KP_1) == GLFW_PRESS) {
 			lightPosition.y += lighSpeed;
-			gameObjects[2].position = lightPosition;
+			gameObjects[lampIndex].position = lightPosition;
 		} else if (glfwGetKey(window, GLFW_KEY_KP_3) == GLFW_PRESS) {
 			lightPosition.y -= lighSpeed;
-			gameObjects[2].position = lightPosition;
+			gameObjects[lampIndex].position = lightPosition;
 		}
 
 		/*
 			Bunny movement, rotation and scale
 		*/
 
-		const int bunnyIndex = 1;
 		float bunnySpeed = 5.0f * deltaTime;
 		if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS) {
 			gameObjects[bunnyIndex].position.z += bunnySpeed;
@@ -252,17 +263,30 @@ int main() {
 			gameObjects[bunnyIndex].size += 5.0f * deltaTime;
 		}
 
-		// Create and compute the model view projection Camera's components
-		mat4 model;
-		mat4 view;
-		mat4 projection;
-
-		model = rotate(model, radians(-55.0f), vec3(1.0f, 0.0f, 0.0f));
-		view = lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-		projection = perspective(radians(45.0f), SCREEN_WIDTH / SCREEN_HEIGHT, 0.1f, 100.0f);
 
 		for (size_t i = 0; i < GAME_OBJECTS_COUNTER; i++) {
 			glUseProgram(shaderProgramme);
+
+			// Apply camera position
+			int viewPosLoc = glGetUniformLocation(shaderProgramme, "viewPos");
+			glUniformMatrix4fv(viewPosLoc, 1, GL_FALSE, value_ptr(cameraPos));
+
+			// Create and compute the model view projection Camera's components
+			mat4 model;
+			mat4 view;
+			mat4 projection;
+
+			model = rotate(model, radians(-55.0f), vec3(1.0f, 0.0f, 0.0f));
+			view = lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+			projection = perspective(radians(45.0f), SCREEN_WIDTH / SCREEN_HEIGHT, 0.1f, 100.0f);
+
+			model = translate(model, gameObjects[i].position);
+
+			model = rotate(model, gameObjects[i].angle_front, vec3(0.0f, 0.0f, 1.0f));
+			model = rotate(model, gameObjects[i].angle_side, vec3(0.0f, 1.0f, 0.0f));
+			model = rotate(model, gameObjects[i].angle_back, vec3(1.0f, 0.0f, 0.0f));
+
+			model = scale(model, vec3(gameObjects[i].size));
 
 			// Apply the model, view and projection on the shader created
 			int modelLoc = glGetUniformLocation(shaderProgramme, "model");
@@ -273,30 +297,16 @@ int main() {
 			glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
 			int projectionLoc = glGetUniformLocation(shaderProgramme, "projection");
 			glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, value_ptr(projection));
+			
+			// Apply light
+			if (i != lampIndex) {
+				vec3 lightColor = vec3(1.0f, 1.0f, 1.0f);
+				int lightColorLoc = glGetUniformLocation(shaderProgramme, "lightColor");
+				glUniform3fv(lightColorLoc, 1, value_ptr(lightColor));
 
-			// Compute the transform for each object
-			glm::mat4 transform;
-			transform = translate(transform, gameObjects[i].position);
-
-			transform = rotate(transform, gameObjects[i].angle_front, vec3(0.0f, 0.0f, 1.0f));
-			transform = rotate(transform, gameObjects[i].angle_side, vec3(0.0f, 1.0f, 0.0f));
-			transform = rotate(transform, gameObjects[i].angle_back, vec3(1.0f, 0.0f, 0.0f));
-
-			transform = scale(transform, vec3(gameObjects[i].size, gameObjects[i].size, gameObjects[i].size));
-
-			// Apply the transform object
-			GLint transformLoc = glGetUniformLocation(shaderProgramme, "transform");
-			glUniformMatrix4fv(transformLoc, 1, GL_FALSE, value_ptr(transform));
-
-			int viewPosLoc = glGetUniformLocation(shaderProgramme, "viewPos");
-			glUniformMatrix4fv(viewPosLoc, 1, GL_FALSE, value_ptr(cameraPos));
-
-			vec3 lightColor = vec3(1.0f, 1.0f, 1.0f);
-			int lightColorLoc = glGetUniformLocation(shaderProgramme, "lightColor");
-			glUniform3fv(lightColorLoc, 1, value_ptr(lightColor));
-
-			int lightPositionLoc = glGetUniformLocation(shaderProgramme, "lightPosition");
-			glUniform3fv(lightPositionLoc, 1, value_ptr(lightPosition));
+				int lightPositionLoc = glGetUniformLocation(shaderProgramme, "lightPosition");
+				glUniform3fv(lightPositionLoc, 1, value_ptr(lightPosition));
+			}
 
 			glBindVertexArray(gameObjects[i].VAO);
 			glDrawElements(GL_TRIANGLES, gameObjects[i].vertexCounter, GL_UNSIGNED_INT, 0);
@@ -311,7 +321,7 @@ int main() {
 		glfwSwapBuffers(window);
 
 		// Set the cursor to the middle of the screen
-		glfwSetCursorPos(window, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+		//glfwSetCursorPos(window, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 	}
 
 	// close GL context and any other GLFW resources
