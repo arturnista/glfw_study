@@ -1,3 +1,6 @@
+#define _SCL_SECURE_NO_WARNINGS
+#pragma warning(disable:4996)
+
 #include "readFiles.h"
 
 const char* readFile(string filename) {
@@ -79,7 +82,7 @@ void fetchFileData(string filename,
 	}
 }
 
-gameObject readObjectFile(string filename, float size, vec3 offset) {
+gameObject readObjectFile(string filename, float size, vec3 color) {
 	std::vector<GLfloat> pointsVector = {};
 	std::vector<GLuint> indexVector = {};
 	std::vector<GLfloat> normalVector = {};
@@ -94,11 +97,6 @@ gameObject readObjectFile(string filename, float size, vec3 offset) {
 	cout << "face count" << " = " << vertexCounter << '\n';
 
 	GLfloat *points = new GLfloat[pointsCounter];
-	glm::vec3 color = glm::vec3(
-		static_cast <float> (rand()) / static_cast <float> (RAND_MAX),
-		static_cast <float> (rand()) / static_cast <float> (RAND_MAX),
-		static_cast <float> (rand()) / static_cast <float> (RAND_MAX)
-	);
 
 	float lineSize = 9;
 
@@ -118,10 +116,6 @@ gameObject readObjectFile(string filename, float size, vec3 offset) {
 			points[i + 6] = normalVector.at(counter);
 			points[i + 7] = normalVector.at(counter + 1);
 			points[i + 8] = normalVector.at(counter + 2);
-
-			std::cout << " x: " << points[i + 6];
-			std::cout << " y: " << points[i + 7];
-			std::cout << " z: " << points[i + 8] << '\n';
 		} else {
 			points[i + 6] = 1.0f;
 			points[i + 7] = 0.0f;
@@ -175,5 +169,10 @@ gameObject readObjectFile(string filename, float size, vec3 offset) {
 }
 
 gameObject readObjectFile(string filename, float size) {
-	return readObjectFile(filename, size, vec3(0.0f, 0.0f, 0.0f));
+	glm::vec3 color = glm::vec3(
+		static_cast <float> (rand()) / static_cast <float> (RAND_MAX),
+		static_cast <float> (rand()) / static_cast <float> (RAND_MAX),
+		static_cast <float> (rand()) / static_cast <float> (RAND_MAX)
+	);
+	return readObjectFile(filename, size, color);
 }
