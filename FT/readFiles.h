@@ -24,6 +24,11 @@ using namespace glm;
 
 const char* readFile(string filename);
 
+void fetchFileData(string filename,
+					vector<GLfloat>& pointsVector,
+					vector<GLuint>& indexVector,
+					vector<GLfloat>& normalVector);
+                    
 gameObject readObjectFile(string filename, float size, vec3 offset);
 
 gameObject readObjectFile(string filename, float size = 1);

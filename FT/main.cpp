@@ -19,6 +19,7 @@
 #include "common.h"
 #include "readFiles.h"
 #include "Shader.h"
+#include "GameObject.h"
 
 
 using namespace std;
@@ -67,14 +68,10 @@ int main() {
 	vec3 lightPosition = vec3(5.0f, 5.0f, 0.0f);
 
 	int GAME_OBJECTS_COUNTER = 2;
-	gameObject *gameObjects = new gameObject[GAME_OBJECTS_COUNTER];
-	gameObjects[0] = readObjectFile("./assets/objects/bunny_normal.obj", 10, vec3(1.0f, 1.0f, 0.0f));
-	gameObjects[0].position = vec3(0, 0, 0);
-	gameObjects[1] = readObjectFile("./assets/objects/cube.obj", .3, vec3(1.0f));
-	gameObjects[1].position = lightPosition;
-
-	const int bunnyIndex = 0;
-	const int lampIndex = 1;
+	GameObject* bunnyObject = new GameObject("./assets/objects/bunny_normal.obj", 10, vec3(1.0f, 1.0f, 0.0f));
+	bunnyObject->setPosition(vec3(0, 0, 0));
+	GameObject* lampObject = new GameObject("./assets/objects/cube.obj", .3, vec3(1.0f));
+	lampObject->setPosition(lightPosition);
 
 	Shader* shader = new Shader("lighting");
 
@@ -171,24 +168,24 @@ int main() {
 		float lighSpeed = 5.0f * deltaTime;
 		if (glfwGetKey(window, GLFW_KEY_KP_8) == GLFW_PRESS) {
 			lightPosition.z += lighSpeed;
-			gameObjects[lampIndex].position = lightPosition;
+			lampObject->setPosition( lightPosition );
 		} else if (glfwGetKey(window, GLFW_KEY_KP_5) == GLFW_PRESS) {
 			lightPosition.z -= lighSpeed;
-			gameObjects[lampIndex].position = lightPosition;
+			lampObject->setPosition( lightPosition );
 		}
 		if (glfwGetKey(window, GLFW_KEY_KP_4) == GLFW_PRESS) {
 			lightPosition.x -= lighSpeed;
-			gameObjects[lampIndex].position = lightPosition;
+			lampObject->setPosition( lightPosition );
 		} else if (glfwGetKey(window, GLFW_KEY_KP_6) == GLFW_PRESS) {
 			lightPosition.x += lighSpeed;
-			gameObjects[lampIndex].position = lightPosition;
+			lampObject->setPosition( lightPosition );
 		}
 		if (glfwGetKey(window, GLFW_KEY_KP_1) == GLFW_PRESS) {
 			lightPosition.y += lighSpeed;
-			gameObjects[lampIndex].position = lightPosition;
+			lampObject->setPosition( lightPosition );
 		} else if (glfwGetKey(window, GLFW_KEY_KP_3) == GLFW_PRESS) {
 			lightPosition.y -= lighSpeed;
-			gameObjects[lampIndex].position = lightPosition;
+			lampObject->setPosition( lightPosition );
 		}
 
 		/*
@@ -197,84 +194,61 @@ int main() {
 
 		float bunnySpeed = 5.0f * deltaTime;
 		if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS) {
-			gameObjects[bunnyIndex].position.z += bunnySpeed;
+			bunnyObject->setPositionZ(bunnySpeed);
 		} else if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
-			gameObjects[bunnyIndex].position.z -= bunnySpeed;
+			bunnyObject->setPositionZ(bunnySpeed);
 		}
 		if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
-			gameObjects[bunnyIndex].position.x -= bunnySpeed;
+			bunnyObject->setPositionX(bunnySpeed);
 		} else if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS) {
-			gameObjects[bunnyIndex].position.x += bunnySpeed;
+			bunnyObject->setPositionX(bunnySpeed);
 		}
 		if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS) {
-			gameObjects[bunnyIndex].position.y += bunnySpeed;
+			bunnyObject->setPositionY(bunnySpeed);
 		} else if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS) {
-			gameObjects[bunnyIndex].position.y -= bunnySpeed;
+			bunnyObject->setPositionY(bunnySpeed);
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS) {
-			gameObjects[bunnyIndex].angle_front -= 1.0f * deltaTime;
+			bunnyObject->rotateX(-1.0f * deltaTime);
 		} else if (glfwGetKey(window, GLFW_KEY_Y) == GLFW_PRESS) {
-			gameObjects[bunnyIndex].angle_front += 1.0f * deltaTime;
+			bunnyObject->rotateX(+1.0f * deltaTime);
 		}
 		if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS) {
-			gameObjects[bunnyIndex].angle_side -= 1.0f * deltaTime;
+			bunnyObject->rotateY(-1.0f * deltaTime);
 		} else if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS) {
-			gameObjects[bunnyIndex].angle_side += 1.0f * deltaTime;
+			bunnyObject->rotateY(+1.0f * deltaTime);
 		}
 		if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
-			gameObjects[bunnyIndex].angle_back -= 1.0f * deltaTime;
+			bunnyObject->rotateZ(-1.0f * deltaTime);
 		} else if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS) {
-			gameObjects[bunnyIndex].angle_back += 1.0f * deltaTime;
+			bunnyObject->rotateZ(+1.0f * deltaTime);
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_COMMA) == GLFW_PRESS) {
-			gameObjects[bunnyIndex].size -= 5.0f * deltaTime;
-			if(gameObjects[bunnyIndex].size < 0) gameObjects[bunnyIndex].size = 0;
+			int size = bunnyObject->getSize() - (5.0f * deltaTime);
+			if(size < 0) size = 0;
+			bunnyObject->setSize(size);
 		} else if (glfwGetKey(window, GLFW_KEY_PERIOD) == GLFW_PRESS) {
-			gameObjects[bunnyIndex].size += 5.0f * deltaTime;
+			int size = bunnyObject->getSize() + (5.0f * deltaTime);
+			bunnyObject->setSize(size);
 		}
 
 
-		for (size_t i = 0; i < GAME_OBJECTS_COUNTER; i++) {
-			glUseProgram(shader->getProgram());
+		glUseProgram(shader->getProgram());
 
-			// Apply camera position
-			shader->use("viewPos", cameraPos);
+		// Apply camera position
+		shader->use("viewPos", cameraPos);
 
-			// Create and compute the model view projection Camera's components
-			mat4 model;
-			mat4 view;
-			mat4 projection;
+		// Apply light
+		vec3 lightColor = vec3(1.0f, 1.0f, 1.0f);
+		shader->use("lightColor", lightColor);
+		shader->use("lightPosition", lightPosition);
 
-			model = rotate(model, radians(-55.0f), vec3(1.0f, 0.0f, 0.0f));
-			view = lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-			projection = perspective(radians(45.0f), SCREEN_WIDTH / SCREEN_HEIGHT, 0.1f, 100.0f);
+		mat4 view = lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+		mat4 projection = perspective(radians(45.0f), SCREEN_WIDTH / SCREEN_HEIGHT, 0.1f, 100.0f);
 
-			model = translate(model, gameObjects[i].position);
-
-			model = rotate(model, gameObjects[i].angle_front, vec3(0.0f, 0.0f, 1.0f));
-			model = rotate(model, gameObjects[i].angle_side, vec3(0.0f, 1.0f, 0.0f));
-			model = rotate(model, gameObjects[i].angle_back, vec3(1.0f, 0.0f, 0.0f));
-
-			model = scale(model, vec3(gameObjects[i].size));
-
-			// Apply the model, view and projection on the shader created
-			shader->use("model", model);
-			shader->use("inverseModel", inverse(model));
-			shader->use("view", view);
-			shader->use("projection", projection);
-
-			// Apply light
-			if (i != lampIndex) {
-				vec3 lightColor = vec3(1.0f, 1.0f, 1.0f);
-				shader->use("lightColor", lightColor);
-				shader->use("lightPosition", lightPosition);
-			}
-
-			glBindVertexArray(gameObjects[i].VAO);
-			glDrawElements(GL_TRIANGLES, gameObjects[i].vertexCounter, GL_UNSIGNED_INT, 0);
-		}
+		bunnyObject->render(shader, view, projection);
 
 		// Reset the vertex bind
 		glBindVertexArray(0);

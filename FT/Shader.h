@@ -1,3 +1,6 @@
+#ifndef __SHADER_HEADER__
+#define __SHADER_HEADER__ 1
+
 #include <GL/glew.h> // include GLEW and new version of GL on Windows
 #include <GLFW/glfw3.h> // GLFW helper library
 
@@ -20,3 +23,5 @@ public:
     void use(string name, glm::vec3 value);
     void use(string name, glm::mat4 value);
 };
+
+#endif
