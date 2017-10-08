@@ -18,24 +18,13 @@
 
 #include "common.h"
 #include "readFiles.h"
+#include "Shader.h"
 
 
 using namespace std;
 using namespace glm;
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos);
-
-void compileShader(GLuint shader) {
-	glCompileShader(shader);
-
-	int  success;
-	char infoLog[512];
-	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-	if (!success) {
-		glGetShaderInfoLog(shader, 512, NULL, infoLog);
-		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-	}
-}
 
 int main() {
   	srand (time(NULL));
@@ -79,32 +68,15 @@ int main() {
 
 	int GAME_OBJECTS_COUNTER = 2;
 	gameObject *gameObjects = new gameObject[GAME_OBJECTS_COUNTER];
-	gameObjects[0] = readObjectFile("./Objects/bunny_normal.obj", 10, vec3(1.0f, 1.0f, 0.0f));
+	gameObjects[0] = readObjectFile("./assets/objects/bunny_normal.obj", 10, vec3(1.0f, 1.0f, 0.0f));
 	gameObjects[0].position = vec3(0, 0, 0);
-	gameObjects[1] = readObjectFile("./Objects/cube.obj", .3, vec3(1.0f));
+	gameObjects[1] = readObjectFile("./assets/objects/cube.obj", .3, vec3(1.0f));
 	gameObjects[1].position = lightPosition;
 
 	const int bunnyIndex = 0;
 	const int lampIndex = 1;
 
-	const char* vertex_shader_program = readFile("shader.glsl");
-	const char* fragment_shader_program = readFile("fragment.glsl");
-
-	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertex_shader_program, NULL);
-	compileShader(vertexShader);
-
-	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragment_shader_program, NULL);
-	compileShader(fragmentShader);
-
-	GLuint shaderProgramme = glCreateProgram();
-	glAttachShader(shaderProgramme, vertexShader);
-	glAttachShader(shaderProgramme, fragmentShader);
-	glLinkProgram(shaderProgramme);
-
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
+	Shader* shader = new Shader("lighting");
 
 	float rotateSpeed = .1;
 	float distanceX = 0.0f;
@@ -265,11 +237,10 @@ int main() {
 
 
 		for (size_t i = 0; i < GAME_OBJECTS_COUNTER; i++) {
-			glUseProgram(shaderProgramme);
+			glUseProgram(shader->getProgram());
 
 			// Apply camera position
-			int viewPosLoc = glGetUniformLocation(shaderProgramme, "viewPos");
-			glUniformMatrix4fv(viewPosLoc, 1, GL_FALSE, value_ptr(cameraPos));
+			shader->use("viewPos", cameraPos);
 
 			// Create and compute the model view projection Camera's components
 			mat4 model;
@@ -289,23 +260,16 @@ int main() {
 			model = scale(model, vec3(gameObjects[i].size));
 
 			// Apply the model, view and projection on the shader created
-			int modelLoc = glGetUniformLocation(shaderProgramme, "model");
-			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
-			int inverseModelLoc = glGetUniformLocation(shaderProgramme, "inverseModel");
-			glUniformMatrix4fv(inverseModelLoc, 1, GL_FALSE, value_ptr(inverse(model)));
-			int viewLoc = glGetUniformLocation(shaderProgramme, "view");
-			glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
-			int projectionLoc = glGetUniformLocation(shaderProgramme, "projection");
-			glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, value_ptr(projection));
-			
+			shader->use("model", model);
+			shader->use("inverseModel", inverse(model));
+			shader->use("view", view);
+			shader->use("projection", projection);
+
 			// Apply light
 			if (i != lampIndex) {
 				vec3 lightColor = vec3(1.0f, 1.0f, 1.0f);
-				int lightColorLoc = glGetUniformLocation(shaderProgramme, "lightColor");
-				glUniform3fv(lightColorLoc, 1, value_ptr(lightColor));
-
-				int lightPositionLoc = glGetUniformLocation(shaderProgramme, "lightPosition");
-				glUniform3fv(lightPositionLoc, 1, value_ptr(lightPosition));
+				shader->use("lightColor", lightColor);
+				shader->use("lightPosition", lightPosition);
 			}
 
 			glBindVertexArray(gameObjects[i].VAO);
