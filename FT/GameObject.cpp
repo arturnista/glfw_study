@@ -80,13 +80,16 @@ GameObject::GameObject (string filename, float size, vec3 color) {
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * vertexCounter, indexArray, GL_STATIC_DRAW);
 	}
 
-    this->size = size;
     this->vertexCounter = vertexCounter;
     this->VAO = VAO;
-    this->position = vec3(0.0f);
     this->rotation = vec3(0.0f);
     this->model = rotate(this->model, radians(-55.0f), vec3(1.0f, 0.0f, 0.0f));
+
+	this->setSize(size);
+	this->setPosition(vec3(0.0f));
 }
+
+void GameObject::update(GLFWwindow* window, float deltaTime) {}
 
 GLuint GameObject::getVAO() {
     return this->VAO;
@@ -100,52 +103,67 @@ float GameObject::getSize() {
     return this->size;
 }
 
-mat4 GameObject::getModel() {
-    return this->model;
+vec3 GameObject::getPosition() {
+    return this->position;
+}
+
+float GameObject::getPositionX() {
+    return this->position.x;
+}
+
+float GameObject::getPositionY() {
+    return this->position.y;
+}
+
+float GameObject::getPositionZ() {
+    return this->position.z;
 }
 
 void GameObject::setPosition(vec3 position) {
     this->position = position;
-    model = translate(model, this->position);
 }
 
 void GameObject::setPositionX(float value) {
     this->position.x = value;
-    model = translate(model, this->position);
+	std::cout << "X: " << value << '\n';
 }
 
 void GameObject::setPositionY(float value) {
     this->position.y = value;
-    model = translate(model, this->position);
+	std::cout << "Y: " << value << '\n';
 }
 
 void GameObject::setPositionZ(float value) {
     this->position.z = value;
-    model = translate(model, this->position);
+	std::cout << "Z: " << value << '\n';
 }
 
 void GameObject::setSize(float size) {
     this->size = size;
-    model = scale(model, vec3(this->size));
 }
 
 void GameObject::rotateX(float value) {
     this->rotation.x += value;
-    model = glm::rotate(model, value, vec3(1.0f, 0.0f, 0.0f));
 }
 
 void GameObject::rotateY(float value) {
     this->rotation.y += value;
-    model = glm::rotate(model, value, vec3(0.0f, 1.0f, 0.0f));
 }
 
 void GameObject::rotateZ(float value) {
     this->rotation.z += value;
-    model = glm::rotate(model, value, vec3(0.0f, 0.0f, 1.0f));
 }
 
 void GameObject::render(Shader* shader, mat4 view, mat4 projection) {
 	// Apply the model, view and projection on the shader created
+	mat4 model;
+	model = rotate(model, radians(-55.0f), vec3(1.0f, 0.0f, 0.0f));
+	model = translate(model, this->position);
+	model = glm::rotate(model, this->rotation.x, vec3(1.0f, 0.0f, 0.0f));
+    model = glm::rotate(model, this->rotation.y, vec3(0.0f, 1.0f, 0.0f));
+    model = glm::rotate(model, this->rotation.z, vec3(0.0f, 0.0f, 1.0f));
+	model = scale(model, vec3(this->size));
+
 	shader->use("model", model);
 	shader->use("inverseModel", inverse(model));
 	shader->use("view", view);

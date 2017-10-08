@@ -19,7 +19,8 @@
 #include "common.h"
 #include "readFiles.h"
 #include "Shader.h"
-#include "GameObject.h"
+#include "Lamp.h"
+#include "Bunny.h"
 
 
 using namespace std;
@@ -68,9 +69,9 @@ int main() {
 	vec3 lightPosition = vec3(5.0f, 5.0f, 0.0f);
 
 	int GAME_OBJECTS_COUNTER = 2;
-	GameObject* bunnyObject = new GameObject("./assets/objects/bunny_normal.obj", 10, vec3(1.0f, 1.0f, 0.0f));
+	Bunny* bunnyObject = new Bunny("./assets/objects/bunny_normal.obj", 10, vec3(1.0f, 1.0f, 0.0f));
 	bunnyObject->setPosition(vec3(0, 0, 0));
-	GameObject* lampObject = new GameObject("./assets/objects/cube.obj", .3, vec3(1.0f));
+	Lamp* lampObject = new Lamp("./assets/objects/cube.obj", .3, vec3(1.0f));
 	lampObject->setPosition(lightPosition);
 
 	Shader* shader = new Shader("lighting");
@@ -164,76 +165,8 @@ int main() {
 		/*
 			Light movement
 		*/
-
-		float lighSpeed = 5.0f * deltaTime;
-		if (glfwGetKey(window, GLFW_KEY_KP_8) == GLFW_PRESS) {
-			lightPosition.z += lighSpeed;
-			lampObject->setPosition( lightPosition );
-		} else if (glfwGetKey(window, GLFW_KEY_KP_5) == GLFW_PRESS) {
-			lightPosition.z -= lighSpeed;
-			lampObject->setPosition( lightPosition );
-		}
-		if (glfwGetKey(window, GLFW_KEY_KP_4) == GLFW_PRESS) {
-			lightPosition.x -= lighSpeed;
-			lampObject->setPosition( lightPosition );
-		} else if (glfwGetKey(window, GLFW_KEY_KP_6) == GLFW_PRESS) {
-			lightPosition.x += lighSpeed;
-			lampObject->setPosition( lightPosition );
-		}
-		if (glfwGetKey(window, GLFW_KEY_KP_1) == GLFW_PRESS) {
-			lightPosition.y += lighSpeed;
-			lampObject->setPosition( lightPosition );
-		} else if (glfwGetKey(window, GLFW_KEY_KP_3) == GLFW_PRESS) {
-			lightPosition.y -= lighSpeed;
-			lampObject->setPosition( lightPosition );
-		}
-
-		/*
-			Bunny movement, rotation and scale
-		*/
-
-		float bunnySpeed = 5.0f * deltaTime;
-		if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS) {
-			bunnyObject->setPositionZ(bunnySpeed);
-		} else if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
-			bunnyObject->setPositionZ(bunnySpeed);
-		}
-		if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
-			bunnyObject->setPositionX(bunnySpeed);
-		} else if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS) {
-			bunnyObject->setPositionX(bunnySpeed);
-		}
-		if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS) {
-			bunnyObject->setPositionY(bunnySpeed);
-		} else if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS) {
-			bunnyObject->setPositionY(bunnySpeed);
-		}
-
-		if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS) {
-			bunnyObject->rotateX(-1.0f * deltaTime);
-		} else if (glfwGetKey(window, GLFW_KEY_Y) == GLFW_PRESS) {
-			bunnyObject->rotateX(+1.0f * deltaTime);
-		}
-		if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS) {
-			bunnyObject->rotateY(-1.0f * deltaTime);
-		} else if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS) {
-			bunnyObject->rotateY(+1.0f * deltaTime);
-		}
-		if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
-			bunnyObject->rotateZ(-1.0f * deltaTime);
-		} else if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS) {
-			bunnyObject->rotateZ(+1.0f * deltaTime);
-		}
-
-		if (glfwGetKey(window, GLFW_KEY_COMMA) == GLFW_PRESS) {
-			int size = bunnyObject->getSize() - (5.0f * deltaTime);
-			if(size < 0) size = 0;
-			bunnyObject->setSize(size);
-		} else if (glfwGetKey(window, GLFW_KEY_PERIOD) == GLFW_PRESS) {
-			int size = bunnyObject->getSize() + (5.0f * deltaTime);
-			bunnyObject->setSize(size);
-		}
-
+        bunnyObject->update(window, deltaTime);
+		lamp->update(window, deltaTime);
 
 		glUseProgram(shader->getProgram());
 
@@ -249,6 +182,7 @@ int main() {
 		mat4 projection = perspective(radians(45.0f), SCREEN_WIDTH / SCREEN_HEIGHT, 0.1f, 100.0f);
 
 		bunnyObject->render(shader, view, projection);
+		lampObject->render(shader, view, projection);
 
 		// Reset the vertex bind
 		glBindVertexArray(0);

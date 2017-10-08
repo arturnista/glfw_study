@@ -15,7 +15,7 @@ using namespace std;
 using namespace glm;
 
 class GameObject {
-private:
+protected:
 	GLuint VAO;
 	int vertexCounter;
 
@@ -28,13 +28,19 @@ public:
 
 	GLuint getVAO();
 	int getVertexCounter();
-    mat4 getModel();
-    float getSize();
 
+    virtual void update(GLFWwindow* window, float deltaTime);
+
+    vec3 getPosition();
+    float getPositionX();
+    float getPositionY();
+    float getPositionZ();
     void setPosition(vec3 position);
     void setPositionX(float value);
     void setPositionY(float value);
     void setPositionZ(float value);
+
+    float getSize();
     void setSize(float size);
 
     void rotateX(float value);
