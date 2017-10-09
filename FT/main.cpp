@@ -19,6 +19,7 @@
 #include "Shader.h"
 #include "Camera.h"
 #include "Lamp.h"
+#include "Player.h"
 #include "Bunny.h"
 
 
@@ -65,46 +66,30 @@ int main() {
 	glEnable(GL_DEPTH_TEST); // enable depth-testing
 	glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
 
+    printf("\nPre GameLoop actions\n\n");
+
 	vec3 lightPosition = vec3(5.0f, 5.0f, 0.0f);
 
-	int GAME_OBJECTS_COUNTER = 2;
+    Camera* camera = new Camera(window);
+    Shader* shader = new Shader("lighting");
+
+    Player* player = new Player(camera);
 	Bunny* bunnyObject = new Bunny();
 	bunnyObject->setPosition(vec3(0, 0, 0));
 	Lamp* lampObject = new Lamp();
 	lampObject->setPosition(lightPosition);
 
-	Shader* shader = new Shader("lighting");
-
-	float rotateSpeed = .1;
-	float distanceX = 0.0f;
-	float distanceY = 0.0f;
-	float distanceZ = 3.0f;
-
-	double lastMouseX = 0.0f;
-	double lastMouseY = 0.0f;
-
-	bool isFirstMouse = true;
 
 	float deltaTime = 0.0f;	// Time between current frame and last frame
 	float lastFrame = 0.0f; // Time of last frame
 
-    Camera* camera = new Camera(window);
-
-	float pitch = 0;
-	float yaw = 0;
-
-	float mouseSens = 1.3f;
     tLight light = {
         vec3(1.0f, 1.0f, 1.0f),
         lightPosition
     };
-	while (!glfwWindowShouldClose(window)) {
-		// Updates the screen size
-		int width, height;
-		glfwGetWindowSize(window, &width, &height);
-		float SCREEN_WIDTH = width;
-		float SCREEN_HEIGHT = height;
 
+    printf("\nGameLoop actions\n\n");
+	while (!glfwWindowShouldClose(window)) {
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -114,58 +99,16 @@ int main() {
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
-		// Get the cursor position
-		double mouseX, mouseY;
-		glfwGetCursorPos(window, &mouseX, &mouseY);
-
-		// Compute the mouse position
-
-		if (isFirstMouse) {
-			lastMouseY = mouseY;
-			lastMouseX = mouseX;
-			isFirstMouse = false;
-		}
-		float mouseOffsetX = (mouseX - lastMouseX) * deltaTime * mouseSens;
-		float mouseOffsetY = (lastMouseY - mouseY) * deltaTime * mouseSens;
-		lastMouseY = mouseY;
-		lastMouseX = mouseX;
-		// Uses the screen center as reference
-		//float mouseOffsetX = deltaTime * mouseSens * (SCREEN_WIDTH / 2 - mouseX);
-		//float mouseOffsetY = deltaTime * mouseSens * (SCREEN_HEIGHT / 2 - mouseY);
-
-		pitch += mouseOffsetY;
-		yaw += mouseOffsetX;
-		if(pitch > 89.0f) pitch =  89.0f;
-		if(pitch < -89.0f) pitch = -89.0f;
-
-		vec3 lookingDirection = vec3(
-			cos(radians(pitch)) * cos(radians(yaw)),
-			sin(radians(pitch)),
-			cos(radians(pitch)) * sin(radians(yaw))
-		);
-
-		camera->setFront( normalize(lookingDirection) );
-        vec3 cameraFront = camera->getFront();
-		float cameraSpeed = 10.0f * deltaTime;
-		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-			camera->setPosition( camera->getPosition() + (cameraSpeed * cameraFront) );
-		} else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-			camera->setPosition( camera->getPosition() - (cameraSpeed * cameraFront) );
-		}
-		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-			camera->setPosition( camera->getPosition() - (normalize(cross(cameraFront, camera->getUp())) * cameraSpeed) );
-		} else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-			camera->setPosition( camera->getPosition() + (normalize(cross(cameraFront, camera->getUp())) * cameraSpeed) );
-		}
-
 		/*
 			Objects update
 		*/
         bunnyObject->update(window, deltaTime);
-		lampObject->update(window, deltaTime);
+        lampObject->update(window, deltaTime);
+		player->update(window, deltaTime);
 
 		bunnyObject->render(shader, camera, light);
-		lampObject->render(shader, camera, light);
+        lampObject->render(shader, camera, light);
+		player->render(shader, camera, light);
 
 		// Reset the vertex bind
 		glBindVertexArray(0);
@@ -174,9 +117,6 @@ int main() {
 		glfwPollEvents();
 		// put the stuff we've been drawing onto the display
 		glfwSwapBuffers(window);
-
-		// Set the cursor to the middle of the screen
-		//glfwSetCursorPos(window, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 	}
 
 	// close GL context and any other GLFW resources

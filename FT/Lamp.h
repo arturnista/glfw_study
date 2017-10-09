@@ -5,12 +5,8 @@
 
 class Lamp : public GameObject {
 private:
-    /* data */
-
 public:
     Lamp ();
-
-    void update(GLFWwindow* window, float deltaTime);
 };
 
 #endif
