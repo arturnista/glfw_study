@@ -1,6 +1,6 @@
 #include "Bunny.h"
 
-Bunny::Bunny(string filename, float size, vec3 color) : GameObject(filename, size, color) {}
+Bunny::Bunny() : GameObject("bunny_normal.obj", 10, vec3(1.0f, 1.0f, 0.0f)) {}
 
 void Bunny::update(GLFWwindow* window, float deltaTime) {
     /*

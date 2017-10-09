@@ -26,6 +26,7 @@ protected:
 	vec3 rotation;
     mat4 model;
 public:
+	GameObject ();
     GameObject (string filename, float size, vec3 color);
 
 	GLuint getVAO();

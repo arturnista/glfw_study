@@ -68,9 +68,9 @@ int main() {
 	vec3 lightPosition = vec3(5.0f, 5.0f, 0.0f);
 
 	int GAME_OBJECTS_COUNTER = 2;
-	Bunny* bunnyObject = new Bunny("./assets/objects/bunny_normal.obj", 10, vec3(1.0f, 1.0f, 0.0f));
+	Bunny* bunnyObject = new Bunny();
 	bunnyObject->setPosition(vec3(0, 0, 0));
-	Lamp* lampObject = new Lamp("./assets/objects/cube.obj", .3, vec3(1.0f));
+	Lamp* lampObject = new Lamp();
 	lampObject->setPosition(lightPosition);
 
 	Shader* shader = new Shader("lighting");

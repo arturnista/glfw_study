@@ -8,7 +8,7 @@ private:
     /* data */
 
 public:
-    Bunny (string filename, float size, vec3 color);
+    Bunny ();
 
     void update(GLFWwindow* window, float deltaTime);
 };

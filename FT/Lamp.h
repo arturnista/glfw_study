@@ -8,7 +8,7 @@ private:
     /* data */
 
 public:
-    Lamp (string filename, float size, vec3 color);
+    Lamp ();
 
     void update(GLFWwindow* window, float deltaTime);
 };

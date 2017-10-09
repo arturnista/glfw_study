@@ -1,6 +1,18 @@
 #include "GameObject.h"
 
-GameObject::GameObject (string filename, float size, vec3 color) {
+GameObject::GameObject () {
+	this->vertexCounter = 0;
+	this->VAO = 0;
+	this->rotation = vec3(0.0f);
+	this->model = mat4(0.0f);
+
+	this->setSize(0.0f);
+	this->setPosition(vec3(0.0f));
+}
+
+GameObject::GameObject (string fn, float size, vec3 color) {
+	string filename = "./assets/objects/" + fn;
+
 	std::vector<GLfloat> pointsVector = {};
 	std::vector<GLuint> indexVector = {};
 	std::vector<GLfloat> normalVector = {};
@@ -151,6 +163,10 @@ void GameObject::rotateZ(float value) {
 }
 
 void GameObject::render(Shader* shader, Camera* camera, tLight light) {
+	if(this->VAO == 0) {
+		return;
+	}
+	
 	glUseProgram(shader->getProgram());
 
 	// Apply the model, view and projection on the shader created
