@@ -4,6 +4,8 @@
 #include <GL/glew.h> // include GLEW and new version of GL on Windows
 #include <GLFW/glfw3.h> // GLFW helper library
 
+#include <vector>
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -25,6 +27,8 @@ protected:
     vec3 position;
 	vec3 rotation;
     mat4 model;
+
+	Shader* shader;
 public:
 	GameObject ();
     GameObject (string filename, float size, vec3 color);
@@ -50,7 +54,7 @@ public:
     void rotateY(float value);
     void rotateZ(float value);
 
-    void render(Shader* shader, Camera* camera, tLight light);
+    void render(Camera* camera, tLight light);
 };
 
 #endif

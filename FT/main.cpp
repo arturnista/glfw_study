@@ -16,12 +16,13 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "StateController.h"
+
 #include "Shader.h"
 #include "Camera.h"
 #include "Lamp.h"
 #include "Player.h"
 #include "Bunny.h"
-
 
 using namespace std;
 using namespace glm;
@@ -51,7 +52,6 @@ int main() {
 	glfwSetCursorPosCallback(window, cursor_pos_callback);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-
 	// start GLEW extension handler
 	glewExperimental = GL_TRUE;
 	glewInit();
@@ -71,7 +71,7 @@ int main() {
 	vec3 lightPosition = vec3(5.0f, 5.0f, 0.0f);
 
     Camera* camera = new Camera(window);
-    Shader* shader = new Shader("lighting");
+    StateController* stateController = new StateController(window, camera);
 
     Player* player = new Player(camera);
 	Bunny* bunnyObject = new Bunny();
@@ -79,6 +79,9 @@ int main() {
 	Lamp* lampObject = new Lamp();
 	lampObject->setPosition(lightPosition);
 
+    stateController->addObject( player );
+    stateController->addObject( bunnyObject );
+    stateController->addObject( lampObject );
 
 	float deltaTime = 0.0f;	// Time between current frame and last frame
 	float lastFrame = 0.0f; // Time of last frame
@@ -102,24 +105,21 @@ int main() {
 		/*
 			Objects update
 		*/
-        bunnyObject->update(window, deltaTime);
-        lampObject->update(window, deltaTime);
-		player->update(window, deltaTime);
-
-		bunnyObject->render(shader, camera, light);
-        lampObject->render(shader, camera, light);
-		player->render(shader, camera, light);
+        vector<GameObject*> gameObjects = stateController->getObjects();
+        for (int i = 0; i < gameObjects.size(); i++) gameObjects.at(i)->update(window, deltaTime);
+        for (int i = 0; i < gameObjects.size(); i++) gameObjects.at(i)->render(camera, light);
 
 		// Reset the vertex bind
 		glBindVertexArray(0);
 
-		// update other events like input handling
+		// Update other events like input handling
 		glfwPollEvents();
-		// put the stuff we've been drawing onto the display
+
+		// Put the stuff we've been drawing onto the display
 		glfwSwapBuffers(window);
 	}
 
-	// close GL context and any other GLFW resources
+	// Close GL context and any other GLFW resources
 	glfwTerminate();
 	return 0;
 }
@@ -131,6 +131,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	}
 }
 
+// Is called whenever the mouse moves
 void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos) {
-	// cout << xpos << '\n';
 }

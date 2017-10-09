@@ -8,6 +8,8 @@ GameObject::GameObject () {
 
 	this->setSize(0.0f);
 	this->setPosition(vec3(0.0f));
+
+	this->shader = NULL;
 }
 
 GameObject::GameObject (string fn, float size, vec3 color) {
@@ -98,6 +100,8 @@ GameObject::GameObject (string fn, float size, vec3 color) {
 
 	this->setSize(size);
 	this->setPosition(vec3(0.0f));
+
+	this->shader = new Shader("lighting");
 }
 
 void GameObject::update(GLFWwindow* window, float deltaTime) {}
@@ -162,12 +166,12 @@ void GameObject::rotateZ(float value) {
     this->rotation.z += value;
 }
 
-void GameObject::render(Shader* shader, Camera* camera, tLight light) {
-	if(this->VAO == 0) {
+void GameObject::render(Camera* camera, tLight light) {
+	if(this->shader == NULL) {
 		return;
 	}
-	
-	glUseProgram(shader->getProgram());
+
+	glUseProgram(this->shader->getProgram());
 
 	// Apply the model, view and projection on the shader created
 	mat4 model;
@@ -181,16 +185,16 @@ void GameObject::render(Shader* shader, Camera* camera, tLight light) {
 	mat4 projection = camera->getProjection();
 
 	// Apply camera position
-	shader->use("viewPos", camera->getPosition());
+	this->shader->use("viewPos", camera->getPosition());
 
-	shader->use("model", model);
-	shader->use("inverseModel", inverse(model));
-	shader->use("view", view);
-	shader->use("projection", projection);
+	this->shader->use("model", model);
+	this->shader->use("inverseModel", inverse(model));
+	this->shader->use("view", view);
+	this->shader->use("projection", projection);
 
 	// Apply lighting
-	shader->use("lightColor", light.color);
-	shader->use("lightPosition", light.position);
+	this->shader->use("lightColor", light.color);
+	this->shader->use("lightPosition", light.position);
 
 	glBindVertexArray(this->VAO);
 	glDrawElements(GL_TRIANGLES, this->vertexCounter, GL_UNSIGNED_INT, 0);
