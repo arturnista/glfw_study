@@ -1,1 +1,1 @@
-nodemon --exec "./build.sh && ./build/app.out" -e cpp,h,glsl
+nodemon --exec "./run.sh" -e cpp,h,glsl

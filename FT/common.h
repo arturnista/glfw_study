@@ -2,13 +2,8 @@
 #define __COMMON_HEADER__ 1
 
 typedef struct {
-	GLuint VAO;
-	int vertexCounter;
-	float size;
-	glm::vec3 position;
-	float angle_front;
-	float angle_side;
-	float angle_back;
-} gameObject;
+	vec3 color;
+	vec3 position;
+} tLight;
 
 #endif

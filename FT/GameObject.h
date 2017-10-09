@@ -9,7 +9,9 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Shader.h"
+#include "Camera.h"
 #include "readFiles.h"
+#include "common.h"
 
 using namespace std;
 using namespace glm;
@@ -47,7 +49,7 @@ public:
     void rotateY(float value);
     void rotateZ(float value);
 
-    void render(Shader* shader, mat4 view, mat4 projection);
+    void render(Shader* shader, Camera* camera, tLight light);
 };
 
 #endif

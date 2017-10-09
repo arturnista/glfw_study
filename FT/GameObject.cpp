@@ -150,7 +150,9 @@ void GameObject::rotateZ(float value) {
     this->rotation.z += value;
 }
 
-void GameObject::render(Shader* shader, mat4 view, mat4 projection) {
+void GameObject::render(Shader* shader, Camera* camera, tLight light) {
+	glUseProgram(shader->getProgram());
+
 	// Apply the model, view and projection on the shader created
 	mat4 model;
 	model = translate(model, this->position);
@@ -159,10 +161,20 @@ void GameObject::render(Shader* shader, mat4 view, mat4 projection) {
     model = glm::rotate(model, this->rotation.z, vec3(0.0f, 0.0f, 1.0f));
 	model = scale(model, vec3(this->size));
 
+	mat4 view = camera->getView();
+	mat4 projection = camera->getProjection();
+
+	// Apply camera position
+	shader->use("viewPos", camera->getPosition());
+
 	shader->use("model", model);
 	shader->use("inverseModel", inverse(model));
 	shader->use("view", view);
 	shader->use("projection", projection);
+
+	// Apply lighting
+	shader->use("lightColor", light.color);
+	shader->use("lightPosition", light.position);
 
 	glBindVertexArray(this->VAO);
 	glDrawElements(GL_TRIANGLES, this->vertexCounter, GL_UNSIGNED_INT, 0);

@@ -17,6 +17,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Shader.h"
+#include "Camera.h"
 #include "Lamp.h"
 #include "Bunny.h"
 
@@ -87,19 +88,16 @@ int main() {
 	float deltaTime = 0.0f;	// Time between current frame and last frame
 	float lastFrame = 0.0f; // Time of last frame
 
-	vec3 cameraPos = vec3(0.0f, 0.0f, -3.0f);
-	vec3 cameraFront = vec3(0.0f, 0.0f, 0.0f);
-
-	vec3 cameraTarget = vec3(0.0f, 0.0f, 0.0f);
-	vec3 cameraDirection = normalize(cameraPos - cameraTarget);
-	vec3 up = vec3(0.0f, 1.0f, 0.0f);
-	vec3 cameraRight = normalize(cross(up, cameraDirection));
-	vec3 cameraUp = cross(cameraDirection, cameraRight);
+    Camera* camera = new Camera(window);
 
 	float pitch = 0;
 	float yaw = 0;
 
 	float mouseSens = 1.3f;
+    tLight light = {
+        vec3(1.0f, 1.0f, 1.0f),
+        lightPosition
+    };
 	while (!glfwWindowShouldClose(window)) {
 		// Updates the screen size
 		int width, height;
@@ -146,41 +144,28 @@ int main() {
 			cos(radians(pitch)) * sin(radians(yaw))
 		);
 
-		cameraFront = normalize(lookingDirection);
-
+		camera->setFront( normalize(lookingDirection) );
+        vec3 cameraFront = camera->getFront();
 		float cameraSpeed = 10.0f * deltaTime;
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-			cameraPos += cameraSpeed * cameraFront;
+			camera->setPosition( camera->getPosition() + (cameraSpeed * cameraFront) );
 		} else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-			cameraPos -= cameraSpeed * cameraFront;
+			camera->setPosition( camera->getPosition() - (cameraSpeed * cameraFront) );
 		}
 		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-			cameraPos -= normalize(cross(cameraFront, cameraUp)) * cameraSpeed;
+			camera->setPosition( camera->getPosition() - (normalize(cross(cameraFront, camera->getUp())) * cameraSpeed) );
 		} else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-			cameraPos += normalize(cross(cameraFront, cameraUp)) * cameraSpeed;
+			camera->setPosition( camera->getPosition() + (normalize(cross(cameraFront, camera->getUp())) * cameraSpeed) );
 		}
 
 		/*
-			Light movement
+			Objects update
 		*/
         bunnyObject->update(window, deltaTime);
 		lampObject->update(window, deltaTime);
 
-		glUseProgram(shader->getProgram());
-
-		// Apply camera position
-		shader->use("viewPos", cameraPos);
-
-		// Apply light
-		vec3 lightColor = vec3(1.0f, 1.0f, 1.0f);
-		shader->use("lightColor", lightColor);
-		shader->use("lightPosition", lightPosition);
-
-		mat4 view = lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-		mat4 projection = perspective(radians(45.0f), SCREEN_WIDTH / SCREEN_HEIGHT, 0.1f, 100.0f);
-
-		bunnyObject->render(shader, view, projection);
-		lampObject->render(shader, view, projection);
+		bunnyObject->render(shader, camera, light);
+		lampObject->render(shader, camera, light);
 
 		// Reset the vertex bind
 		glBindVertexArray(0);
