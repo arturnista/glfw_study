@@ -16,8 +16,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "common.h"
-#include "readFiles.h"
 #include "Shader.h"
 #include "Lamp.h"
 #include "Bunny.h"
@@ -166,7 +164,7 @@ int main() {
 			Light movement
 		*/
         bunnyObject->update(window, deltaTime);
-		lamp->update(window, deltaTime);
+		lampObject->update(window, deltaTime);
 
 		glUseProgram(shader->getProgram());
 

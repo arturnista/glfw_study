@@ -7,7 +7,6 @@ GameObject::GameObject (string filename, float size, vec3 color) {
 
 	fetchFileData(filename, pointsVector, indexVector, normalVector);
 
-
 	int pointsCounter = pointsVector.size() * 3;
 	int vertexCounter = indexVector.size();
 
@@ -125,17 +124,14 @@ void GameObject::setPosition(vec3 position) {
 
 void GameObject::setPositionX(float value) {
     this->position.x = value;
-	std::cout << "X: " << value << '\n';
 }
 
 void GameObject::setPositionY(float value) {
     this->position.y = value;
-	std::cout << "Y: " << value << '\n';
 }
 
 void GameObject::setPositionZ(float value) {
     this->position.z = value;
-	std::cout << "Z: " << value << '\n';
 }
 
 void GameObject::setSize(float size) {
@@ -157,7 +153,6 @@ void GameObject::rotateZ(float value) {
 void GameObject::render(Shader* shader, mat4 view, mat4 projection) {
 	// Apply the model, view and projection on the shader created
 	mat4 model;
-	model = rotate(model, radians(-55.0f), vec3(1.0f, 0.0f, 0.0f));
 	model = translate(model, this->position);
 	model = glm::rotate(model, this->rotation.x, vec3(1.0f, 0.0f, 0.0f));
     model = glm::rotate(model, this->rotation.y, vec3(0.0f, 1.0f, 0.0f));
