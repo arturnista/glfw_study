@@ -6,14 +6,16 @@ GameObject::GameObject (TexturesManager* tm) {
 	this->rotation = vec3(0.0f);
 	this->model = mat4(0.0f);
 
-	this->setSize(0.0f);
+	this->setSize(vec3(0.0f));
 	this->setPosition(vec3(0.0f));
 
 	this->shader = NULL;
 	this->texturesManager = tm;
 }
 
-GameObject::GameObject (TexturesManager* tm, string fn, float size, vec3 color) {
+GameObject::GameObject (TexturesManager* tm, string fn, float size, vec3 color) : GameObject::GameObject (tm, fn, vec3(size), color) {}
+
+GameObject::GameObject (TexturesManager* tm, string fn, vec3 size, vec3 color) {
 	string filename = "./assets/objects/" + fn;
 
 	std::vector<GLfloat> pointsVector = {};
@@ -56,8 +58,14 @@ GameObject::GameObject (TexturesManager* tm, string fn, float size, vec3 color) 
 		}
 
 		if(this->hasTexture) {
-			points[i + 6] = textureVector.at(texCounter);
-			points[i + 7] = textureVector.at(texCounter + 1);
+			float mult1 = abs(points[i + 4] * size.y) + abs(points[i + 3] * size.x);
+			float mult2 = abs(points[i + 5] * size.z) + abs(points[i + 3] * size.x);
+
+			points[i + 6] = textureVector.at(texCounter) * 1;
+			points[i + 7] = textureVector.at(texCounter + 1) * 1;
+			if(filename.compare("./assets/objects/cube_normal.obj") == 0) {
+				std::cout << "vt " << mult1 << "\t" << mult2 << '\n';
+			}
 		} else {
 			points[i + 6] = 0.0f;
 			points[i + 7] = 0.0f;
@@ -77,7 +85,6 @@ GameObject::GameObject (TexturesManager* tm, string fn, float size, vec3 color) 
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
-
 	// Positions
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, lineSize * sizeof(GLfloat), (void*)0);
 	glEnableVertexAttribArray(0);
@@ -92,8 +99,7 @@ GameObject::GameObject (TexturesManager* tm, string fn, float size, vec3 color) 
 
 	if(vertexCounter > 0) {
 		GLuint *indexArray = new GLuint[vertexCounter];
-		copy(indexVector.begin(), indexVector.end(), indexArray);
-		for (size_t i = 0; i < vertexCounter; i++) indexArray[i] = indexArray[i] - 1;
+		for (size_t i = 0; i < vertexCounter; i++) indexArray[i] = indexVector.at(i) - 1;
 
 		GLuint EBO = 0;
 		glGenBuffers(1, &EBO);
@@ -129,7 +135,7 @@ void GameObject::setTextureName(string name) {
 	this->textureName = name;
 }
 
-float GameObject::getSize() {
+vec3 GameObject::getSize() {
     return this->size;
 }
 
@@ -166,6 +172,10 @@ void GameObject::setPositionZ(float value) {
 }
 
 void GameObject::setSize(float size) {
+    this->size = vec3(size);
+}
+
+void GameObject::setSize(vec3 size) {
     this->size = size;
 }
 
@@ -194,7 +204,7 @@ void GameObject::render(Camera* camera, tLight light) {
 	model = glm::rotate(model, this->rotation.x, vec3(1.0f, 0.0f, 0.0f));
     model = glm::rotate(model, this->rotation.y, vec3(0.0f, 1.0f, 0.0f));
     model = glm::rotate(model, this->rotation.z, vec3(0.0f, 0.0f, 1.0f));
-	model = scale(model, vec3(this->size));
+	model = scale(model, this->size);
 
 	mat4 view = camera->getView();
 	mat4 projection = camera->getProjection();

@@ -1,6 +1,6 @@
 #include "Cube.h"
 
-Cube::Cube(TexturesManager* tm) : GameObject(tm, "cube_normal.obj", 1, vec3(1.0f)) {
+Cube::Cube(TexturesManager* tm, vec3 size) : GameObject(tm, "cube_normal.obj", size, vec3(1.0f)) {
     this->setTextureName("wall");
 }
 
@@ -39,11 +39,10 @@ void Cube::update(GLFWwindow* window, float deltaTime) {
     }
 
     if (glfwGetKey(window, GLFW_KEY_COMMA) == GLFW_PRESS) {
-        float size = this->getSize() - (5.0f * deltaTime);
-        if(size < 0) size = 0;
+        vec3 size = this->getSize() - vec3(5.0f * deltaTime);
         this->setSize(size);
     } else if (glfwGetKey(window, GLFW_KEY_PERIOD) == GLFW_PRESS) {
-        float size = this->getSize() + (5.0f * deltaTime);
+        vec3 size = this->getSize() + vec3(5.0f * deltaTime);
         this->setSize(size);
     }
 

@@ -31,34 +31,34 @@ v -0.5  0.5 -0.5
 v  0.5  0.5  0.5
 v -0.5  0.5  0.5
 
-vt 1 1
-vt 1 0
-vt 0 1
+vt 0.3 50
+vt 0.3 0
+vt 0 50
 vt 0 0
 
-vt 1 1
-vt 1 0
-vt 0 1
+vt 0.3 50
+vt 0.3 0
+vt 0 50
 vt 0 0
 
-vt 1 1
-vt 1 0
-vt 0 1
+vt 50 0.3
+vt 50 0
+vt 0 0.3
 vt 0 0
 
-vt 1 1
-vt 1 0
-vt 0 1
+vt 50 0.3
+vt 50 0
+vt 0 0.3
 vt 0 0
 
-vt 1 1
-vt 1 0
-vt 0 1
+vt 50 50
+vt 50 0
+vt 0 50
 vt 0 0
 
-vt 1 1
-vt 1 0
-vt 0 1
+vt 50 50
+vt 50 0
+vt 0 50
 vt 0 0
 
 vn 0 0 1

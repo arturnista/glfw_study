@@ -5,6 +5,7 @@
 #include <GLFW/glfw3.h> // GLFW helper library
 
 #include <vector>
+#include <math.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -29,7 +30,7 @@ protected:
 
 	vec3 color;
 
-	float size;
+	vec3 size;
     vec3 position;
 	vec3 rotation;
     mat4 model;
@@ -37,7 +38,8 @@ protected:
 	Shader* shader;
 public:
 	GameObject (TexturesManager* tm);
-    GameObject (TexturesManager* tm, string filename, float size, vec3 color);
+	GameObject (TexturesManager* tm, string filename, float size, vec3 color);
+    GameObject (TexturesManager* tm, string filename, vec3 size, vec3 color);
 
 	GLuint getVAO();
 	int getVertexCounter();
@@ -55,8 +57,9 @@ public:
     void setPositionY(float value);
     void setPositionZ(float value);
 
-    float getSize();
-    void setSize(float size);
+    vec3 getSize();
+	void setSize(float size);
+    void setSize(vec3 size);
 
     void rotateX(float value);
     void rotateY(float value);

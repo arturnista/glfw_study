@@ -79,8 +79,8 @@ int main() {
     Player* player = new Player(camera);
 	Bunny* bunnyObject = new Bunny(texturesManager);
 	bunnyObject->setPosition(vec3(0, 0, 0));
-	Cube* cubeObject = new Cube(texturesManager);
-	cubeObject->setPosition(vec3(0, 2, 2));
+	Cube* cubeObject = new Cube(texturesManager, vec3(50.0f, 0.3f, 50.0f));
+	cubeObject->setPosition(vec3(2, 0, 5));
 	Lamp* lampObject = new Lamp(texturesManager);
 	lampObject->setPosition(lightPosition);
 

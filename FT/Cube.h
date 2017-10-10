@@ -7,7 +7,7 @@ class Cube : public GameObject {
 private:
 
 public:
-    Cube (TexturesManager* tm);
+    Cube (TexturesManager* tm, vec3 size);
 
     void update(GLFWwindow* window, float deltaTime);
 };
