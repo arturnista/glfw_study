@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <vector>
+#include <map>
 #include <string>
 
 #include <glm/glm.hpp>
@@ -16,7 +17,9 @@
 
 class TexturesManager {
 private:
-    unsigned int texture;
+    std::map<std::string, unsigned int> textureMap;
+
+    unsigned int processTexture(std::string filename);
 
 public:
     TexturesManager ();

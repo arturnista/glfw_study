@@ -1,7 +1,7 @@
 #include "Cube.h"
 
 Cube::Cube(TexturesManager* tm) : GameObject(tm, "cube_normal.obj", 1, vec3(1.0f)) {
-    this->setTextureName("container");
+    this->setTextureName("wall");
 }
 
 void Cube::update(GLFWwindow* window, float deltaTime) {

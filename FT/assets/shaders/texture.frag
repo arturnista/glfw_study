@@ -36,5 +36,5 @@ void main() {
     vec3 specular = specularStrength * spec * lightColor;
 
     vec3 result = (ambient + diffuse + specular) * objectColor;
-    fragment_color = texture(ourTexture, TextureCoord) * vec4(objectColor, 1.0);
+    fragment_color = texture(ourTexture, TextureCoord) * vec4(result, 1.0);
 }
