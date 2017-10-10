@@ -58,14 +58,8 @@ GameObject::GameObject (TexturesManager* tm, string fn, vec3 size, vec3 color) {
 		}
 
 		if(this->hasTexture) {
-			float mult1 = abs(points[i + 4] * size.y) + abs(points[i + 3] * size.x);
-			float mult2 = abs(points[i + 5] * size.z) + abs(points[i + 3] * size.x);
-
-			points[i + 6] = textureVector.at(texCounter) * 1;
-			points[i + 7] = textureVector.at(texCounter + 1) * 1;
-			if(filename.compare("./assets/objects/cube_normal.obj") == 0) {
-				std::cout << "vt " << mult1 << "\t" << mult2 << '\n';
-			}
+			points[i + 6] = textureVector.at(texCounter);
+			points[i + 7] = textureVector.at(texCounter + 1);
 		} else {
 			points[i + 6] = 0.0f;
 			points[i + 7] = 0.0f;
@@ -201,9 +195,9 @@ void GameObject::render(Camera* camera, tLight light) {
 	// Apply the model, view and projection on the shader created
 	mat4 model;
 	model = translate(model, this->position);
-	model = glm::rotate(model, this->rotation.x, vec3(1.0f, 0.0f, 0.0f));
-    model = glm::rotate(model, this->rotation.y, vec3(0.0f, 1.0f, 0.0f));
-    model = glm::rotate(model, this->rotation.z, vec3(0.0f, 0.0f, 1.0f));
+	model = rotate(model, this->rotation.x, vec3(1.0f, 0.0f, 0.0f));
+    model = rotate(model, this->rotation.y, vec3(0.0f, 1.0f, 0.0f));
+    model = rotate(model, this->rotation.z, vec3(0.0f, 0.0f, 1.0f));
 	model = scale(model, this->size);
 
 	mat4 view = camera->getView();

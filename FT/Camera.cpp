@@ -42,5 +42,5 @@ mat4 Camera::getView() {
 mat4 Camera::getProjection() {
 	int screenWidth, screenHeight;
 	glfwGetWindowSize(this->window, &screenWidth, &screenHeight);
-	return perspective(radians(45.0f), float(screenWidth / screenHeight), 0.1f, 100.0f);
+	return perspective(radians(45.0f), float(screenWidth / screenHeight), 0.1f, 500.0f);
 }
