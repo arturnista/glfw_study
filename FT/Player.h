@@ -8,6 +8,8 @@ class Player : public GameObject {
 private:
     Camera* camera;
 
+    glm::vec3 position;
+
 	double lastMouseX;
 	double lastMouseY;
 

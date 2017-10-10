@@ -5,10 +5,9 @@
 
 class Cube : public GameObject {
 private:
-    /* data */
 
 public:
-    Cube ();
+    Cube (TexturesManager* tm);
 
     void update(GLFWwindow* window, float deltaTime);
 };

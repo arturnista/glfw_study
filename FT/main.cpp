@@ -19,6 +19,7 @@
 #include "StateController.h"
 
 #include "Shader.h"
+#include "TexturesManager.h"
 #include "Camera.h"
 #include "Lamp.h"
 #include "Player.h"
@@ -73,13 +74,14 @@ int main() {
 
     Camera* camera = new Camera(window);
     StateController* stateController = new StateController(window, camera);
+    TexturesManager* texturesManager = new TexturesManager();
 
     Player* player = new Player(camera);
-	Bunny* bunnyObject = new Bunny();
+	Bunny* bunnyObject = new Bunny(texturesManager);
 	bunnyObject->setPosition(vec3(0, 0, 0));
-	Cube* cubeObject = new Cube();
+	Cube* cubeObject = new Cube(texturesManager);
 	cubeObject->setPosition(vec3(0, 2, 2));
-	Lamp* lampObject = new Lamp();
+	Lamp* lampObject = new Lamp(texturesManager);
 	lampObject->setPosition(lightPosition);
 
     stateController->addObject( player );

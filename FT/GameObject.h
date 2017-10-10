@@ -12,6 +12,7 @@
 
 #include "Shader.h"
 #include "Camera.h"
+#include "TexturesManager.h"
 #include "readFiles.h"
 #include "common.h"
 
@@ -22,6 +23,11 @@ class GameObject {
 protected:
 	GLuint VAO;
 	int vertexCounter;
+	string textureName;
+	bool hasTexture;
+	TexturesManager* texturesManager;
+
+	vec3 color;
 
 	float size;
     vec3 position;
@@ -30,13 +36,15 @@ protected:
 
 	Shader* shader;
 public:
-	GameObject ();
-    GameObject (string filename, float size, vec3 color);
+	GameObject (TexturesManager* tm);
+    GameObject (TexturesManager* tm, string filename, float size, vec3 color);
 
 	GLuint getVAO();
 	int getVertexCounter();
 
     virtual void update(GLFWwindow* window, float deltaTime);
+
+	void setTextureName(string name);
 
     vec3 getPosition();
     float getPositionX();
@@ -54,7 +62,7 @@ public:
     void rotateY(float value);
     void rotateZ(float value);
 
-    void render(Camera* camera, tLight light);
+    virtual void render(Camera* camera, tLight light);
 };
 
 #endif

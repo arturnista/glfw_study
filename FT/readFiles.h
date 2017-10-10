@@ -18,6 +18,7 @@ const char* readFile(string filename);
 void fetchFileData(string filename,
 					vector<GLfloat>& pointsVector,
 					vector<GLuint>& indexVector,
-					vector<GLfloat>& normalVector);
+					vector<GLfloat>& normalVector,
+					vector<GLfloat>& textureVector);
 
 #endif

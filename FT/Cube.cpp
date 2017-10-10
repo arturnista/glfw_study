@@ -1,6 +1,8 @@
 #include "Cube.h"
 
-Cube::Cube() : GameObject("cube_t.obj", 1, vec3(1.0f, 0.0f, 0.0f)) {}
+Cube::Cube(TexturesManager* tm) : GameObject(tm, "cube_normal.obj", 1, vec3(1.0f)) {
+    this->setTextureName("container");
+}
 
 void Cube::update(GLFWwindow* window, float deltaTime) {
     float bunnySpeed = 5.0f * deltaTime;

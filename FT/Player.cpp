@@ -1,6 +1,6 @@
 #include "Player.h"
 
-Player::Player(Camera* camera) : GameObject() {
+Player::Player(Camera* camera) : GameObject(NULL) {
     this->camera = camera;
 
     this->lastMouseX = 0.0f;
@@ -8,7 +8,10 @@ Player::Player(Camera* camera) : GameObject() {
     this->pitch = 0;
     this->yaw = 0;
 
-    this->mouseSens = 2.0f;
+    this->mouseSens = 3.0f;
+
+    this->position = vec3(0.0f, 5.0f, 0.0f);
+    camera->setPosition(this->position);
 }
 
 void Player::update(GLFWwindow* window, float deltaTime) {
@@ -33,19 +36,21 @@ void Player::update(GLFWwindow* window, float deltaTime) {
         cos(radians(this->pitch)) * sin(radians(this->yaw))
     );
 
-    camera->setFront( normalize(lookingDirection) );
-    vec3 cameraFront = camera->getFront();
+    vec3 playerFront = normalize(lookingDirection);
 
-    float cameraSpeed = 10.0f * deltaTime;
+    float playerSpeed = 10.0f * deltaTime;
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-        camera->setPosition( camera->getPosition() + (cameraSpeed * cameraFront) );
+        this->position += playerSpeed * playerFront;
     } else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-        camera->setPosition( camera->getPosition() - (cameraSpeed * cameraFront) );
+        this->position -= playerSpeed * playerFront;
     }
-    
+
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-        camera->setPosition( camera->getPosition() - (normalize(cross(cameraFront, camera->getUp())) * cameraSpeed) );
+        this->position -= normalize(cross(playerFront, camera->getUp())) * playerSpeed;
     } else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-        camera->setPosition( camera->getPosition() + (normalize(cross(cameraFront, camera->getUp())) * cameraSpeed) );
+        this->position += normalize(cross(playerFront, camera->getUp())) * playerSpeed;
     }
+
+    camera->setFront( playerFront );
+    camera->setPosition(this->position);
 }
