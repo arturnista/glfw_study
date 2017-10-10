@@ -23,6 +23,7 @@
 #include "Lamp.h"
 #include "Player.h"
 #include "Bunny.h"
+#include "Cube.h"
 
 using namespace std;
 using namespace glm;
@@ -76,12 +77,15 @@ int main() {
     Player* player = new Player(camera);
 	Bunny* bunnyObject = new Bunny();
 	bunnyObject->setPosition(vec3(0, 0, 0));
+	Cube* cubeObject = new Cube();
+	cubeObject->setPosition(vec3(0, 2, 2));
 	Lamp* lampObject = new Lamp();
 	lampObject->setPosition(lightPosition);
 
     stateController->addObject( player );
     stateController->addObject( bunnyObject );
     stateController->addObject( lampObject );
+    stateController->addObject( cubeObject );
 
 	float deltaTime = 0.0f;	// Time between current frame and last frame
 	float lastFrame = 0.0f; // Time of last frame
