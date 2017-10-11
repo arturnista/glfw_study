@@ -26,6 +26,7 @@
 #include "Bunny.h"
 #include "Grass.h"
 #include "Dirt.h"
+#include "Stone.h"
 
 using namespace std;
 using namespace glm;
@@ -71,7 +72,7 @@ int main() {
 
     printf("\nPre GameLoop actions\n\n");
 
-	vec3 lightPosition = vec3(10.0f, 5.0f, 0.0f);
+	vec3 lightPosition = vec3(30.0f, 10.0f, 0.0f);
 
     Camera* camera = new Camera(window);
     StateController* stateController = new StateController(window, camera);
@@ -87,19 +88,23 @@ int main() {
 	lampObject->setPosition(lightPosition);
     stateController->addObject( lampObject );
 
-    int size = 15;
-    int height = 3;
+    int size = 10;
+    int height = 5;
     for (size_t xInc = 0; xInc < size; xInc++) {
         for (size_t yInc = 0; yInc < height; yInc++) {
             for (size_t zInc = 0; zInc < size; zInc++) {
                 if(yInc == 0) {
                 	Grass* grassObject = new Grass(resourcesManager);
-                	grassObject->setPosition(vec3(xInc, yInc, zInc));
+                	grassObject->setPosition(vec3(xInc, yInc * -1.0f, zInc));
                     stateController->addObject( grassObject );
-                } else {
+                } else if(yInc < 3) {
                     Dirt* dirtObject = new Dirt(resourcesManager);
                     dirtObject->setPosition(vec3(xInc, yInc * -1.0f, zInc));
                     stateController->addObject( dirtObject );
+                } else {
+                    Stone* stoneObject = new Stone(resourcesManager);
+                    stoneObject->setPosition(vec3(xInc, yInc * -1.0f, zInc));
+                    stateController->addObject( stoneObject );
                 }
             }
         }

@@ -2,11 +2,13 @@
 
 ResourcesManager::ResourcesManager() {
     textureMap["grass"] = this->processTexture("./assets/textures/grass.jpg");
+    textureMap["stone"] = this->processTexture("./assets/textures/stone.jpg");
     textureMap["container"] = this->processTexture("./assets/textures/container.jpg");
     textureMap["wall"] = this->processTexture("./assets/textures/wall.jpg");
 
     objectMap["grass_normal"] = this->processObjectFile("./assets/objects/grass_normal.obj");
     objectMap["dirt_normal"] = this->processObjectFile("./assets/objects/dirt_normal.obj");
+    objectMap["cube_normal"] = this->processObjectFile("./assets/objects/cube_normal.obj");
     objectMap["bunny_normal"] = this->processObjectFile("./assets/objects/bunny_normal.obj");
     objectMap["cube"] = this->processObjectFile("./assets/objects/cube.obj");
 }

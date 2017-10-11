@@ -136,7 +136,6 @@ void GameObject::render(Camera* camera, tLight light) {
 	if(this->shader == NULL) {
 		return;
 	}
-
 	glUseProgram(this->shader->getProgram());
 
 	// Apply the model, view and projection on the shader created
