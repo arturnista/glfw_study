@@ -13,8 +13,7 @@
 
 #include "Shader.h"
 #include "Camera.h"
-#include "TexturesManager.h"
-#include "readFiles.h"
+#include "ResourcesManager.h"
 #include "common.h"
 
 using namespace std;
@@ -26,7 +25,7 @@ protected:
 	int vertexCounter;
 	string textureName;
 	bool hasTexture;
-	TexturesManager* texturesManager;
+	ResourcesManager* resourcesManager;
 
 	vec3 color;
 
@@ -37,9 +36,9 @@ protected:
 
 	Shader* shader;
 public:
-	GameObject (TexturesManager* tm);
-	GameObject (TexturesManager* tm, string filename, float size, vec3 color);
-    GameObject (TexturesManager* tm, string filename, vec3 size, vec3 color);
+	GameObject (ResourcesManager* rm);
+	GameObject (ResourcesManager* rm, string filename, float size, vec3 color);
+    GameObject (ResourcesManager* rm, string filename, vec3 size, vec3 color);
 
 	GLuint getVAO();
 	int getVertexCounter();

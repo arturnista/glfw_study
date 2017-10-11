@@ -19,12 +19,13 @@
 #include "StateController.h"
 
 #include "Shader.h"
-#include "TexturesManager.h"
+#include "ResourcesManager.h"
 #include "Camera.h"
 #include "Lamp.h"
 #include "Player.h"
 #include "Bunny.h"
 #include "Grass.h"
+#include "Dirt.h"
 
 using namespace std;
 using namespace glm;
@@ -39,7 +40,6 @@ int main() {
 		return 1;
 	}
 
-	glEnable(GL_CULL_FACE);
 	const float INITIAL_SCREEN_WIDTH = 800;
 	const float INITIAL_SCREEN_HEIGHT = 600;
 
@@ -66,32 +66,42 @@ int main() {
 
 	// tell GL to only draw onto a pixel if the shape is closer to the viewer
 	glEnable(GL_DEPTH_TEST); // enable depth-testing
+    // glEnable(GL_CULL_FACE);
 	glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
 
     printf("\nPre GameLoop actions\n\n");
 
-	vec3 lightPosition = vec3(5.0f, 5.0f, 0.0f);
+	vec3 lightPosition = vec3(10.0f, 5.0f, 0.0f);
 
     Camera* camera = new Camera(window);
     StateController* stateController = new StateController(window, camera);
-    TexturesManager* texturesManager = new TexturesManager();
+    ResourcesManager* resourcesManager = new ResourcesManager();
 
-    // Bunny* bunnyObject = new Bunny(texturesManager);
+    // Bunny* bunnyObject = new Bunny(resourcesManager);
     // bunnyObject->setPosition(vec3(0, 0, 0));
     // stateController->addObject( bunnyObject );
 
     Player* player = new Player(camera);
     stateController->addObject( player );
-	Lamp* lampObject = new Lamp(texturesManager);
+	Lamp* lampObject = new Lamp(resourcesManager);
 	lampObject->setPosition(lightPosition);
     stateController->addObject( lampObject );
 
-    int size = 10;
+    int size = 15;
+    int height = 3;
     for (size_t xInc = 0; xInc < size; xInc++) {
-        for (size_t zInc = 0; zInc < size; zInc++) {
-        	Grass* grassObject = new Grass(texturesManager, vec3(1.0f));
-        	grassObject->setPosition(vec3(xInc, 0.0f, zInc));
-            stateController->addObject( grassObject );
+        for (size_t yInc = 0; yInc < height; yInc++) {
+            for (size_t zInc = 0; zInc < size; zInc++) {
+                if(yInc == 0) {
+                	Grass* grassObject = new Grass(resourcesManager);
+                	grassObject->setPosition(vec3(xInc, yInc, zInc));
+                    stateController->addObject( grassObject );
+                } else {
+                    Dirt* dirtObject = new Dirt(resourcesManager);
+                    dirtObject->setPosition(vec3(xInc, yInc * -1.0f, zInc));
+                    stateController->addObject( dirtObject );
+                }
+            }
         }
     }
 
@@ -103,8 +113,16 @@ int main() {
         lightPosition
     };
 
+    float minFPS = 0;
+    float maxFPS = 0;
+    float medFPS = 0;
+
+    int frames = 0;
+
     printf("\nGameLoop actions\n\n");
+
 	while (!glfwWindowShouldClose(window)) {
+        frames++;
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -114,15 +132,24 @@ int main() {
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
+        if(frames > 100) {
+            float FPS = 1 / deltaTime;
+            medFPS += FPS;
+            if(minFPS == 0 || minFPS > FPS) minFPS = FPS;
+            if(maxFPS < FPS) maxFPS = FPS;
+
+            std::cout << "Min FPS " << minFPS << "\t\t";
+            std::cout << "Max FPS " << maxFPS << "\t\t";
+            std::cout << "Med FPS " << ( medFPS / ( frames - 100 ) ) << "\t\t";
+            std::cout << "FPS " << FPS << '\n';
+        }
+
 		/*
 			Objects update
 		*/
         vector<GameObject*> gameObjects = stateController->getObjects();
         for (int i = 0; i < gameObjects.size(); i++) gameObjects.at(i)->update(window, deltaTime);
         for (int i = 0; i < gameObjects.size(); i++) gameObjects.at(i)->render(camera, light);
-
-		// Reset the vertex bind
-		glBindVertexArray(0);
 
 		// Update other events like input handling
 		glfwPollEvents();

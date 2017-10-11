@@ -6,7 +6,7 @@
 class Lamp : public GameObject {
 private:
 public:
-    Lamp (TexturesManager* tm);
+    Lamp (ResourcesManager* tm);
 };
 
 #endif

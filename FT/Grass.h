@@ -7,7 +7,7 @@ class Grass : public GameObject {
 private:
 
 public:
-    Grass (TexturesManager* tm, vec3 size);
+    Grass (ResourcesManager* tm);
 
     void update(GLFWwindow* window, float deltaTime);
 };

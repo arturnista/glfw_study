@@ -1,6 +1,6 @@
 #include "Bunny.h"
 
-Bunny::Bunny(TexturesManager* tm) : GameObject(tm, "bunny_normal.obj", 10, vec3(1.0f, 1.0f, 0.0f)) {}
+Bunny::Bunny(ResourcesManager* tm) : GameObject(tm, "bunny_normal", 10, vec3(1.0f, 1.0f, 0.0f)) {}
 
 void Bunny::update(GLFWwindow* window, float deltaTime) {
     // float bunnySpeed = 5.0f * deltaTime;

@@ -12,6 +12,7 @@ Camera::Camera (GLFWwindow* window) {
     up = cross(direction, right);
 
     this->window = window;
+    this->resetProjection();
 }
 
 vec3 Camera::getUp() {
@@ -39,8 +40,12 @@ mat4 Camera::getView() {
     return lookAt( position, position + front, up );
 }
 
+void Camera::resetProjection() {
+    int screenWidth, screenHeight;
+    glfwGetWindowSize(this->window, &screenWidth, &screenHeight);
+    this->projection = perspective(radians(45.0f), float(screenWidth / screenHeight), 0.1f, 100.0f);
+}
+
 mat4 Camera::getProjection() {
-	int screenWidth, screenHeight;
-	glfwGetWindowSize(this->window, &screenWidth, &screenHeight);
-	return perspective(radians(45.0f), float(screenWidth / screenHeight), 0.1f, 500.0f);
+    return this->projection;
 }

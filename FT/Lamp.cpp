@@ -1,3 +1,3 @@
 #include "Lamp.h"
 
-Lamp::Lamp(TexturesManager* tm) : GameObject(tm, "cube.obj", .3, vec3(1.0f)) {}
+Lamp::Lamp(ResourcesManager* tm) : GameObject(tm, "cube", .3, vec3(1.0f)) {}

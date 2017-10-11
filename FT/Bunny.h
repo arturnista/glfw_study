@@ -8,7 +8,7 @@ private:
     /* data */
 
 public:
-    Bunny (TexturesManager* tm);
+    Bunny (ResourcesManager* tm);
 
     void update(GLFWwindow* window, float deltaTime);
 };

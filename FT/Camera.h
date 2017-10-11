@@ -21,6 +21,7 @@ private:
     vec3 up;
 
     GLFWwindow* window;
+    mat4 projection;
 public:
     Camera (GLFWwindow* window);
 
@@ -31,6 +32,8 @@ public:
 
     vec3 getFront();
     void setFront(vec3 front);
+
+    void resetProjection();
 
     mat4 getView();
     mat4 getProjection();
