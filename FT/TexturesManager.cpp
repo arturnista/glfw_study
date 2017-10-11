@@ -1,6 +1,8 @@
 #include "TexturesManager.h"
 
 TexturesManager::TexturesManager() {
+    textureMap["grass"] = this->processTexture("./assets/textures/grass.jpg");
+    textureMap["grass_dirt"] = this->processTexture("./assets/textures/grass_dirt.png");
     textureMap["container"] = this->processTexture("./assets/textures/container.jpg");
     textureMap["wall"] = this->processTexture("./assets/textures/wall.jpg");
 }
@@ -18,7 +20,7 @@ unsigned int TexturesManager::processTexture(std::string filename) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     int width, height, nrChannels;
-    unsigned char *textureData = stbi_load(filename.c_str(), &width, &height, &nrChannels, 0);
+    unsigned char *textureData = stbi_load(filename.c_str(), &width, &height, &nrChannels, STBI_default);
     if (textureData) {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, textureData);
         glGenerateMipmap(GL_TEXTURE_2D);

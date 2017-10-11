@@ -1,10 +1,10 @@
-#include "Cube.h"
+#include "Grass.h"
 
-Cube::Cube(TexturesManager* tm, vec3 size) : GameObject(tm, "cube_normal.obj", size, vec3(1.0f)) {
-    this->setTextureName("wall");
+Grass::Grass(TexturesManager* tm, vec3 size) : GameObject(tm, "grass_normal.obj", size, vec3(1.0f)) {
+    this->setTextureName("grass");
 }
 
-void Cube::update(GLFWwindow* window, float deltaTime) {
+void Grass::update(GLFWwindow* window, float deltaTime) {
     float bunnySpeed = 5.0f * deltaTime;
     if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS) {
         this->setPositionZ(this->getPositionZ() + bunnySpeed);

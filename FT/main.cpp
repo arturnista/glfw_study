@@ -24,7 +24,7 @@
 #include "Lamp.h"
 #include "Player.h"
 #include "Bunny.h"
-#include "Cube.h"
+#include "Grass.h"
 
 using namespace std;
 using namespace glm;
@@ -76,18 +76,24 @@ int main() {
     StateController* stateController = new StateController(window, camera);
     TexturesManager* texturesManager = new TexturesManager();
 
+    // Bunny* bunnyObject = new Bunny(texturesManager);
+    // bunnyObject->setPosition(vec3(0, 0, 0));
+    // stateController->addObject( bunnyObject );
+
     Player* player = new Player(camera);
-	Bunny* bunnyObject = new Bunny(texturesManager);
-	bunnyObject->setPosition(vec3(0, 0, 0));
-	Cube* cubeObject = new Cube(texturesManager, vec3(50.0f, 0.3f, 50.0f));
-	cubeObject->setPosition(vec3(2, 0, 5));
+    stateController->addObject( player );
 	Lamp* lampObject = new Lamp(texturesManager);
 	lampObject->setPosition(lightPosition);
-
-    stateController->addObject( player );
-    stateController->addObject( bunnyObject );
     stateController->addObject( lampObject );
-    stateController->addObject( cubeObject );
+
+    int size = 10;
+    for (size_t xInc = 0; xInc < size; xInc++) {
+        for (size_t zInc = 0; zInc < size; zInc++) {
+        	Grass* grassObject = new Grass(texturesManager, vec3(1.0f));
+        	grassObject->setPosition(vec3(xInc, 0.0f, zInc));
+            stateController->addObject( grassObject );
+        }
+    }
 
 	float deltaTime = 0.0f;	// Time between current frame and last frame
 	float lastFrame = 0.0f; // Time of last frame
