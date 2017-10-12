@@ -146,9 +146,6 @@ void GameObject::render(Camera* camera, tLight light) {
     model = rotate(model, this->rotation.z, vec3(0.0f, 0.0f, 1.0f));
 	model = scale(model, this->size);
 
-	mat4 view = camera->getView();
-	mat4 projection = camera->getProjection();
-
 	this->shader->use("objectColor", this->color);
 
 	// Apply camera position
@@ -156,15 +153,17 @@ void GameObject::render(Camera* camera, tLight light) {
 
 	this->shader->use("model", model);
 	this->shader->use("inverseModel", inverse(model));
-	this->shader->use("view", view);
-	this->shader->use("projection", projection);
+	this->shader->use("view", camera->getView());
+	this->shader->use("projection", camera->getProjection());
 
 	// Apply lighting
 	this->shader->use("lightColor", light.color);
 	this->shader->use("lightPosition", light.position);
 
 	if(this->hasTexture) {
+		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, this->resourcesManager->getTexture(this->textureName));
+		this->shader->use("outTexture", 0);
 	}
 
 	glBindVertexArray(this->VAO);

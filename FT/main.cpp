@@ -122,12 +122,11 @@ int main() {
     float maxFPS = 0;
     float medFPS = 0;
 
-    int frames = 0;
+    int frames = -100;
 
     printf("\nGameLoop actions\n\n");
 
 	while (!glfwWindowShouldClose(window)) {
-        frames++;
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -137,7 +136,8 @@ int main() {
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
-        if(frames > 100) {
+		frames++;
+		if(frames > 0) {
             float FPS = 1 / deltaTime;
             medFPS += FPS;
             if(minFPS == 0 || minFPS > FPS) minFPS = FPS;
@@ -145,8 +145,13 @@ int main() {
 
             std::cout << "Min FPS " << minFPS << "\t\t";
             std::cout << "Max FPS " << maxFPS << "\t\t";
-            std::cout << "Med FPS " << ( medFPS / ( frames - 100 ) ) << "\t\t";
+            std::cout << "Med FPS " << ( medFPS / frames ) << "\t\t";
             std::cout << "FPS " << FPS << '\n';
+
+			if (frames > 1000) {
+				medFPS = 0;
+				frames = 0;
+			}
         }
 
 		/*

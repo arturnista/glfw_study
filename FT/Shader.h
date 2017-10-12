@@ -21,7 +21,8 @@ public:
     GLuint getProgram();
 
     void use(string name, glm::vec3 value);
-    void use(string name, glm::mat4 value);
+	void use(string name, glm::mat4 value);
+	void use(string name, int value);
 };
 
 #endif
