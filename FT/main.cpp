@@ -88,8 +88,9 @@ int main() {
 	lampObject->setPosition(lightPosition);
     stateController->addObject( lampObject );
 
-    int size = 10;
+    int size = 20;
     int height = 5;
+    int aeho = 0;
     for (size_t xInc = 0; xInc < size; xInc++) {
         for (size_t yInc = 0; yInc < height; yInc++) {
             for (size_t zInc = 0; zInc < size; zInc++) {
@@ -111,18 +112,8 @@ int main() {
     }
 
 	float deltaTime = 0.0f;	// Time between current frame and last frame
-	float lastFrame = 0.0f; // Time of last frame
-
-    tLight light = {
-        vec3(1.0f, 1.0f, 1.0f),
-        lightPosition
-    };
-
-    float minFPS = 0;
-    float maxFPS = 0;
-    float medFPS = 0;
-
-    int frames = -100;
+    float lastFrame = 0.0f; // Time of last frame
+	float timePassed = 0.0f; // Time of last frame
 
     printf("\nGameLoop actions\n\n");
 
@@ -135,31 +126,18 @@ int main() {
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
+        timePassed += deltaTime;
 
-		frames++;
-		if(frames > 0) {
-            float FPS = 1 / deltaTime;
-            medFPS += FPS;
-            if(minFPS == 0 || minFPS > FPS) minFPS = FPS;
-            if(maxFPS < FPS) maxFPS = FPS;
-
-            std::cout << "Min FPS " << minFPS << "\t\t";
-            std::cout << "Max FPS " << maxFPS << "\t\t";
-            std::cout << "Med FPS " << ( medFPS / frames ) << "\t\t";
-            std::cout << "FPS " << FPS << '\n';
-
-			if (frames > 1000) {
-				medFPS = 0;
-				frames = 0;
-			}
+        if(timePassed >= 2) {
+            std::cout << 1 / deltaTime << '\n';
+            timePassed = 0;
         }
 
 		/*
 			Objects update
 		*/
-        vector<GameObject*> gameObjects = stateController->getObjects();
-        for (int i = 0; i < gameObjects.size(); i++) gameObjects.at(i)->update(window, deltaTime);
-        for (int i = 0; i < gameObjects.size(); i++) gameObjects.at(i)->render(camera, light);
+        stateController->update(deltaTime);
+        stateController->render(deltaTime);
 
 		// Update other events like input handling
 		glfwPollEvents();

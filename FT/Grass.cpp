@@ -1,6 +1,6 @@
 #include "Grass.h"
 
-Grass::Grass(ResourcesManager* tm) : GameObject(tm, "grass_normal", vec3(1.0f), vec3(1.0f)) {
+Grass::Grass(ResourcesManager* tm) : GameObject(tm, GO_TYPE_GRASS, "grass_normal", vec3(1.0f), vec3(1.0f)) {
     this->setTextureName("grass");
 }
 

@@ -1,6 +1,6 @@
 #include "Player.h"
 
-Player::Player(Camera* camera) : GameObject(NULL) {
+Player::Player(Camera* camera) : GameObject(NULL, GO_TYPE_PLAYER) {
     this->camera = camera;
 
     this->lastMouseX = 0.0f;

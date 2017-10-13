@@ -1,6 +1,6 @@
 #include "Stone.h"
 
-Stone::Stone(ResourcesManager* tm) : GameObject(tm, "cube_normal", vec3(1.0f), vec3(1.0f)) {
+Stone::Stone(ResourcesManager* tm) : GameObject(tm, GO_TYPE_STONE, "cube_normal", vec3(1.0f), vec3(1.0f)) {
     this->setTextureName("stone");
 }
 

@@ -1,6 +1,8 @@
 #include "GameObject.h"
 
-GameObject::GameObject (ResourcesManager* rm) {
+GameObject::GameObject (ResourcesManager* rm, int type) {
+	this->type = type;
+
 	this->vertexCounter = 0;
 	this->VAO = 0;
 	this->rotation = vec3(0.0f);
@@ -13,9 +15,9 @@ GameObject::GameObject (ResourcesManager* rm) {
 	this->resourcesManager = rm;
 }
 
-GameObject::GameObject (ResourcesManager* rm, string fn, float size, vec3 color) : GameObject::GameObject (rm, fn, vec3(size), color) {}
+GameObject::GameObject (ResourcesManager* rm, int type, string fn, float size, vec3 color) : GameObject::GameObject (rm, type, fn, vec3(size), color) {}
 
-GameObject::GameObject (ResourcesManager* rm, string fn, vec3 size, vec3 color) {
+GameObject::GameObject (ResourcesManager* rm, int type, string fn, vec3 size, vec3 color) {
 	tObject object = rm->getObject(fn);
 
 	GLuint VBO = 0;
@@ -47,6 +49,8 @@ GameObject::GameObject (ResourcesManager* rm, string fn, vec3 size, vec3 color) 
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * object.verticesCounter, object.vertices, GL_STATIC_DRAW);
 	}
 
+	this->type = type;
+
 	this->hasTexture = object.hasTexture;
     this->vertexCounter = object.verticesCounter;
     this->VAO = VAO;
@@ -63,6 +67,10 @@ GameObject::GameObject (ResourcesManager* rm, string fn, vec3 size, vec3 color) 
 }
 
 void GameObject::update(GLFWwindow* window, float deltaTime) {}
+
+int GameObject::getType() {
+    return this->type;
+}
 
 GLuint GameObject::getVAO() {
     return this->VAO;
@@ -168,4 +176,34 @@ void GameObject::render(Camera* camera, tLight light) {
 
 	glBindVertexArray(this->VAO);
 	glDrawElements(GL_TRIANGLES, this->vertexCounter, GL_UNSIGNED_INT, 0);
+}
+
+void GameObject::render(Shader* shader) {
+	if(this->VAO == 0) {
+		return;
+	}
+
+	// Apply the model, view and projection on the shader created
+	mat4 model;
+	model = translate(model, this->position);
+
+	// shader->use("objectColor", this->color);
+
+	shader->use("model", model);
+	shader->use("inverseModel", inverse(model));
+
+	glBindVertexArray(this->VAO);
+	glDrawElements(GL_TRIANGLES, this->vertexCounter, GL_UNSIGNED_INT, 0);
+}
+
+void GameObject::renderTexture(Shader* shader) {
+	if(this->VAO == 0) {
+		return;
+	}
+
+	if(this->hasTexture) {
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, this->resourcesManager->getTexture(this->textureName));
+		shader->use("outTexture", 0);
+	}
 }

@@ -16,16 +16,25 @@
 #include "ResourcesManager.h"
 #include "common.h"
 
+const int GO_TYPE_GRASS = 1;
+const int GO_TYPE_BUNNY = 2;
+const int GO_TYPE_DIRT = 3;
+const int GO_TYPE_PLAYER = 4;
+const int GO_TYPE_STONE = 5;
+const int GO_TYPE_LAMP = 6;
+
 using namespace std;
 using namespace glm;
 
 class GameObject {
 protected:
+	int type;
+	ResourcesManager* resourcesManager;
+
 	GLuint VAO;
 	int vertexCounter;
 	string textureName;
 	bool hasTexture;
-	ResourcesManager* resourcesManager;
 
 	vec3 color;
 
@@ -36,9 +45,11 @@ protected:
 
 	Shader* shader;
 public:
-	GameObject (ResourcesManager* rm);
-	GameObject (ResourcesManager* rm, string filename, float size, vec3 color);
-    GameObject (ResourcesManager* rm, string filename, vec3 size, vec3 color);
+	GameObject (ResourcesManager* rm, int type);
+	GameObject (ResourcesManager* rm, int type, string filename, float size, vec3 color);
+    GameObject (ResourcesManager* rm, int type, string filename, vec3 size, vec3 color);
+
+	int getType();
 
 	GLuint getVAO();
 	int getVertexCounter();
@@ -64,7 +75,9 @@ public:
     void rotateY(float value);
     void rotateZ(float value);
 
-    virtual void render(Camera* camera, tLight light);
+	virtual void render(Camera* camera, tLight light);
+	virtual void render(Shader* shader);
+    virtual void renderTexture(Shader* shader);
 };
 
 #endif

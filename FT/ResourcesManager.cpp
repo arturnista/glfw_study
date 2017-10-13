@@ -27,10 +27,6 @@ tObject ResourcesManager::processObjectFile(std::string filename) {
 	int pointsCounter = pointsVector.size() * 2 + textureCounter;
 	int verticesCounter = indexVector.size();
 
-	cout << filename << "\t";
-	cout << "vertex count" << " = " << pointsVector.size() << '\t';
-	cout << "face count" << " = " << verticesCounter << '\n';
-
 	GLfloat *points = new GLfloat[pointsCounter];
 
 	float itemsPerPoint = 8;
@@ -68,6 +64,10 @@ tObject ResourcesManager::processObjectFile(std::string filename) {
 	GLuint *vertices = new GLuint[verticesCounter];
 	for (size_t i = 0; i < verticesCounter; i++) vertices[i] = indexVector.at(i) - 1;
 
+
+    cout << "Object: " << filename << "\t";
+    cout << "vertex count" << " = " << pointsVector.size() << '\t';
+    cout << "face count" << " = " << verticesCounter << '\n';
     return {
     	pointsVector,
     	indexVector,
@@ -104,6 +104,9 @@ unsigned int ResourcesManager::processTexture(std::string filename) {
     }
     stbi_image_free(textureData);
 
+
+    cout << "Texture: " << filename << "\t";
+    cout << "Size (" << width << ", " << height << ")" << '\n';
     return texture;
 }
 
