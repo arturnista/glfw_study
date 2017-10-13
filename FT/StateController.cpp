@@ -49,6 +49,12 @@ std::vector<tStateGameObject> StateController::getObjects() {
     return objectsVector;
 }
 
+void StateController::prepareObjects() {
+    for (int i = 0; i < objectsVector.size(); i++) {
+        objectsVector.at(i).shouldRender = shouldRender(objectsVector.at(i).gameObject->getPosition());
+    }
+}
+
 void StateController::update(float deltaTime) {
     for (int i = 0; i < objectsVector.size(); i++) {
         objectsVector.at(i).gameObject->update(this->window, deltaTime);

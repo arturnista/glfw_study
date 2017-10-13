@@ -88,12 +88,22 @@ int main() {
 	lampObject->setPosition(lightPosition);
     stateController->addObject( lampObject );
 
-    int size = 20;
-    int height = 5;
-    int aeho = 0;
+    int size = 40;
+    int height = 10;
+    float fullBlocks = size * size * height;
+    int blocksCreated = 0;
+    int perc;
+    int lastPercShow = 0;
     for (size_t xInc = 0; xInc < size; xInc++) {
         for (size_t yInc = 0; yInc < height; yInc++) {
             for (size_t zInc = 0; zInc < size; zInc++) {
+                blocksCreated++;
+                perc = floor((blocksCreated / fullBlocks) * 100);
+                if(perc != lastPercShow && perc % 5 == 0) {
+                    std::cout << "Loading: " << perc << "%" << '\n';
+                    lastPercShow = perc;
+                }
+
                 if(yInc == 0) {
                 	Grass* grassObject = new Grass(resourcesManager);
                 	grassObject->setPosition(vec3(xInc, yInc * -1.0f, zInc));
@@ -117,6 +127,7 @@ int main() {
 
     printf("\nGameLoop actions\n\n");
 
+    stateController->prepareObjects();
 	while (!glfwWindowShouldClose(window)) {
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
