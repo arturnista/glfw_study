@@ -3,7 +3,13 @@
 
 #include <GLFW/glfw3.h>
 #include <glm/gtc/type_ptr.hpp>
+#include <string>
 #include <vector>
+
+// std::string vec3ToString(glm::vec3 v) {
+// 	std::string ret = std::to_string(v.x) + "," + std::to_string(v.y) + "," + std::to_string(v.z);
+// 	return ret;
+// }
 
 typedef struct {
 	glm::vec3 color;

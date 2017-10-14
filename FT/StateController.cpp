@@ -14,26 +14,32 @@ StateController::StateController(GLFWwindow* window, Camera* camera) {
     this->shader = new Shader("texture");
 }
 
-bool StateController::shouldRender(glm::vec3 position) {
-    bool isRight = false;
-    bool isLeft = false;
-    bool isUp = false;
-    bool isBottom = false;
-    bool isFront = false;
-    bool isBack = false;
+bool StateController::shouldRender(glm::vec3 pos) {
+    std::string rightPos = glm::to_string(vec3(pos.x + 1, pos.y, pos.z));
+    if( objectsVectorByPosition[rightPos].gameObject == NULL ) return true;
 
+    std::string leftPos = glm::to_string(vec3(pos.x - 1, pos.y, pos.z));
+    if( objectsVectorByPosition[leftPos].gameObject == NULL ) return true;
+
+    std::string upPos = glm::to_string(vec3(pos.x, pos.y + 1, pos.z));
+    if( objectsVectorByPosition[upPos].gameObject == NULL ) return true;
+
+    std::string bottomPos = glm::to_string(vec3(pos.x, pos.y - 1, pos.z));
+    if( objectsVectorByPosition[bottomPos].gameObject == NULL ) return true;
+
+    std::string frontPos = glm::to_string(vec3(pos.x, pos.y, pos.z + 1));
+    if( objectsVectorByPosition[frontPos].gameObject == NULL ) return true;
+
+    std::string backPos = glm::to_string(vec3(pos.x, pos.y, pos.z - 1));
+    if( objectsVectorByPosition[backPos].gameObject == NULL ) return true;
+
+    return false;
+}
+
+void StateController::prepareObjects() {
     for (int i = 0; i < objectsVector.size(); i++) {
-        glm::vec3 goPos = objectsVector.at(i).gameObject->getPosition();
-        if(!isRight && position.x == goPos.x + 1) isRight = true;
-        if(!isLeft && position.x == goPos.x - 1) isLeft = true;
-        if(!isUp && position.y == goPos.y + 1) isUp = true;
-        if(!isBottom && position.y == goPos.y - 1) isBottom = true;
-        if(!isFront && position.z == goPos.z + 1) isFront = true;
-        if(!isBack && position.z == goPos.z - 1) isBack = true;
-
-        if(isRight && isLeft && isUp && isBottom && isFront && isBack) return false;
+        objectsVector[i].shouldRender = shouldRender(objectsVector[i].gameObject->getPosition());
     }
-    return true;
 }
 
 void StateController::addObject(GameObject* object) {
@@ -42,17 +48,12 @@ void StateController::addObject(GameObject* object) {
         true
     };
     objectsVector.push_back(structObject);
+    objectsVectorByPosition[glm::to_string(object->getPosition())] = structObject;
     std::sort (objectsVector.begin(), objectsVector.end(), objectSort);
 }
 
 std::vector<tStateGameObject> StateController::getObjects() {
     return objectsVector;
-}
-
-void StateController::prepareObjects() {
-    for (int i = 0; i < objectsVector.size(); i++) {
-        objectsVector.at(i).shouldRender = shouldRender(objectsVector.at(i).gameObject->getPosition());
-    }
 }
 
 void StateController::update(float deltaTime) {

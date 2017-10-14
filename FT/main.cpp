@@ -99,7 +99,7 @@ int main() {
             for (size_t zInc = 0; zInc < size; zInc++) {
                 blocksCreated++;
                 perc = floor((blocksCreated / fullBlocks) * 100);
-                if(perc != lastPercShow && perc % 5 == 0) {
+                if(perc != lastPercShow && perc % 10 == 0) {
                     std::cout << "Loading: " << perc << "%" << '\n';
                     lastPercShow = perc;
                 }

@@ -1,9 +1,12 @@
 #ifndef __STATE_CONTROLLER_HEADER__
 #define __STATE_CONTROLLER_HEADER__ 1
 
+#include <glm/ext.hpp>
+
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <map>
 
 #include "GameObject.h"
 #include "Camera.h"
@@ -18,6 +21,7 @@ typedef struct {
 class StateController {
 private:
     std::vector<tStateGameObject> objectsVector;
+	std::map<std::string, tStateGameObject> objectsVectorByPosition;
     GLFWwindow* window;
     Camera* camera;
     Shader* shader;
