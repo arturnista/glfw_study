@@ -5,12 +5,12 @@
 #include <GLFW/glfw3.h> // GLFW helper library
 #include <stdio.h>
 #include <iostream>
-#include <string>
 #include <fstream>
 #include <sstream>
 #include <vector>
 #include <math.h>
 #include <time.h>       /* time */
+#include <thread>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -24,14 +24,15 @@
 #include "Lamp.h"
 #include "Player.h"
 #include "Bunny.h"
-#include "Grass.h"
-#include "Dirt.h"
-#include "Stone.h"
+#include "Map.h"
 
-using namespace std;
-using namespace glm;
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos);
+
+Camera* camera;
+StateController* stateController;
+ResourcesManager* resourcesManager;
+Map* mapCont;
 
 int main() {
   	srand (time(NULL));
@@ -72,15 +73,14 @@ int main() {
 
     printf("\nPre GameLoop actions\n\n");
 
-	vec3 lightPosition = vec3(30.0f, 10.0f, 0.0f);
+	glm::vec3 lightPosition = glm::vec3(30.0f, 10.0f, 0.0f);
 
-    Camera* camera = new Camera(window);
-    StateController* stateController = new StateController(window, camera);
-    ResourcesManager* resourcesManager = new ResourcesManager();
+    camera = new Camera(window);
+    stateController = new StateController(window, camera);
+    resourcesManager = new ResourcesManager();
+    mapCont = new Map(resourcesManager, stateController);
 
-    // Bunny* bunnyObject = new Bunny(resourcesManager);
-    // bunnyObject->setPosition(vec3(0, 0, 0));
-    // stateController->addObject( bunnyObject );
+    std::thread mapThread (mapCont->create);
 
     Player* player = new Player(camera);
     stateController->addObject( player );
@@ -88,38 +88,6 @@ int main() {
 	lampObject->setPosition(lightPosition);
     stateController->addObject( lampObject );
 
-    int size = 40;
-    int height = 10;
-    float fullBlocks = size * size * height;
-    int blocksCreated = 0;
-    int perc;
-    int lastPercShow = 0;
-    for (size_t xInc = 0; xInc < size; xInc++) {
-        for (size_t yInc = 0; yInc < height; yInc++) {
-            for (size_t zInc = 0; zInc < size; zInc++) {
-                blocksCreated++;
-                perc = floor((blocksCreated / fullBlocks) * 100);
-                if(perc != lastPercShow && perc % 10 == 0) {
-                    std::cout << "Loading: " << perc << "%" << '\n';
-                    lastPercShow = perc;
-                }
-
-                if(yInc == 0) {
-                	Grass* grassObject = new Grass(resourcesManager);
-                	grassObject->setPosition(vec3(xInc, yInc * -1.0f, zInc));
-                    stateController->addObject( grassObject );
-                } else if(yInc < 3) {
-                    Dirt* dirtObject = new Dirt(resourcesManager);
-                    dirtObject->setPosition(vec3(xInc, yInc * -1.0f, zInc));
-                    stateController->addObject( dirtObject );
-                } else {
-                    Stone* stoneObject = new Stone(resourcesManager);
-                    stoneObject->setPosition(vec3(xInc, yInc * -1.0f, zInc));
-                    stateController->addObject( stoneObject );
-                }
-            }
-        }
-    }
 
 	float deltaTime = 0.0f;	// Time between current frame and last frame
     float lastFrame = 0.0f; // Time of last frame

@@ -49,6 +49,9 @@ void StateController::addObject(GameObject* object) {
     };
     objectsVector.push_back(structObject);
     objectsVectorByPosition[glm::to_string(object->getPosition())] = structObject;
+
+    this->prepareObjects();
+
     std::sort (objectsVector.begin(), objectsVector.end(), objectSort);
 }
 
