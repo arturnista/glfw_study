@@ -2,6 +2,7 @@
 #define __MAP_HEADER__ 1
 
 #include <iostream>
+#include <thread>
 
 #include "StateController.h"
 #include "ResourcesManager.h"

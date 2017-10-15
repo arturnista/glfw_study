@@ -16,9 +16,8 @@ Map::Map (ResourcesManager* resourcesManager, StateController* stateController) 
 }
 
 void Map::create() {
-    while(this->createOne()) {
-        
-    }
+    std::thread mapThread (&Map::createOne, this);
+    mapThread.join();
 }
 
 bool Map::createOne() {
