@@ -14,6 +14,19 @@ StateController::StateController(GLFWwindow* window, Camera* camera) {
     this->shader = new Shader("texture");
 }
 
+void StateController::jointObjects() {
+    glm::vec3 lastPosition;
+    for (int i = 0; i < objectsVector.size(); i++) {
+        tStateGameObject stateGO = objectsVector.at(i);
+        glm::vec3 position = stateGO.gameObject->getPosition();
+        if(lastPosition != position) {
+            lastPosition = position;
+        }
+
+
+    }
+}
+
 bool StateController::shouldRender(glm::vec3 pos) {
     unsigned long testPos = hashVec3(vec3(pos.x + 1, pos.y, pos.z));
     if( objectsVectorByPosition[testPos].gameObject == NULL ) return true;

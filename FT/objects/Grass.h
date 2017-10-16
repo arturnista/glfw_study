@@ -8,6 +8,7 @@ private:
 
 public:
     Grass (ResourcesManager* tm);
+    Grass (ResourcesManager* tm, float size);
 
     void update(GLFWwindow* window, float deltaTime);
 };

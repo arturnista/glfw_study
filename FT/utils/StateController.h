@@ -8,10 +8,10 @@
 #include <algorithm>
 #include <map>
 
-#include "GameObject.h"
+#include "../objects/GameObject.h"
 #include "Camera.h"
 #include "Shader.h"
-#include "common.h"
+#include "../common.h"
 
 typedef struct {
 	GameObject* gameObject;
@@ -20,7 +20,8 @@ typedef struct {
 
 class StateController {
 private:
-    std::vector<tStateGameObject> objectsVector;
+	std::vector<tStateGameObject> objectsVector;
+    std::vector<tStateGameObject> objectsToRenderVector;
 	std::map<unsigned long, tStateGameObject> objectsVectorByPosition;
     GLFWwindow* window;
     Camera* camera;
@@ -33,6 +34,7 @@ public:
     void addObject(GameObject* object);
     std::vector<tStateGameObject> getObjects();
 
+	void jointObjects();
 	void prepareObjects();
     void update(float deltaTime);
     void render(float deltaTime);

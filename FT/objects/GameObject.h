@@ -11,10 +11,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "Shader.h"
-#include "Camera.h"
-#include "ResourcesManager.h"
-#include "common.h"
+#include "../utils/Shader.h"
+#include "../utils/Camera.h"
+#include "../utils/ResourcesManager.h"
+#include "../common.h"
 
 const int GO_TYPE_GRASS = 1;
 const int GO_TYPE_BUNNY = 2;

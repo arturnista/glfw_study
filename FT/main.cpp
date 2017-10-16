@@ -16,14 +16,14 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "StateController.h"
+#include "./utils/StateController.h"
 
-#include "Shader.h"
-#include "ResourcesManager.h"
-#include "Camera.h"
-#include "Lamp.h"
-#include "Player.h"
-#include "Bunny.h"
+#include "./utils/Shader.h"
+#include "./utils/ResourcesManager.h"
+#include "./utils/Camera.h"
+#include "./objects/Lamp.h"
+#include "./objects/Player.h"
+#include "./objects/Bunny.h"
 #include "Map.h"
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
@@ -133,6 +133,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	if ((key == GLFW_KEY_ESCAPE || key == GLFW_KEY_Q) && action == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, GL_TRUE);
 	}
+    
+    if(key == GLFW_KEY_F && action == GLFW_PRESS) {
+        stateController->jointObjects();
+    }
 }
 
 // Is called whenever the mouse moves

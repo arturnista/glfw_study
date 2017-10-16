@@ -3,12 +3,12 @@
 
 #include <iostream>
 
-#include "StateController.h"
-#include "ResourcesManager.h"
+#include "./utils/StateController.h"
+#include "./utils/ResourcesManager.h"
 
-#include "Grass.h"
-#include "Dirt.h"
-#include "Stone.h"
+#include "./objects/Grass.h"
+#include "./objects/Dirt.h"
+#include "./objects/Stone.h"
 
 class Map {
 private:

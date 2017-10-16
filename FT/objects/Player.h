@@ -2,7 +2,7 @@
 #define __PLAYER_HEADER__ 1
 
 #include "GameObject.h"
-#include "Camera.h"
+#include "../utils/Camera.h"
 
 class Player : public GameObject {
 private:
