@@ -21,7 +21,7 @@ typedef struct {
 class StateController {
 private:
     std::vector<tStateGameObject> objectsVector;
-	std::map<std::string, tStateGameObject> objectsVectorByPosition;
+	std::map<unsigned long, tStateGameObject> objectsVectorByPosition;
     GLFWwindow* window;
     Camera* camera;
     Shader* shader;

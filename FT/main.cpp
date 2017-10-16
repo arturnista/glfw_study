@@ -80,8 +80,6 @@ int main() {
     resourcesManager = new ResourcesManager();
     mapCont = new Map(resourcesManager, stateController);
 
-    std::thread mapThread (mapCont->create);
-
     Player* player = new Player(camera);
     stateController->addObject( player );
 	Lamp* lampObject = new Lamp(resourcesManager);
@@ -95,7 +93,6 @@ int main() {
 
     printf("\nGameLoop actions\n\n");
 
-    stateController->prepareObjects();
 	while (!glfwWindowShouldClose(window)) {
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -115,6 +112,7 @@ int main() {
 		/*
 			Objects update
 		*/
+        mapCont->create(1);
         stateController->update(deltaTime);
         stateController->render(deltaTime);
 

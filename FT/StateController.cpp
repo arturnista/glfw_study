@@ -15,23 +15,23 @@ StateController::StateController(GLFWwindow* window, Camera* camera) {
 }
 
 bool StateController::shouldRender(glm::vec3 pos) {
-    std::string rightPos = glm::to_string(vec3(pos.x + 1, pos.y, pos.z));
-    if( objectsVectorByPosition[rightPos].gameObject == NULL ) return true;
+    unsigned long testPos = hashVec3(vec3(pos.x + 1, pos.y, pos.z));
+    if( objectsVectorByPosition[testPos].gameObject == NULL ) return true;
 
-    std::string leftPos = glm::to_string(vec3(pos.x - 1, pos.y, pos.z));
-    if( objectsVectorByPosition[leftPos].gameObject == NULL ) return true;
+    testPos = hashVec3(vec3(pos.x - 1, pos.y, pos.z));
+    if( objectsVectorByPosition[testPos].gameObject == NULL ) return true;
 
-    std::string upPos = glm::to_string(vec3(pos.x, pos.y + 1, pos.z));
-    if( objectsVectorByPosition[upPos].gameObject == NULL ) return true;
+    testPos = hashVec3(vec3(pos.x, pos.y + 1, pos.z));
+    if( objectsVectorByPosition[testPos].gameObject == NULL ) return true;
 
-    std::string bottomPos = glm::to_string(vec3(pos.x, pos.y - 1, pos.z));
-    if( objectsVectorByPosition[bottomPos].gameObject == NULL ) return true;
+    testPos = hashVec3(vec3(pos.x, pos.y - 1, pos.z));
+    if( objectsVectorByPosition[testPos].gameObject == NULL ) return true;
 
-    std::string frontPos = glm::to_string(vec3(pos.x, pos.y, pos.z + 1));
-    if( objectsVectorByPosition[frontPos].gameObject == NULL ) return true;
+    testPos = hashVec3(vec3(pos.x, pos.y, pos.z + 1));
+    if( objectsVectorByPosition[testPos].gameObject == NULL ) return true;
 
-    std::string backPos = glm::to_string(vec3(pos.x, pos.y, pos.z - 1));
-    if( objectsVectorByPosition[backPos].gameObject == NULL ) return true;
+    testPos = hashVec3(vec3(pos.x, pos.y, pos.z - 1));
+    if( objectsVectorByPosition[testPos].gameObject == NULL ) return true;
 
     return false;
 }
@@ -48,7 +48,8 @@ void StateController::addObject(GameObject* object) {
         true
     };
     objectsVector.push_back(structObject);
-    objectsVectorByPosition[glm::to_string(object->getPosition())] = structObject;
+    unsigned long key = hashVec3(object->getPosition());
+    objectsVectorByPosition[key] = structObject;
 
     this->prepareObjects();
 

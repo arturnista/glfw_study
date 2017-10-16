@@ -27,7 +27,7 @@ private:
 
 public:
     Map (ResourcesManager* resourcesManager, StateController* stateController);
-    void create();
+    bool create(int amount = 0);
     bool createOne();
 };
 
