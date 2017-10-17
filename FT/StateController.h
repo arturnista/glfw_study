@@ -11,7 +11,13 @@
 #include <math.h>
 
 #include "./objects/GameObject.h"
+
 #include "./objects/Grass.h"
+#include "./objects/Bunny.h"
+#include "./objects/Dirt.h"
+#include "./objects/Stone.h"
+#include "./objects/Lamp.h"
+
 #include "ResourcesManager.h"
 #include "Camera.h"
 #include "Shader.h"

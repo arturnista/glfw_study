@@ -31,9 +31,10 @@ void StateController::jointObjects() {
     // std::list<tStateGameObject> next = { objectsToRenderList.front() };
     std::list<tStateGameObject> next = { objectsVector[2] };
 
-    float biggerX = objectsVector[0].gameObject->getPosition().x;
-    float biggerY = objectsVector[0].gameObject->getPosition().y;
-    float biggerZ = objectsVector[0].gameObject->getPosition().z;
+    int type = next.front().gameObject->getType();
+    float biggerX = next.front().gameObject->getPosition().x;
+    float biggerY = next.front().gameObject->getPosition().y;
+    float biggerZ = next.front().gameObject->getPosition().z;
 
     while (!next.empty()) {
         // Get the first object and remove it from the list
@@ -45,7 +46,7 @@ void StateController::jointObjects() {
 
         // Add the new itens from to valid list
         glm::vec3 pos = frontObj.gameObject->getPosition();
-        int type = frontObj.gameObject->getType();
+
         tHash testPos;
         tStateGameObject objToAdd;
         if(pos.x >= pos.z) {
@@ -90,10 +91,22 @@ void StateController::jointObjects() {
         objectsToRenderList.remove( go );
     }
 
-    Grass* gr = new Grass(resourcesManager);
-    gr->setSize(glm::vec3(squadSize, 1.0f, squadSize));
-    gr->setPosition(center);
-    this->addObject( gr );
+    GameObject* go;
+    if(type == GO_TYPE_GRASS) {
+        go = new Grass(resourcesManager);
+    } else  if(type == GO_TYPE_BUNNY) {
+        go = new Bunny(resourcesManager);
+    } else  if(type == GO_TYPE_DIRT) {
+        go = new Dirt(resourcesManager);
+    } else  if(type == GO_TYPE_STONE) {
+        go = new Stone(resourcesManager);
+    } else  if(type == GO_TYPE_LAMP) {
+        go = new Lamp(resourcesManager);
+    }
+
+    go->setSize(glm::vec3(squadSize, 1.0f, squadSize));
+    go->setPosition(center);
+    this->addObject( go );
 }
 
 bool StateController::shouldRender(glm::vec3 pos) {
