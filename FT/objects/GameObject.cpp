@@ -140,6 +140,14 @@ void GameObject::rotateZ(float value) {
     this->rotation.z += value;
 }
 
+vec3 GameObject::getColor() {
+    return color;
+}
+
+void GameObject::setColor(vec3 color) {
+    this->color = color;
+}
+
 void GameObject::render(Camera* camera, tLight light) {
 	if(this->shader == NULL) {
 		return;
@@ -187,7 +195,11 @@ void GameObject::render(Shader* shader) {
 	mat4 model;
 	model = translate(model, this->position);
 
-	// shader->use("objectColor", this->color);
+	if(this->size.x != 1.0f || this->size.y != 1.0f || this->size.z != 1.0f) {
+		model = scale(model, this->size);
+	}
+
+	shader->use("objectColor", this->color);
 
 	shader->use("model", model);
 	shader->use("inverseModel", inverse(model));

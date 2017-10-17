@@ -8,9 +8,7 @@
 #include <string>
 #include <vector>
 
-unsigned long hashNumber(long v);
-
-unsigned long hashVec3(glm::vec3 v);
+typedef unsigned long tHash;
 
 typedef struct {
 	glm::vec3 color;
@@ -29,5 +27,9 @@ typedef struct {
 	GLuint *vertices;
 	int verticesCounter;
 } tObject;
+
+tHash hashNumber(long v);
+
+tHash hashVec3(glm::vec3 v);
 
 #endif

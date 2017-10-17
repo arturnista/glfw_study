@@ -5,31 +5,41 @@
 
 #include <iostream>
 #include <vector>
+#include <list>
 #include <algorithm>
 #include <map>
+#include <math.h>
 
-#include "../objects/GameObject.h"
+#include "./objects/GameObject.h"
+#include "./objects/Grass.h"
+#include "ResourcesManager.h"
 #include "Camera.h"
 #include "Shader.h"
-#include "../common.h"
+#include "common.h"
 
-typedef struct {
+struct tStateGameObject {
 	GameObject* gameObject;
 	bool shouldRender;
-} tStateGameObject;
+	bool operator==(const tStateGameObject& rhs) const {
+		return gameObject == rhs.gameObject;
+	}
+};
+
+typedef struct tStateGameObject tStateGameObject;
 
 class StateController {
 private:
 	std::vector<tStateGameObject> objectsVector;
-    std::vector<tStateGameObject> objectsToRenderVector;
-	std::map<unsigned long, tStateGameObject> objectsVectorByPosition;
+    std::list<tStateGameObject> objectsToRenderList;
+	std::map<unsigned long, tStateGameObject> objectsMapByPosition;
     GLFWwindow* window;
     Camera* camera;
     Shader* shader;
+	ResourcesManager* resourcesManager;
 
     bool shouldRender(glm::vec3 position);
 public:
-    StateController (GLFWwindow* window, Camera* camera);
+    StateController (GLFWwindow* window, Camera* camera, ResourcesManager* rm);
 
     void addObject(GameObject* object);
     std::vector<tStateGameObject> getObjects();

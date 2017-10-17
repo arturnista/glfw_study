@@ -1,7 +1,7 @@
 #include "common.h"
 
-unsigned long hashNumber(long v) {
-	unsigned long h = v;
+tHash hashNumber(long v) {
+	tHash h = v;
 	h ^= h >> 16;
 	h *= 0x85ebca6b;
 	h ^= h >> 13;
@@ -10,9 +10,9 @@ unsigned long hashNumber(long v) {
 	return h;
 }
 
-unsigned long hashVec3(glm::vec3 v) {
-	unsigned long vl1 = hashNumber( floor( v.x ) );
-	unsigned long vl2 = hashNumber( hashNumber( floor( v.y ) ) );
-	unsigned long vl3 = hashNumber( hashNumber( hashNumber( floor( v.z ) ) ) );
+tHash hashVec3(glm::vec3 v) {
+	tHash vl1 = hashNumber( floor( v.x ) );
+	tHash vl2 = hashNumber( hashNumber( floor( v.y ) ) );
+	tHash vl3 = hashNumber( hashNumber( hashNumber( floor( v.z ) ) ) );
 	return hashNumber( vl1 + vl2 + vl3 );
 }

@@ -11,9 +11,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "../utils/Shader.h"
-#include "../utils/Camera.h"
-#include "../utils/ResourcesManager.h"
+#include "../Shader.h"
+#include "../Camera.h"
+#include "../ResourcesManager.h"
 #include "../common.h"
 
 const int GO_TYPE_GRASS = 1;
@@ -66,6 +66,9 @@ public:
     void setPositionX(float value);
     void setPositionY(float value);
     void setPositionZ(float value);
+
+    vec3 getColor();
+	void setColor(vec3 color);
 
     vec3 getSize();
 	void setSize(float size);

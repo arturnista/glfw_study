@@ -4,8 +4,8 @@ Map::Map (ResourcesManager* resourcesManager, StateController* stateController) 
     this->resourcesManager = resourcesManager;
     this->stateController = stateController;
 
-    this->sizeX = 10;
-    this->sizeZ = 10;
+    this->sizeX = 30;
+    this->sizeZ = 30;
     this->height = 5;
 
     this->sizeXCreated = 0;
@@ -56,6 +56,7 @@ bool Map::createOne() {
             this->heightCreated++;
 
             if(this->height <= this->heightCreated) {
+                std::cout << "TERMINOU" << '\n';
                 this->finished = true;
             }
         }

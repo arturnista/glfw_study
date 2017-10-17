@@ -3,8 +3,8 @@
 
 #include <iostream>
 
-#include "./utils/StateController.h"
-#include "./utils/ResourcesManager.h"
+#include "StateController.h"
+#include "ResourcesManager.h"
 
 #include "./objects/Grass.h"
 #include "./objects/Dirt.h"

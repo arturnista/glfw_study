@@ -16,11 +16,11 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "./utils/StateController.h"
+#include "StateController.h"
 
-#include "./utils/Shader.h"
-#include "./utils/ResourcesManager.h"
-#include "./utils/Camera.h"
+#include "Shader.h"
+#include "ResourcesManager.h"
+#include "Camera.h"
 #include "./objects/Lamp.h"
 #include "./objects/Player.h"
 #include "./objects/Bunny.h"
@@ -76,8 +76,8 @@ int main() {
 	glm::vec3 lightPosition = glm::vec3(30.0f, 10.0f, 0.0f);
 
     camera = new Camera(window);
-    stateController = new StateController(window, camera);
     resourcesManager = new ResourcesManager();
+    stateController = new StateController(window, camera, resourcesManager);
     mapCont = new Map(resourcesManager, stateController);
 
     Player* player = new Player(camera);
@@ -90,9 +90,9 @@ int main() {
 	float deltaTime = 0.0f;	// Time between current frame and last frame
     float lastFrame = 0.0f; // Time of last frame
 	float timePassed = 0.0f; // Time of last frame
+    int frames = 0;
 
     printf("\nGameLoop actions\n\n");
-
 	while (!glfwWindowShouldClose(window)) {
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -104,9 +104,11 @@ int main() {
 		lastFrame = currentFrame;
         timePassed += deltaTime;
 
+        frames++;
         if(timePassed >= 2) {
-            std::cout << 1 / deltaTime << '\n';
+            std::cout << frames / 2.0f << '\n';
             timePassed = 0;
+            frames = 0;
         }
 
 		/*
@@ -133,7 +135,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	if ((key == GLFW_KEY_ESCAPE || key == GLFW_KEY_Q) && action == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, GL_TRUE);
 	}
-    
+
     if(key == GLFW_KEY_F && action == GLFW_PRESS) {
         stateController->jointObjects();
     }
