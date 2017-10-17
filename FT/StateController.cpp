@@ -7,31 +7,126 @@ struct myclass {
 } objectSort;
 
 
-StateController::StateController(GLFWwindow* window, Camera* camera) {
+StateController::StateController(GLFWwindow* window, Camera* camera, ResourcesManager* rm) {
     objectsVector = {};
     this->window = window;
     this->camera = camera;
+    this->resourcesManager = rm;
     this->shader = new Shader("texture");
 }
 
+void StateController::jointObjects() {
+    glm::vec3 lastPosition;
+
+    objectsToRenderList.clear();
+    for (size_t i = 0; i < objectsVector.size(); i++) {
+        int type = objectsVector.at(i).gameObject->getType();
+        // Player should not be rendered
+        if(type != GO_TYPE_PLAYER) {
+            objectsToRenderList.push_back( objectsVector.at(i) );
+        }
+    }
+
+    std::list<tStateGameObject> valid;
+    // std::list<tStateGameObject> next = { objectsToRenderList.front() };
+    std::list<tStateGameObject> next = { objectsVector[2] };
+
+    int type = next.front().gameObject->getType();
+    float biggerX = next.front().gameObject->getPosition().x;
+    float biggerY = next.front().gameObject->getPosition().y;
+    float biggerZ = next.front().gameObject->getPosition().z;
+
+    while (!next.empty()) {
+        // Get the first object and remove it from the list
+        tStateGameObject frontObj = next.front();
+        valid.push_back( frontObj );
+        next.pop_front();
+
+        frontObj.gameObject->setColor(vec3(1.0f, 0.0f, 0.0f));
+
+        // Add the new itens from to valid list
+        glm::vec3 pos = frontObj.gameObject->getPosition();
+
+        tHash testPos;
+        tStateGameObject objToAdd;
+        if(pos.x >= pos.z) {
+            testPos = hashVec3(vec3(pos.x + 1, pos.y, pos.z));
+            objToAdd = objectsMapByPosition[testPos];
+
+            if(objToAdd.gameObject != NULL && type == objToAdd.gameObject->getType()) {
+                next.push_back( objToAdd );
+            }
+        }
+        if(pos.x <= pos.z) {
+            testPos = hashVec3(vec3(pos.x, pos.y, pos.z + 1));
+            objToAdd = objectsMapByPosition[testPos];
+
+            if(objToAdd.gameObject != NULL && type == objToAdd.gameObject->getType()) {
+                next.push_back( objToAdd );
+            }
+        }
+        if(pos.x == pos.z) {
+            testPos = hashVec3(vec3(pos.x + 1, pos.y, pos.z + 1));
+            objToAdd = objectsMapByPosition[testPos];
+
+            if(objToAdd.gameObject != NULL && type == objToAdd.gameObject->getType()) {
+                next.push_back( objToAdd );
+            }
+        }
+
+        if(biggerX < pos.x) biggerX = pos.x;
+        if(biggerY < pos.y) biggerY = pos.y;
+        if(biggerZ < pos.z) biggerZ = pos.z;
+    }
+
+
+    float squadSize = sqrt(valid.size());
+    if(squadSize == 1.0f) return;
+
+    glm::vec3 center = vec3(biggerX / 2, biggerY / 2, biggerZ / 2);
+
+    std::list<tStateGameObject>::const_iterator validIteractor;
+    for (validIteractor = valid.begin(); validIteractor != valid.end(); ++validIteractor) {
+        tStateGameObject go = *validIteractor;
+        objectsToRenderList.remove( go );
+    }
+
+    GameObject* go;
+    if(type == GO_TYPE_GRASS) {
+        go = new Grass(resourcesManager);
+    } else  if(type == GO_TYPE_BUNNY) {
+        go = new Bunny(resourcesManager);
+    } else  if(type == GO_TYPE_DIRT) {
+        go = new Dirt(resourcesManager);
+    } else  if(type == GO_TYPE_STONE) {
+        go = new Stone(resourcesManager);
+    } else  if(type == GO_TYPE_LAMP) {
+        go = new Lamp(resourcesManager);
+    }
+
+    go->setSize(glm::vec3(squadSize, 1.0f, squadSize));
+    go->setPosition(center);
+    this->addObject( go );
+}
+
 bool StateController::shouldRender(glm::vec3 pos) {
-    std::string rightPos = glm::to_string(vec3(pos.x + 1, pos.y, pos.z));
-    if( objectsVectorByPosition[rightPos].gameObject == NULL ) return true;
+    unsigned long testPos = hashVec3(vec3(pos.x + 1, pos.y, pos.z));
+    if( objectsMapByPosition[testPos].gameObject == NULL ) return true;
 
-    std::string leftPos = glm::to_string(vec3(pos.x - 1, pos.y, pos.z));
-    if( objectsVectorByPosition[leftPos].gameObject == NULL ) return true;
+    testPos = hashVec3(vec3(pos.x - 1, pos.y, pos.z));
+    if( objectsMapByPosition[testPos].gameObject == NULL ) return true;
 
-    std::string upPos = glm::to_string(vec3(pos.x, pos.y + 1, pos.z));
-    if( objectsVectorByPosition[upPos].gameObject == NULL ) return true;
+    testPos = hashVec3(vec3(pos.x, pos.y + 1, pos.z));
+    if( objectsMapByPosition[testPos].gameObject == NULL ) return true;
 
-    std::string bottomPos = glm::to_string(vec3(pos.x, pos.y - 1, pos.z));
-    if( objectsVectorByPosition[bottomPos].gameObject == NULL ) return true;
+    testPos = hashVec3(vec3(pos.x, pos.y - 1, pos.z));
+    if( objectsMapByPosition[testPos].gameObject == NULL ) return true;
 
-    std::string frontPos = glm::to_string(vec3(pos.x, pos.y, pos.z + 1));
-    if( objectsVectorByPosition[frontPos].gameObject == NULL ) return true;
+    testPos = hashVec3(vec3(pos.x, pos.y, pos.z + 1));
+    if( objectsMapByPosition[testPos].gameObject == NULL ) return true;
 
-    std::string backPos = glm::to_string(vec3(pos.x, pos.y, pos.z - 1));
-    if( objectsVectorByPosition[backPos].gameObject == NULL ) return true;
+    testPos = hashVec3(vec3(pos.x, pos.y, pos.z - 1));
+    if( objectsMapByPosition[testPos].gameObject == NULL ) return true;
 
     return false;
 }
@@ -48,11 +143,15 @@ void StateController::addObject(GameObject* object) {
         true
     };
     objectsVector.push_back(structObject);
-    objectsVectorByPosition[glm::to_string(object->getPosition())] = structObject;
+    int type = structObject.gameObject->getType();
+    if(type != GO_TYPE_PLAYER) {
+        objectsToRenderList.push_back( structObject );
+        unsigned long key = hashVec3(object->getPosition());
+        objectsMapByPosition[key] = structObject;
+        this->prepareObjects();
+    }
 
-    this->prepareObjects();
-
-    std::sort (objectsVector.begin(), objectsVector.end(), objectSort);
+    // std::sort (objectsVector.begin(), objectsVector.end(), objectSort);
 }
 
 std::vector<tStateGameObject> StateController::getObjects() {
@@ -86,8 +185,9 @@ void StateController::render(float deltaTime) {
 	shader->use("lightPosition", light.position);
 
     int lastType = 0;
-    for (int i = 0; i < objectsVector.size(); i++) {
-        tStateGameObject go = objectsVector.at(i);
+    std::list<tStateGameObject>::const_iterator renderIterator;
+    for (renderIterator = objectsToRenderList.begin(); renderIterator != objectsToRenderList.end(); ++renderIterator) {
+        tStateGameObject go = *renderIterator;
         if(go.shouldRender) {
             int type = go.gameObject->getType();
             if(lastType != type) {
@@ -97,4 +197,17 @@ void StateController::render(float deltaTime) {
             go.gameObject->render(this->shader);
         }
     }
+
+    // int lastType = 0;
+    // for (int i = 0; i < objectsVector.size(); i++) {
+    //     tStateGameObject go = objectsVector.at(i);
+    //     if(go.shouldRender) {
+    //         int type = go.gameObject->getType();
+    //         if(lastType != type) {
+    //             lastType = type;
+    //             go.gameObject->renderTexture(this->shader);
+    //         }
+    //         go.gameObject->render(this->shader);
+    //     }
+    // }
 }

@@ -29,7 +29,7 @@ tObject ResourcesManager::processObjectFile(std::string filename) {
 
 	GLfloat *points = new GLfloat[pointsCounter];
 
-	float itemsPerPoint = 8;
+	int itemsPerPoint = 8;
 
 	int counter = 0;
 	int texCounter = 0;

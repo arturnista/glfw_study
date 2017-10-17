@@ -1,15 +1,14 @@
 #ifndef __COMMON_HEADER__
 #define __COMMON_HEADER__ 1
 
+#include <iostream>
 #include <GLFW/glfw3.h>
 #include <glm/gtc/type_ptr.hpp>
+#include <math.h>
 #include <string>
 #include <vector>
 
-// std::string vec3ToString(glm::vec3 v) {
-// 	std::string ret = std::to_string(v.x) + "," + std::to_string(v.y) + "," + std::to_string(v.z);
-// 	return ret;
-// }
+typedef unsigned long tHash;
 
 typedef struct {
 	glm::vec3 color;
@@ -22,11 +21,15 @@ typedef struct {
 	std::vector<GLfloat> normalVector;
 	std::vector<GLfloat> textureVector;
 	bool hasTexture;
-	float itemsPerPoint;
+	int itemsPerPoint;
 	GLfloat *points;
 	int pointsCounter;
 	GLuint *vertices;
 	int verticesCounter;
 } tObject;
+
+tHash hashNumber(long v);
+
+tHash hashVec3(glm::vec3 v);
 
 #endif

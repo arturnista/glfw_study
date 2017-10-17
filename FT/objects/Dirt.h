@@ -8,6 +8,7 @@ private:
 
 public:
     Dirt (ResourcesManager* tm);
+    Dirt (ResourcesManager* tm, float size);
 
     void update(GLFWwindow* window, float deltaTime);
 };

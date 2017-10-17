@@ -7,9 +7,9 @@
 #include "StateController.h"
 #include "ResourcesManager.h"
 
-#include "Grass.h"
-#include "Dirt.h"
-#include "Stone.h"
+#include "./objects/Grass.h"
+#include "./objects/Dirt.h"
+#include "./objects/Stone.h"
 
 class Map {
 private:
@@ -28,7 +28,7 @@ private:
 
 public:
     Map (ResourcesManager* resourcesManager, StateController* stateController);
-    void create();
+    bool create(int amount = 0);
     bool createOne();
 };
 

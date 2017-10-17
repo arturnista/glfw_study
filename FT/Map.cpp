@@ -4,9 +4,9 @@ Map::Map (ResourcesManager* resourcesManager, StateController* stateController) 
     this->resourcesManager = resourcesManager;
     this->stateController = stateController;
 
-    this->sizeX = 40;
-    this->sizeZ = 40;
-    this->height = 10;
+    this->sizeX = 30;
+    this->sizeZ = 30;
+    this->height = 5;
 
     this->sizeXCreated = 0;
     this->sizeZCreated = 0;
@@ -15,9 +15,17 @@ Map::Map (ResourcesManager* resourcesManager, StateController* stateController) 
     this->finished = false;
 }
 
-void Map::create() {
-    std::thread mapThread (&Map::createOne, this);
-    mapThread.join();
+bool Map::create(int amount) {
+    if(amount > 0) {
+        for (int i = 0; i < amount; i++) {
+            bool ret = this->createOne();
+            if(!ret) return false;
+        }
+        return true;
+    } else {
+        while (this->createOne()) {}
+        return false;
+    }
 }
 
 bool Map::createOne() {
@@ -48,6 +56,7 @@ bool Map::createOne() {
             this->heightCreated++;
 
             if(this->height <= this->heightCreated) {
+                std::cout << "TERMINOU" << '\n';
                 this->finished = true;
             }
         }

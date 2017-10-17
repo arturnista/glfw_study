@@ -16,7 +16,7 @@ uniform mat4 inverseModel;
 uniform mat4 projection;
 
 void main() {
-    TextureCoord = aTextureCoord;
+    TextureCoord = vec2(aTextureCoord.x, 1 - aTextureCoord.y);
 
     FragPos = vec3(model * vec4(aPos, 1.0));
     Normal = mat3(transpose(inverseModel)) * aNormal;

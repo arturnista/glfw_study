@@ -8,6 +8,7 @@ private:
 
 public:
     Stone (ResourcesManager* tm);
+    Stone (ResourcesManager* tm, float size);
 
     void update(GLFWwindow* window, float deltaTime);
 };

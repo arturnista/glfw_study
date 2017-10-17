@@ -14,7 +14,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "common.h"
-#include "readFiles.h"
+#include "./utils/readFiles.h"
 #include "./vendor/stb_image.h"
 
 class ResourcesManager {
