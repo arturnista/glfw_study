@@ -34,7 +34,7 @@ void StateController::jointObjects(bool reset) {
         std::list<tStateGameObject> valid;
         std::list<tStateGameObject> next = {  };
         std::list<tStateGameObject> nextPromise = { objectsToRenderListToAnalyse.front() };
-        // std::list<tStateGameObject> nextPromise = { objectsVector[2] };
+        // std::list<tStateGameObject> nextPromise = { objectsVector[10] };
 
         int compareType = nextPromise.front().gameObject->getType();
         glm::vec3 initialPos = nextPromise.front().gameObject->getPosition();
@@ -58,16 +58,16 @@ void StateController::jointObjects(bool reset) {
                 valid.push_back( frontObj );
                 next.pop_front();
 
-                if(counter % 4 == 0) frontObj.gameObject->setColor( vec3(0.0f, 0.0f, 1.0f) );
-                else if(counter % 3 == 0) frontObj.gameObject->setColor( vec3(0.0f, 1.0f, 0.0f) );
-                else if(counter % 2 == 0) frontObj.gameObject->setColor( vec3(1.0f, 0.0f, 0.0f) );
+                // frontObj.gameObject->setColor( vec3(1.0f, 0.0f, 0.0f) );
 
                 // Add the new itens from to valid list
                 glm::vec3 pos = frontObj.gameObject->getPosition();
+                int xCompare = pos.x - initialPos.x;
+                int zCompare = pos.z - initialPos.z;
 
                 tHash testPos;
                 tStateGameObject objToAdd;
-                if(pos.x >= pos.z) {
+                if(xCompare >= zCompare) {
                     testPos = hashVec3(vec3(pos.x + 1, pos.y, pos.z));
                     objToAdd = objectsMapByPosition[testPos];
 
@@ -77,7 +77,7 @@ void StateController::jointObjects(bool reset) {
                         running = false;
                     }
                 }
-                if(pos.x <= pos.z) {
+                if(xCompare <= zCompare) {
                     testPos = hashVec3(vec3(pos.x, pos.y, pos.z + 1));
                     objToAdd = objectsMapByPosition[testPos];
 
@@ -87,7 +87,7 @@ void StateController::jointObjects(bool reset) {
                         running = false;
                     }
                 }
-                if(pos.x == pos.z) {
+                if(xCompare == zCompare) {
                     testPos = hashVec3(vec3(pos.x + 1, pos.y, pos.z + 1));
                     objToAdd = objectsMapByPosition[testPos];
 
@@ -127,11 +127,6 @@ void StateController::jointObjects(bool reset) {
             ( (biggerY - minnorY) / 2 ) + minnorY,
             ( (biggerZ - minnorZ) / 2 ) + minnorZ
         );
-
-        std::cout << "Size: " << squadSize << '\t';
-        std::cout << "Valids: " << valid.size() << '\t';
-        std::cout << "Initial: " << glm::to_string(initialPos) << '\t';
-        std::cout << "Center: " << glm::to_string(center) << '\n';
 
         GameObject* compactGo;
         if(compareType == GO_TYPE_GRASS) {
@@ -193,6 +188,7 @@ void StateController::addObject(GameObject* object) {
         unsigned long key = hashVec3(object->getPosition());
         objectsMapByPosition[key] = structObject;
         this->prepareObjects();
+        // this->jointObjects();
     }
 
     // std::sort (objectsVector.begin(), objectsVector.end(), objectSort);
