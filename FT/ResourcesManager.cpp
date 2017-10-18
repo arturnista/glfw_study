@@ -19,7 +19,7 @@ tObject ResourcesManager::processObjectFile(std::string filename) {
 	std::vector<GLfloat> normalVector = {};
 	std::vector<GLfloat> textureVector = {};
 
-	fetchFileData(filename, pointsVector, indexVector, normalVector, textureVector);
+	readObjFile(filename, pointsVector, indexVector, normalVector, textureVector);
 
 	bool hasTexture = textureVector.size() > 0;
 

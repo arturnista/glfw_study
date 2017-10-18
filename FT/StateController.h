@@ -43,12 +43,17 @@ private:
     Shader* shader;
 	ResourcesManager* resourcesManager;
 
+	int yrender;
+
     bool shouldRender(glm::vec3 position);
 public:
     StateController (GLFWwindow* window, Camera* camera, ResourcesManager* rm);
 
     void addObject(GameObject* object);
     std::vector<tStateGameObject> getObjects();
+
+	void setY(int y);
+	int getY();
 
 	void jointObjects(bool reset = false);
 	void prepareObjects();

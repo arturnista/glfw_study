@@ -15,7 +15,7 @@ using namespace std;
 
 const char* readFile(string filename);
 
-void fetchFileData(string filename,
+void readObjFile(string filename,
 					vector<GLfloat>& pointsVector,
 					vector<GLuint>& indexVector,
 					vector<GLfloat>& normalVector,

@@ -42,8 +42,8 @@ int main() {
 		return 1;
 	}
 
-	const float INITIAL_SCREEN_WIDTH = 800;
-	const float INITIAL_SCREEN_HEIGHT = 600;
+	const float INITIAL_SCREEN_WIDTH = 1200;
+	const float INITIAL_SCREEN_HEIGHT = 800;
 
 	GLFWwindow* window = glfwCreateWindow(INITIAL_SCREEN_WIDTH, INITIAL_SCREEN_HEIGHT, "Hello Triangle", NULL, NULL);
 	if (!window) {
@@ -105,7 +105,8 @@ int main() {
 
         frames++;
         if(timePassed >= 2) {
-            std::cout << frames / 2.0f << '\n';
+            std::cout << "FPS:" << frames / 2.0f << '\t';
+            std::cout << "Time: " << timePassed / frames << '\n';
             timePassed = 0;
             frames = 0;
         }
@@ -113,7 +114,7 @@ int main() {
 		/*
 			Objects update
 		*/
-        mapCont->create(1);
+        mapCont->create(10);
         stateController->update(deltaTime);
         stateController->render(deltaTime);
 
@@ -141,6 +142,14 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
     if(key == GLFW_KEY_R && action == GLFW_PRESS) {
         stateController->jointObjects(true);
+    }
+
+    if(key == GLFW_KEY_COMMA && action == GLFW_PRESS) {
+        stateController->setY(stateController->getY() - 1);
+    }
+
+    if(key == GLFW_KEY_PERIOD && action == GLFW_PRESS) {
+        stateController->setY(stateController->getY() + 1);
     }
 }
 

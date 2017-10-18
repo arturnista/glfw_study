@@ -13,12 +13,23 @@ StateController::StateController(GLFWwindow* window, Camera* camera, ResourcesMa
     this->camera = camera;
     this->resourcesManager = rm;
     this->shader = new Shader("texture");
+
+    this->yrender = 0;
+}
+
+void StateController::setY(int y) {
+    this->yrender = y;
+}
+
+int StateController::getY() {
+    return this->yrender;
 }
 
 void StateController::jointObjects(bool reset) {
     std::list<tStateGameObject> objectsToRenderListToAnalyse;
     objectsToRenderList.clear();
     for (size_t i = 0; i < objectsVector.size(); i++) {
+        if(!objectsVector.at(i).shouldRender) continue;
         int type = objectsVector.at(i).gameObject->getType();
         // Player should not be rendered
         if(type != GO_TYPE_PLAYER) {
@@ -218,7 +229,7 @@ void StateController::render(float deltaTime) {
 	shader->use("projection", this->camera->getProjection());
 
     // Set object color
-    shader->use("objectColor", vec3(1.0f));
+    // shader->use("objectColor", vec3(1.0f));
 
 	// Apply lighting
 	shader->use("lightColor", light.color);
@@ -229,6 +240,8 @@ void StateController::render(float deltaTime) {
     for (renderIterator = objectsToRenderList.begin(); renderIterator != objectsToRenderList.end(); ++renderIterator) {
         tStateGameObject go = *renderIterator;
         if(go.shouldRender) {
+            if(go.gameObject->getPosition().y > this->yrender) continue;
+
             int type = go.gameObject->getType();
             if(lastType != type) {
                 lastType = type;
@@ -237,17 +250,4 @@ void StateController::render(float deltaTime) {
             go.gameObject->render(this->shader);
         }
     }
-
-    // int lastType = 0;
-    // for (int i = 0; i < objectsVector.size(); i++) {
-    //     tStateGameObject go = objectsVector.at(i);
-    //     if(go.shouldRender) {
-    //         int type = go.gameObject->getType();
-    //         if(lastType != type) {
-    //             lastType = type;
-    //             go.gameObject->renderTexture(this->shader);
-    //         }
-    //         go.gameObject->render(this->shader);
-    //     }
-    // }
 }
