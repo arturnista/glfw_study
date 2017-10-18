@@ -15,98 +15,142 @@ StateController::StateController(GLFWwindow* window, Camera* camera, ResourcesMa
     this->shader = new Shader("texture");
 }
 
-void StateController::jointObjects() {
-    glm::vec3 lastPosition;
-
+void StateController::jointObjects(bool reset) {
+    std::list<tStateGameObject> objectsToRenderListToAnalyse;
     objectsToRenderList.clear();
     for (size_t i = 0; i < objectsVector.size(); i++) {
         int type = objectsVector.at(i).gameObject->getType();
         // Player should not be rendered
         if(type != GO_TYPE_PLAYER) {
             objectsToRenderList.push_back( objectsVector.at(i) );
+            objectsToRenderListToAnalyse.push_back( objectsVector.at(i) );
         }
     }
 
-    std::list<tStateGameObject> valid;
-    // std::list<tStateGameObject> next = { objectsToRenderList.front() };
-    std::list<tStateGameObject> next = { objectsVector[2] };
+    if(reset) return;
+    int counter = 0;
+    while(!objectsToRenderListToAnalyse.empty()) {
+        counter++;
+        std::list<tStateGameObject> valid;
+        std::list<tStateGameObject> next = {  };
+        std::list<tStateGameObject> nextPromise = { objectsToRenderListToAnalyse.front() };
+        // std::list<tStateGameObject> nextPromise = { objectsVector[2] };
 
-    int type = next.front().gameObject->getType();
-    float biggerX = next.front().gameObject->getPosition().x;
-    float biggerY = next.front().gameObject->getPosition().y;
-    float biggerZ = next.front().gameObject->getPosition().z;
+        int compareType = nextPromise.front().gameObject->getType();
+        glm::vec3 initialPos = nextPromise.front().gameObject->getPosition();
+        float minnorX = initialPos.x;
+        float minnorY = initialPos.y;
+        float minnorZ = initialPos.z;
 
-    while (!next.empty()) {
-        // Get the first object and remove it from the list
-        tStateGameObject frontObj = next.front();
-        valid.push_back( frontObj );
-        next.pop_front();
+        float biggerX = initialPos.x;
+        float biggerY = initialPos.y;
+        float biggerZ = initialPos.z;
 
-        frontObj.gameObject->setColor(vec3(1.0f, 0.0f, 0.0f));
+        bool running = true;
 
-        // Add the new itens from to valid list
-        glm::vec3 pos = frontObj.gameObject->getPosition();
+        while (running) {
+            std::copy( nextPromise.begin(), nextPromise.end(), std::back_inserter( next ) );
+            nextPromise.clear();
 
-        tHash testPos;
-        tStateGameObject objToAdd;
-        if(pos.x >= pos.z) {
-            testPos = hashVec3(vec3(pos.x + 1, pos.y, pos.z));
-            objToAdd = objectsMapByPosition[testPos];
+            while (!next.empty()) {
+                // Get the first object and remove it from the list
+                tStateGameObject frontObj = next.front();
+                valid.push_back( frontObj );
+                next.pop_front();
 
-            if(objToAdd.gameObject != NULL && type == objToAdd.gameObject->getType()) {
-                next.push_back( objToAdd );
+                if(counter % 4 == 0) frontObj.gameObject->setColor( vec3(0.0f, 0.0f, 1.0f) );
+                else if(counter % 3 == 0) frontObj.gameObject->setColor( vec3(0.0f, 1.0f, 0.0f) );
+                else if(counter % 2 == 0) frontObj.gameObject->setColor( vec3(1.0f, 0.0f, 0.0f) );
+
+                // Add the new itens from to valid list
+                glm::vec3 pos = frontObj.gameObject->getPosition();
+
+                tHash testPos;
+                tStateGameObject objToAdd;
+                if(pos.x >= pos.z) {
+                    testPos = hashVec3(vec3(pos.x + 1, pos.y, pos.z));
+                    objToAdd = objectsMapByPosition[testPos];
+
+                    if(objToAdd.gameObject != NULL && compareType == objToAdd.gameObject->getType()) {
+                        nextPromise.push_back( objToAdd );
+                    } else {
+                        running = false;
+                    }
+                }
+                if(pos.x <= pos.z) {
+                    testPos = hashVec3(vec3(pos.x, pos.y, pos.z + 1));
+                    objToAdd = objectsMapByPosition[testPos];
+
+                    if(objToAdd.gameObject != NULL && compareType == objToAdd.gameObject->getType()) {
+                        nextPromise.push_back( objToAdd );
+                    } else {
+                        running = false;
+                    }
+                }
+                if(pos.x == pos.z) {
+                    testPos = hashVec3(vec3(pos.x + 1, pos.y, pos.z + 1));
+                    objToAdd = objectsMapByPosition[testPos];
+
+                    if(objToAdd.gameObject != NULL && compareType == objToAdd.gameObject->getType()) {
+                        nextPromise.push_back( objToAdd );
+                    } else {
+                        running = false;
+                    }
+                }
             }
         }
-        if(pos.x <= pos.z) {
-            testPos = hashVec3(vec3(pos.x, pos.y, pos.z + 1));
-            objToAdd = objectsMapByPosition[testPos];
 
-            if(objToAdd.gameObject != NULL && type == objToAdd.gameObject->getType()) {
-                next.push_back( objToAdd );
-            }
-        }
-        if(pos.x == pos.z) {
-            testPos = hashVec3(vec3(pos.x + 1, pos.y, pos.z + 1));
-            objToAdd = objectsMapByPosition[testPos];
-
-            if(objToAdd.gameObject != NULL && type == objToAdd.gameObject->getType()) {
-                next.push_back( objToAdd );
-            }
+        float squadSize = sqrt(valid.size());
+        if(squadSize == 1.0f) {
+            objectsToRenderListToAnalyse.remove( valid.front() );
+            continue;
         }
 
-        if(biggerX < pos.x) biggerX = pos.x;
-        if(biggerY < pos.y) biggerY = pos.y;
-        if(biggerZ < pos.z) biggerZ = pos.z;
+        std::list<tStateGameObject>::const_iterator validIteractor;
+        for (validIteractor = valid.begin(); validIteractor != valid.end(); ++validIteractor) {
+            tStateGameObject validSGo = *validIteractor;
+
+            vec3 pos = validSGo.gameObject->getPosition();
+            if(biggerX < pos.x) biggerX = pos.x;
+            if(biggerY < pos.y) biggerY = pos.y;
+            if(biggerZ < pos.z) biggerZ = pos.z;
+
+            if(minnorX > pos.x) minnorX = pos.x;
+            if(minnorY > pos.y) minnorY = pos.y;
+            if(minnorZ > pos.z) minnorZ = pos.z;
+
+            objectsToRenderList.remove( validSGo );
+            objectsToRenderListToAnalyse.remove( validSGo );
+        }
+        glm::vec3 center = vec3(
+            ( (biggerX - minnorX) / 2 ) + minnorX,
+            ( (biggerY - minnorY) / 2 ) + minnorY,
+            ( (biggerZ - minnorZ) / 2 ) + minnorZ
+        );
+
+        std::cout << "Size: " << squadSize << '\t';
+        std::cout << "Valids: " << valid.size() << '\t';
+        std::cout << "Initial: " << glm::to_string(initialPos) << '\t';
+        std::cout << "Center: " << glm::to_string(center) << '\n';
+
+        GameObject* compactGo;
+        if(compareType == GO_TYPE_GRASS) {
+            compactGo = new Grass(resourcesManager);
+        } else  if(compareType == GO_TYPE_BUNNY) {
+            compactGo = new Bunny(resourcesManager);
+        } else  if(compareType == GO_TYPE_DIRT) {
+            compactGo = new Dirt(resourcesManager);
+        } else  if(compareType == GO_TYPE_STONE) {
+            compactGo = new Stone(resourcesManager);
+        } else  if(compareType == GO_TYPE_LAMP) {
+            compactGo = new Lamp(resourcesManager);
+        }
+
+        compactGo->setSize(glm::vec3(squadSize, 1.0f, squadSize));
+        compactGo->setPosition(center);
+        objectsToRenderList.push_back( { compactGo, true } );
     }
 
-
-    float squadSize = sqrt(valid.size());
-    if(squadSize == 1.0f) return;
-
-    glm::vec3 center = vec3(biggerX / 2, biggerY / 2, biggerZ / 2);
-
-    std::list<tStateGameObject>::const_iterator validIteractor;
-    for (validIteractor = valid.begin(); validIteractor != valid.end(); ++validIteractor) {
-        tStateGameObject go = *validIteractor;
-        objectsToRenderList.remove( go );
-    }
-
-    GameObject* go;
-    if(type == GO_TYPE_GRASS) {
-        go = new Grass(resourcesManager);
-    } else  if(type == GO_TYPE_BUNNY) {
-        go = new Bunny(resourcesManager);
-    } else  if(type == GO_TYPE_DIRT) {
-        go = new Dirt(resourcesManager);
-    } else  if(type == GO_TYPE_STONE) {
-        go = new Stone(resourcesManager);
-    } else  if(type == GO_TYPE_LAMP) {
-        go = new Lamp(resourcesManager);
-    }
-
-    go->setSize(glm::vec3(squadSize, 1.0f, squadSize));
-    go->setPosition(center);
-    this->addObject( go );
 }
 
 bool StateController::shouldRender(glm::vec3 pos) {

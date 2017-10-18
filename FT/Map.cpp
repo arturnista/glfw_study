@@ -4,8 +4,8 @@ Map::Map (ResourcesManager* resourcesManager, StateController* stateController) 
     this->resourcesManager = resourcesManager;
     this->stateController = stateController;
 
-    this->sizeX = 30;
-    this->sizeZ = 30;
+    this->sizeX = 50;
+    this->sizeZ = 50;
     this->height = 5;
 
     this->sizeXCreated = 0;
@@ -45,18 +45,18 @@ bool Map::createOne() {
         this->stateController->addObject( stoneObject );
     }
 
-
+    float rx = floor( rand() % this->sizeX );
     this->sizeXCreated++;
-    if(this->sizeX <= this->sizeXCreated) {
+    if(this->sizeX + rx <= this->sizeXCreated) {
         this->sizeXCreated = 0;
         this->sizeZCreated++;
 
-        if(this->sizeZ <= this->sizeZCreated) {
+        float rz = floor( rand() % this->sizeZ );
+        if(this->sizeZ + rz <= this->sizeZCreated) {
             this->sizeZCreated = 0;
             this->heightCreated++;
 
             if(this->height <= this->heightCreated) {
-                std::cout << "TERMINOU" << '\n';
                 this->finished = true;
             }
         }

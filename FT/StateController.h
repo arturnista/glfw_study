@@ -50,7 +50,7 @@ public:
     void addObject(GameObject* object);
     std::vector<tStateGameObject> getObjects();
 
-	void jointObjects();
+	void jointObjects(bool reset = false);
 	void prepareObjects();
     void update(float deltaTime);
     void render(float deltaTime);
