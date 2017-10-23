@@ -55,6 +55,7 @@ int main() {
 	glfwSetKeyCallback(window, key_callback);
 	glfwSetCursorPosCallback(window, cursor_pos_callback);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSwapInterval(0); // Vsync off
 
 	// start GLEW extension handler
 	glewExperimental = GL_TRUE;
@@ -114,7 +115,7 @@ int main() {
 		/*
 			Objects update
 		*/
-        mapCont->create(10);
+        mapCont->create(1);
         stateController->update(deltaTime);
         stateController->render(deltaTime);
 
@@ -150,6 +151,13 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
     if(key == GLFW_KEY_PERIOD && action == GLFW_PRESS) {
         stateController->setY(stateController->getY() + 1);
+    }
+
+    if(key == GLFW_KEY_G && action == GLFW_PRESS) {
+        float x = floor( rand() % 25 );
+        float y = floor( rand() % 25 );
+        float z = floor( rand() % 5 );
+        map->break(vec3(x, y, z));
     }
 }
 

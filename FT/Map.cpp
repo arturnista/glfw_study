@@ -4,8 +4,8 @@ Map::Map (ResourcesManager* resourcesManager, StateController* stateController) 
     this->resourcesManager = resourcesManager;
     this->stateController = stateController;
 
-    this->sizeX = 40;
-    this->sizeZ = 40;
+    this->sizeX = 25;
+    this->sizeZ = 25;
     this->height = 5;
 
     this->sizeXCreated = 0;
@@ -55,7 +55,7 @@ bool Map::createOne() {
         if(this->sizeZ + rz <= this->sizeZCreated) {
             this->sizeZCreated = 0;
             this->heightCreated++;
-            // this->stateController->jointObjects();
+            this->stateController->jointObjects();
 
             if(this->height <= this->heightCreated) {
                 this->finished = true;
@@ -63,4 +63,8 @@ bool Map::createOne() {
         }
     }
     return true;
+}
+
+void Map::break(glm::vec3 position) {
+    
 }

@@ -30,6 +30,7 @@ public:
     Map (ResourcesManager* resourcesManager, StateController* stateController);
     bool create(int amount = 0);
     bool createOne();
+    void break(glm::vec3 position);
 };
 
 #endif
