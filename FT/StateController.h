@@ -37,7 +37,7 @@ class StateController {
 private:
 	std::vector<tStateGameObject> objectsVector;
     std::list<tStateGameObject> objectsToRenderList;
-	std::map<unsigned long, tStateGameObject> objectsMapByPosition;
+	std::map<unsigned long, int> objectsMapByPosition;
     GLFWwindow* window;
     Camera* camera;
     Shader* shader;

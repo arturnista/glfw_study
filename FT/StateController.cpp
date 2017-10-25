@@ -78,11 +78,13 @@ void StateController::jointObjects(bool reset) {
 
                 tHash testPos;
                 tStateGameObject objToAdd;
+                int testIndex;
                 if(xCompare >= zCompare) {
                     testPos = hashVec3(vec3(pos.x + 1, pos.y, pos.z));
-                    objToAdd = objectsMapByPosition[testPos];
+                    testIndex = objectsMapByPosition[testPos];
+                    objToAdd = objectsVector.at(testIndex);
 
-                    if(objToAdd.gameObject != NULL && compareType == objToAdd.gameObject->getType()) {
+                    if(objectsVector.size() > testIndex && compareType == objToAdd.gameObject->getType()) {
                         nextPromise.push_back( objToAdd );
                     } else {
                         running = false;
@@ -90,9 +92,10 @@ void StateController::jointObjects(bool reset) {
                 }
                 if(xCompare <= zCompare) {
                     testPos = hashVec3(vec3(pos.x, pos.y, pos.z + 1));
-                    objToAdd = objectsMapByPosition[testPos];
+                    testIndex = objectsMapByPosition[testPos];
+                    objToAdd = objectsVector.at(testIndex);
 
-                    if(objToAdd.gameObject != NULL && compareType == objToAdd.gameObject->getType()) {
+                    if(objectsVector.size() > testIndex && compareType == objToAdd.gameObject->getType()) {
                         nextPromise.push_back( objToAdd );
                     } else {
                         running = false;
@@ -100,9 +103,10 @@ void StateController::jointObjects(bool reset) {
                 }
                 if(xCompare == zCompare) {
                     testPos = hashVec3(vec3(pos.x + 1, pos.y, pos.z + 1));
-                    objToAdd = objectsMapByPosition[testPos];
+                    testIndex = objectsMapByPosition[testPos];
+                    objToAdd = objectsVector.at(testIndex);
 
-                    if(objToAdd.gameObject != NULL && compareType == objToAdd.gameObject->getType()) {
+                    if(objectsVector.size() > testIndex && compareType == objToAdd.gameObject->getType()) {
                         nextPromise.push_back( objToAdd );
                     } else {
                         running = false;
@@ -161,22 +165,28 @@ void StateController::jointObjects(bool reset) {
 
 bool StateController::shouldRender(glm::vec3 pos) {
     unsigned long testPos = hashVec3(vec3(pos.x + 1, pos.y, pos.z));
-    if( objectsMapByPosition[testPos].gameObject == NULL ) return true;
+    int testIndex = objectsMapByPosition[testPos];
+    if( objectsVector.size() > testIndex ) return true;
 
     testPos = hashVec3(vec3(pos.x - 1, pos.y, pos.z));
-    if( objectsMapByPosition[testPos].gameObject == NULL ) return true;
+    testIndex = objectsMapByPosition[testPos];
+    if( objectsVector.size() > testIndex ) return true;
 
     testPos = hashVec3(vec3(pos.x, pos.y + 1, pos.z));
-    if( objectsMapByPosition[testPos].gameObject == NULL ) return true;
+    testIndex = objectsMapByPosition[testPos];
+    if( objectsVector.size() > testIndex ) return true;
 
     testPos = hashVec3(vec3(pos.x, pos.y - 1, pos.z));
-    if( objectsMapByPosition[testPos].gameObject == NULL ) return true;
+    testIndex = objectsMapByPosition[testPos];
+    if( objectsVector.size() > testIndex ) return true;
 
     testPos = hashVec3(vec3(pos.x, pos.y, pos.z + 1));
-    if( objectsMapByPosition[testPos].gameObject == NULL ) return true;
+    testIndex = objectsMapByPosition[testPos];
+    if( objectsVector.size() > testIndex ) return true;
 
     testPos = hashVec3(vec3(pos.x, pos.y, pos.z - 1));
-    if( objectsMapByPosition[testPos].gameObject == NULL ) return true;
+    testIndex = objectsMapByPosition[testPos];
+    if( objectsVector.size() > testIndex ) return true;
 
     return false;
 }
@@ -197,7 +207,7 @@ void StateController::addObject(GameObject* object) {
     if(type != GO_TYPE_PLAYER) {
         objectsToRenderList.push_back( structObject );
         unsigned long key = hashVec3(object->getPosition());
-        objectsMapByPosition[key] = structObject;
+        objectsMapByPosition[key] = objectsVector.size() - 1;
         this->prepareObjects();
         // this->jointObjects();
     }

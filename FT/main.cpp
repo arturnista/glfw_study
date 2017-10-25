@@ -157,7 +157,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         float x = floor( rand() % 25 );
         float y = floor( rand() % 25 );
         float z = floor( rand() % 5 );
-        map->break(vec3(x, y, z));
+        mapCont->breakItem(glm::vec3(x, y, z));
     }
 }
 

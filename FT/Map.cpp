@@ -65,6 +65,6 @@ bool Map::createOne() {
     return true;
 }
 
-void Map::break(glm::vec3 position) {
-    
+void Map::breakItem(glm::vec3 position) {
+
 }
