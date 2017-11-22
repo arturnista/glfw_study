@@ -8,7 +8,7 @@ ResourcesManager::ResourcesManager() {
 
     objectMap["grass_normal"] = this->processObjectFile("./assets/objects/grass_normal.obj");
     objectMap["dirt_normal"] = this->processObjectFile("./assets/objects/dirt_normal.obj");
-    objectMap["cube_normal"] = this->processObjectFile("./assets/objects/cube_normal.obj");
+    objectMap["stone_normal"] = this->processObjectFile("./assets/objects/stone_normal.obj");
     objectMap["bunny_normal"] = this->processObjectFile("./assets/objects/bunny_normal.obj");
     objectMap["cube"] = this->processObjectFile("./assets/objects/cube.obj");
 }
@@ -116,10 +116,21 @@ tObject ResourcesManager::combineObjects(tObject object1, tObject object2, glm::
     pointsVector.insert( pointsVector.end(), object1.pointsVector.begin(), object1.pointsVector.end() );
     pointsVector.insert( pointsVector.end(), object2.pointsVector.begin(), object2.pointsVector.end() );
 
+    for (size_t i = object1.pointsVector.size(); i < pointsVector.size(); i += 3) {
+		pointsVector.at(i) += offset.x;
+		pointsVector.at(i + 1) += offset.y;
+		pointsVector.at(i + 2) += offset.z;
+    }
+
     std::vector<GLuint> indexVector = {};
     indexVector.reserve( object1.indexVector.size() + object2.indexVector.size() );
     indexVector.insert( indexVector.end(), object1.indexVector.begin(), object1.indexVector.end() );
     indexVector.insert( indexVector.end(), object2.indexVector.begin(), object2.indexVector.end() );
+
+    int firstObjPointsInc = object1.pointsVector.size() / 3;
+	for (size_t i = object1.indexVector.size(); i < indexVector.size(); i++) {
+        indexVector.at(i) += firstObjPointsInc;
+    }
 
     std::vector<GLfloat> normalVector = {};
     normalVector.reserve( object1.normalVector.size() + object2.normalVector.size() );
@@ -148,12 +159,6 @@ tObject ResourcesManager::combineObjects(tObject object1, tObject object2, glm::
 		points[i + 0] = pointsVector.at(counter);
 		points[i + 1] = pointsVector.at(counter + 1);
 		points[i + 2] = pointsVector.at(counter + 2);
-        if(i >= object1.pointsVector.size()) {
-            std::cout << "(" << points[i + 0] << ", " << points[i + 1] << ", " << points[i + 2]  << ") => (" << points[i + 0] + offset.x << ", " << points[i + 1] + offset.y << ", " << points[i + 2] + offset.z << ")" << '\n';
-    		points[i + 0] = points[i + 0] + offset.x;
-    		points[i + 1] = points[i + 1] + offset.y;
-    		points[i + 2] = points[i + 2] + offset.z;
-        }
 
 		if(normalVector.size() > 0) {
 			points[i + 3] = normalVector.at(counter);
@@ -181,9 +186,9 @@ tObject ResourcesManager::combineObjects(tObject object1, tObject object2, glm::
 	for (size_t i = 0; i < verticesCounter; i++) vertices[i] = indexVector.at(i) - 1;
 
     // cout << "Object: " << filename << "\t";
-    cout << "vertex count" << " = " << pointsVector.size() << '\t';
-    cout << "face count" << " = " << verticesCounter << '\t';
-    cout << "offset (" << offset.x << ", " << offset.y << ", " << offset.z << ")" << '\n';
+    // cout << "vertex count" << " = " << pointsVector.size() << '\t';
+    // cout << "face count" << " = " << verticesCounter << '\t';
+    // cout << "offset (" << offset.x << ", " << offset.y << ", " << offset.z << ")" << '\n';
 
     return {
     	pointsVector,

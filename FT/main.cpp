@@ -83,9 +83,9 @@ int main() {
 
     Player* player = new Player(camera);
     stateController->addObject( player );
-	Lamp* lampObject = new Lamp(resourcesManager);
-	lampObject->setPosition(lightPosition);
-    stateController->addObject( lampObject );
+	// Lamp* lampObject = new Lamp(resourcesManager);
+	// lampObject->setPosition(lightPosition);
+    // stateController->addObject( lampObject );
 
 	float deltaTime = 0.0f;	// Time between current frame and last frame
     float lastFrame = 0.0f; // Time of last frame

@@ -41,11 +41,13 @@ private:
     GLFWwindow* window;
     Camera* camera;
     Shader* shader;
+
 	ResourcesManager* resourcesManager;
+	tObject objectToRender;
+	GameObject* gameObjectToRender;
 
 	int yrender;
 
-    bool shouldRender(glm::vec3 position);
 public:
     StateController (GLFWwindow* window, Camera* camera, ResourcesManager* rm);
 
@@ -57,7 +59,6 @@ public:
 
 	void jointObjects(bool reset = false);
 	void jointObjectsNEW(bool reset = false);
-	void prepareObjects();
     void update(float deltaTime);
     void render(float deltaTime);
 };

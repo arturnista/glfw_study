@@ -15,6 +15,7 @@ StateController::StateController(GLFWwindow* window, Camera* camera, ResourcesMa
     this->shader = new Shader("texture");
 
     this->yrender = 0;
+    this->gameObjectToRender = NULL;
 }
 
 void StateController::setY(int y) {
@@ -45,7 +46,6 @@ void StateController::jointObjects(bool reset) {
         std::list<tStateGameObject> valid;
         std::list<tStateGameObject> next = {  };
         std::list<tStateGameObject> nextPromise = { objectsToRenderListToAnalyse.front() };
-        // std::list<tStateGameObject> nextPromise = { objectsVector[10] };
 
         int compareType = nextPromise.front().gameObject->getType();
         glm::vec3 initialPos = nextPromise.front().gameObject->getPosition();
@@ -68,8 +68,6 @@ void StateController::jointObjects(bool reset) {
                 tStateGameObject frontObj = next.front();
                 valid.push_back( frontObj );
                 next.pop_front();
-
-                // frontObj.gameObject->setColor( vec3(1.0f, 0.0f, 0.0f) );
 
                 // Add the new itens from to valid list
                 glm::vec3 pos = frontObj.gameObject->getPosition();
@@ -165,53 +163,21 @@ void StateController::jointObjects(bool reset) {
 
 void StateController::jointObjectsNEW(bool reset) {
 
-    tObject object = objectsVector.at(2).gameObject->getObject();
+    tObject object = objectsVector.at(1).gameObject->getObject();
     for (size_t i = 3; i < objectsVector.size(); i++) {
         GameObject* tempGameObject = objectsVector.at(i).gameObject;
         object = this->resourcesManager->combineObjects( object, tempGameObject->getObject(), tempGameObject->getPosition() );
     }
-    std::cout << "itemsPerPoint " << object.itemsPerPoint << '\n';
-    std::cout << "pointsCounter " << object.pointsCounter << '\n';
-    std::cout << "verticesCounter " << object.verticesCounter << '\n';
 
-    GameObject* go = new GameObject(this->resourcesManager, GO_TYPE_STONE, object, 1.0f, vec3(0.0f));
-    go->setTextureName("stone");
+    GameObject* go = new GameObject(this->resourcesManager, GO_TYPE_GRASS, object, 1.0f, vec3(1.0f));
+    go->setTextureName("grass");
     objectsToRenderList.clear();
     objectsToRenderList.push_back({ go, true });
-}
 
-bool StateController::shouldRender(glm::vec3 pos) {
-    unsigned long testPos = hashVec3(vec3(pos.x + 1, pos.y, pos.z));
-    int testIndex = objectsMapByPosition[testPos];
-    if( objectsVector.size() > testIndex ) return true;
+    this->objectToRender = object;
 
-    testPos = hashVec3(vec3(pos.x - 1, pos.y, pos.z));
-    testIndex = objectsMapByPosition[testPos];
-    if( objectsVector.size() > testIndex ) return true;
-
-    testPos = hashVec3(vec3(pos.x, pos.y + 1, pos.z));
-    testIndex = objectsMapByPosition[testPos];
-    if( objectsVector.size() > testIndex ) return true;
-
-    testPos = hashVec3(vec3(pos.x, pos.y - 1, pos.z));
-    testIndex = objectsMapByPosition[testPos];
-    if( objectsVector.size() > testIndex ) return true;
-
-    testPos = hashVec3(vec3(pos.x, pos.y, pos.z + 1));
-    testIndex = objectsMapByPosition[testPos];
-    if( objectsVector.size() > testIndex ) return true;
-
-    testPos = hashVec3(vec3(pos.x, pos.y, pos.z - 1));
-    testIndex = objectsMapByPosition[testPos];
-    if( objectsVector.size() > testIndex ) return true;
-
-    return false;
-}
-
-void StateController::prepareObjects() {
-    for (int i = 0; i < objectsVector.size(); i++) {
-        objectsVector[i].shouldRender = shouldRender(objectsVector[i].gameObject->getPosition());
-    }
+    delete this->gameObjectToRender;
+    this->gameObjectToRender = go;
 }
 
 void StateController::addObject(GameObject* object) {
@@ -219,17 +185,26 @@ void StateController::addObject(GameObject* object) {
         object,
         true
     };
+
     objectsVector.push_back(structObject);
     int type = structObject.gameObject->getType();
     if(type != GO_TYPE_PLAYER) {
         objectsToRenderList.push_back( structObject );
         unsigned long key = hashVec3(object->getPosition());
         objectsMapByPosition[key] = objectsVector.size() - 1;
-        this->prepareObjects();
-        // this->jointObjects();
-    }
 
-    // std::sort (objectsVector.begin(), objectsVector.end(), objectSort);
+        if(this->gameObjectToRender == NULL) {
+            this->objectToRender = object->getObject();
+        } else {
+            this->objectToRender = this->resourcesManager->combineObjects( this->objectToRender, object->getObject(), object->getPosition() );
+        }
+
+        delete this->gameObjectToRender;
+
+        GameObject* go = new GameObject(this->resourcesManager, GO_TYPE_GRASS, this->objectToRender, 1.0f, vec3(1.0f));
+        go->setTextureName("grass");
+        this->gameObjectToRender = go;
+    }
 }
 
 std::vector<tStateGameObject> StateController::getObjects() {
@@ -263,19 +238,24 @@ void StateController::render(float deltaTime) {
 	shader->use("lightPosition", light.position);
 
     int lastType = 0;
-    std::list<tStateGameObject>::const_iterator renderIterator;
-    for (renderIterator = objectsToRenderList.begin(); renderIterator != objectsToRenderList.end(); ++renderIterator) {
-        tStateGameObject go = *renderIterator;
-        if(go.shouldRender) {
-            if(go.gameObject->getPosition().y > this->yrender) continue;
-
-            int type = go.gameObject->getType();
-            if(lastType != type) {
-                lastType = type;
-                go.gameObject->renderTexture(this->shader);
-            }
-
-            go.gameObject->render(this->shader);
-        }
+    if(gameObjectToRender != NULL) {
+        gameObjectToRender->renderTexture(this->shader);
+        gameObjectToRender->render(this->shader);
     }
+
+    // std::list<tStateGameObject>::const_iterator renderIterator;
+    // for (renderIterator = objectsToRenderList.begin(); renderIterator != objectsToRenderList.end(); ++renderIterator) {
+    //     tStateGameObject go = *renderIterator;
+    //     if(go.shouldRender) {
+    //         if(go.gameObject->getPosition().y > this->yrender) continue;
+    //
+    //         int type = go.gameObject->getType();
+    //         if(lastType != type) {
+    //             lastType = type;
+    //             go.gameObject->renderTexture(this->shader);
+    //         }
+    //
+    //         go.gameObject->render(this->shader);
+    //     }
+    // }
 }

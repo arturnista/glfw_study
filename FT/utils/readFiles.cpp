@@ -34,6 +34,7 @@ void readObjFile(string filename,
 
 		while(!openedFile.eof()) {
 			openedFile >> line;
+			if(openedFile.eof()) break;
 
 			if(line.compare("v") == 0) {
 				openedFile >> strNumber;
@@ -55,7 +56,6 @@ void readObjFile(string filename,
 				openedFile >> strNumber;
 				textureVector.push_back( stof(strNumber) );
 			} else if(line.compare("f") == 0) {
-
 				int count = 3;
 				for (size_t i = 0; i < count; i++) {
 					openedFile >> strNumber;

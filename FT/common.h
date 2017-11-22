@@ -15,7 +15,7 @@ typedef struct {
 	glm::vec3 position;
 } tLight;
 
-typedef struct {
+struct tObject {
 	std::vector<GLfloat> pointsVector;
 	std::vector<GLuint> indexVector;
 	std::vector<GLfloat> normalVector;
@@ -26,7 +26,14 @@ typedef struct {
 	int pointsCounter;
 	GLuint *vertices;
 	int verticesCounter;
-} tObject;
+
+	~tObject() {
+		// std::cout << "Delete" << '\n';
+		// delete points;
+		// delete vertices;
+	}
+};
+typedef struct tObject tObject;
 
 tHash hashNumber(long v);
 
