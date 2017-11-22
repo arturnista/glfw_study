@@ -35,6 +35,7 @@ protected:
 	int vertexCounter;
 	string textureName;
 	bool hasTexture;
+	tObject objectData;
 
 	vec3 color;
 
@@ -46,6 +47,10 @@ protected:
 	Shader* shader;
 public:
 	GameObject (ResourcesManager* rm, int type);
+
+	GameObject (ResourcesManager* rm, int type, tObject objectData, float size, vec3 color);
+	GameObject (ResourcesManager* rm, int type, tObject objectData, vec3 size, vec3 color);
+
 	GameObject (ResourcesManager* rm, int type, string filename, float size, vec3 color);
     GameObject (ResourcesManager* rm, int type, string filename, vec3 size, vec3 color);
 
@@ -69,6 +74,8 @@ public:
 
     vec3 getColor();
 	void setColor(vec3 color);
+
+	tObject getObject();
 
     vec3 getSize();
 	void setSize(float size);

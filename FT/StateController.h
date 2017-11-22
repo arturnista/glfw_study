@@ -56,6 +56,7 @@ public:
 	int getY();
 
 	void jointObjects(bool reset = false);
+	void jointObjectsNEW(bool reset = false);
 	void prepareObjects();
     void update(float deltaTime);
     void render(float deltaTime);

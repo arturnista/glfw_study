@@ -15,15 +15,15 @@ GameObject::GameObject (ResourcesManager* rm, int type) {
 	this->resourcesManager = rm;
 }
 
-GameObject::GameObject (ResourcesManager* rm, int type, string fn, float size, vec3 color) : GameObject::GameObject (rm, type, fn, vec3(size), color) {}
+GameObject::GameObject (ResourcesManager* rm, int type, tObject objectData, float size, vec3 color) : GameObject::GameObject (rm, type, objectData, vec3(size), color) {}
 
-GameObject::GameObject (ResourcesManager* rm, int type, string fn, vec3 size, vec3 color) {
-	tObject object = rm->getObject(fn);
+GameObject::GameObject (ResourcesManager* rm, int type, tObject objectData, vec3 size, vec3 color) {
+	this->objectData = objectData;
 
 	GLuint VBO = 0;
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, object.pointsCounter * sizeof(GLfloat), object.points, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, this->objectData.pointsCounter * sizeof(GLfloat), this->objectData.points, GL_STATIC_DRAW);
 
 	GLuint VAO = 0;
 	glGenVertexArrays(1, &VAO);
@@ -31,28 +31,79 @@ GameObject::GameObject (ResourcesManager* rm, int type, string fn, vec3 size, ve
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
 	// Positions
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, object.itemsPerPoint * sizeof(GLfloat), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, this->objectData.itemsPerPoint * sizeof(GLfloat), (void*)0);
 	glEnableVertexAttribArray(0);
 
 	// Normal
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, object.itemsPerPoint * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, this->objectData.itemsPerPoint * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(1);
 
 	// Texture
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, object.itemsPerPoint * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, this->objectData.itemsPerPoint * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(2);
 
-	if(object.verticesCounter > 0) {
+	if(this->objectData.verticesCounter > 0) {
 		GLuint EBO = 0;
 		glGenBuffers(1, &EBO);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * object.verticesCounter, object.vertices, GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * this->objectData.verticesCounter, this->objectData.vertices, GL_STATIC_DRAW);
 	}
 
 	this->type = type;
 
-	this->hasTexture = object.hasTexture;
-    this->vertexCounter = object.verticesCounter;
+	this->hasTexture = this->objectData.hasTexture;
+    this->vertexCounter = this->objectData.verticesCounter;
+    this->VAO = VAO;
+    this->rotation = vec3(0.0f);
+    this->model = rotate(this->model, radians(-55.0f), vec3(1.0f, 0.0f, 0.0f));
+
+	this->setSize(size);
+	this->setPosition(vec3(0.0f));
+
+	this->color = color;
+
+	this->shader = new Shader("texture");
+	this->resourcesManager = rm;
+}
+
+GameObject::GameObject (ResourcesManager* rm, int type, string fn, float size, vec3 color) : GameObject::GameObject (rm, type, fn, vec3(size), color) {}
+
+GameObject::GameObject (ResourcesManager* rm, int type, string fn, vec3 size, vec3 color) {
+	this->objectData = rm->getObject(fn);
+
+	GLuint VBO = 0;
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, this->objectData.pointsCounter * sizeof(GLfloat), this->objectData.points, GL_STATIC_DRAW);
+
+	GLuint VAO = 0;
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+	// Positions
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, this->objectData.itemsPerPoint * sizeof(GLfloat), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	// Normal
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, this->objectData.itemsPerPoint * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(1);
+
+	// Texture
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, this->objectData.itemsPerPoint * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(2);
+
+	if(this->objectData.verticesCounter > 0) {
+		GLuint EBO = 0;
+		glGenBuffers(1, &EBO);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * this->objectData.verticesCounter, this->objectData.vertices, GL_STATIC_DRAW);
+	}
+
+	this->type = type;
+
+	this->hasTexture = this->objectData.hasTexture;
+    this->vertexCounter = this->objectData.verticesCounter;
     this->VAO = VAO;
     this->rotation = vec3(0.0f);
     this->model = rotate(this->model, radians(-55.0f), vec3(1.0f, 0.0f, 0.0f));
@@ -142,6 +193,10 @@ void GameObject::rotateZ(float value) {
 
 vec3 GameObject::getColor() {
     return color;
+}
+
+tObject GameObject::getObject() {
+    return this->objectData;
 }
 
 void GameObject::setColor(vec3 color) {

@@ -163,6 +163,20 @@ void StateController::jointObjects(bool reset) {
 
 }
 
+void StateController::jointObjectsNEW(bool reset) {
+
+    tObject object = objectsVector.at(0).gameObject->getObject();
+    for (size_t i = 1; i < objectsVector.size(); i++) {
+        object = this->resourcesManager->combineObjects(
+            objectsVector.at(i).gameObject->getObject(), object
+        );
+    }
+
+    GameObject* go = new GameObject(this->resourcesManager, GO_TYPE_GRASS, object, 1.0f, vec3(0.0f));
+    objectsToRenderList.clear();
+    objectsToRenderList.push_back({ go, true });
+}
+
 bool StateController::shouldRender(glm::vec3 pos) {
     unsigned long testPos = hashVec3(vec3(pos.x + 1, pos.y, pos.z));
     int testIndex = objectsMapByPosition[testPos];

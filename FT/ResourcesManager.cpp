@@ -110,6 +110,88 @@ unsigned int ResourcesManager::processTexture(std::string filename) {
     return texture;
 }
 
+tObject ResourcesManager::combineObjects(tObject object1, tObject object2) {
+    std::vector<GLfloat> pointsVector = {};
+    pointsVector.reserve( object1.pointsVector.size() + object2.pointsVector.size() );
+    pointsVector.insert( pointsVector.end(), object1.pointsVector.begin(), object1.pointsVector.end() );
+    pointsVector.insert( pointsVector.end(), object2.pointsVector.begin(), object2.pointsVector.end() );
+
+    std::vector<GLuint> indexVector = {};
+    indexVector.reserve( object1.indexVector.size() + object2.indexVector.size() );
+    indexVector.insert( indexVector.end(), object1.indexVector.begin(), object1.indexVector.end() );
+    indexVector.insert( indexVector.end(), object2.indexVector.begin(), object2.indexVector.end() );
+
+    std::vector<GLfloat> normalVector = {};
+    normalVector.reserve( object1.normalVector.size() + object2.normalVector.size() );
+    normalVector.insert( normalVector.end(), object1.normalVector.begin(), object1.normalVector.end() );
+    normalVector.insert( normalVector.end(), object2.normalVector.begin(), object2.normalVector.end() );
+
+    std::vector<GLfloat> textureVector = {};
+    textureVector.reserve( object1.textureVector.size() + object2.textureVector.size() );
+    textureVector.insert( textureVector.end(), object1.textureVector.begin(), object1.textureVector.end() );
+    textureVector.insert( textureVector.end(), object2.textureVector.begin(), object2.textureVector.end() );
+
+    bool hasTexture = textureVector.size() > 0;
+
+	int textureCounter = (pointsVector.size() / 3) * 2;
+	int pointsCounter = pointsVector.size() * 2 + textureCounter;
+	int verticesCounter = indexVector.size();
+
+	GLfloat *points = new GLfloat[pointsCounter];
+
+	int itemsPerPoint = 8;
+
+	int counter = 0;
+	int texCounter = 0;
+	for (size_t i = 0; i < pointsCounter; i += itemsPerPoint) {
+		// Position
+		points[i + 0] = pointsVector.at(counter);
+		points[i + 1] = pointsVector.at(counter + 1);
+		points[i + 2] = pointsVector.at(counter + 2);
+
+		if(normalVector.size() > 0) {
+			points[i + 3] = normalVector.at(counter);
+			points[i + 4] = normalVector.at(counter + 1);
+			points[i + 5] = normalVector.at(counter + 2);
+		} else {
+			points[i + 3] = 1.0f;
+			points[i + 4] = 0.0f;
+			points[i + 5] = 0.0f;
+		}
+
+		if(hasTexture) {
+			points[i + 6] = textureVector.at(texCounter);
+			points[i + 7] = textureVector.at(texCounter + 1);
+		} else {
+			points[i + 6] = 0.0f;
+			points[i + 7] = 0.0f;
+		}
+
+		texCounter += 2;
+		counter += 3;
+	}
+
+	GLuint *vertices = new GLuint[verticesCounter];
+	for (size_t i = 0; i < verticesCounter; i++) vertices[i] = indexVector.at(i) - 1;
+
+    // cout << "Object: " << filename << "\t";
+    cout << "vertex count" << " = " << pointsVector.size() << '\t';
+    cout << "face count" << " = " << verticesCounter << '\n';
+
+    return {
+    	pointsVector,
+    	indexVector,
+    	normalVector,
+    	textureVector,
+    	hasTexture,
+        itemsPerPoint,
+    	points,
+    	pointsCounter,
+    	vertices,
+    	verticesCounter
+    };
+}
+
 tObject ResourcesManager::getObject(std::string objectName) {
     return this->objectMap[objectName];
 }
