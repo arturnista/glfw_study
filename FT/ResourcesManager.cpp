@@ -110,7 +110,7 @@ unsigned int ResourcesManager::processTexture(std::string filename) {
     return texture;
 }
 
-tObject ResourcesManager::combineObjects(tObject object1, tObject object2) {
+tObject ResourcesManager::combineObjects(tObject object1, tObject object2, glm::vec3 offset) {
     std::vector<GLfloat> pointsVector = {};
     pointsVector.reserve( object1.pointsVector.size() + object2.pointsVector.size() );
     pointsVector.insert( pointsVector.end(), object1.pointsVector.begin(), object1.pointsVector.end() );
@@ -148,6 +148,12 @@ tObject ResourcesManager::combineObjects(tObject object1, tObject object2) {
 		points[i + 0] = pointsVector.at(counter);
 		points[i + 1] = pointsVector.at(counter + 1);
 		points[i + 2] = pointsVector.at(counter + 2);
+        if(i >= object1.pointsVector.size()) {
+            std::cout << "(" << points[i + 0] << ", " << points[i + 1] << ", " << points[i + 2]  << ") => (" << points[i + 0] + offset.x << ", " << points[i + 1] + offset.y << ", " << points[i + 2] + offset.z << ")" << '\n';
+    		points[i + 0] = points[i + 0] + offset.x;
+    		points[i + 1] = points[i + 1] + offset.y;
+    		points[i + 2] = points[i + 2] + offset.z;
+        }
 
 		if(normalVector.size() > 0) {
 			points[i + 3] = normalVector.at(counter);
@@ -176,7 +182,8 @@ tObject ResourcesManager::combineObjects(tObject object1, tObject object2) {
 
     // cout << "Object: " << filename << "\t";
     cout << "vertex count" << " = " << pointsVector.size() << '\t';
-    cout << "face count" << " = " << verticesCounter << '\n';
+    cout << "face count" << " = " << verticesCounter << '\t';
+    cout << "offset (" << offset.x << ", " << offset.y << ", " << offset.z << ")" << '\n';
 
     return {
     	pointsVector,

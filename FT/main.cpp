@@ -141,6 +141,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         stateController->jointObjects();
     }
 
+    if(key == GLFW_KEY_V && action == GLFW_PRESS) {
+        stateController->jointObjectsNEW();
+    }
+
     if(key == GLFW_KEY_R && action == GLFW_PRESS) {
         stateController->jointObjects(true);
     }

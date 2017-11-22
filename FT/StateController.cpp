@@ -165,14 +165,17 @@ void StateController::jointObjects(bool reset) {
 
 void StateController::jointObjectsNEW(bool reset) {
 
-    tObject object = objectsVector.at(0).gameObject->getObject();
-    for (size_t i = 1; i < objectsVector.size(); i++) {
-        object = this->resourcesManager->combineObjects(
-            objectsVector.at(i).gameObject->getObject(), object
-        );
+    tObject object = objectsVector.at(2).gameObject->getObject();
+    for (size_t i = 3; i < objectsVector.size(); i++) {
+        GameObject* tempGameObject = objectsVector.at(i).gameObject;
+        object = this->resourcesManager->combineObjects( object, tempGameObject->getObject(), tempGameObject->getPosition() );
     }
+    std::cout << "itemsPerPoint " << object.itemsPerPoint << '\n';
+    std::cout << "pointsCounter " << object.pointsCounter << '\n';
+    std::cout << "verticesCounter " << object.verticesCounter << '\n';
 
-    GameObject* go = new GameObject(this->resourcesManager, GO_TYPE_GRASS, object, 1.0f, vec3(0.0f));
+    GameObject* go = new GameObject(this->resourcesManager, GO_TYPE_STONE, object, 1.0f, vec3(0.0f));
+    go->setTextureName("stone");
     objectsToRenderList.clear();
     objectsToRenderList.push_back({ go, true });
 }
@@ -271,6 +274,7 @@ void StateController::render(float deltaTime) {
                 lastType = type;
                 go.gameObject->renderTexture(this->shader);
             }
+
             go.gameObject->render(this->shader);
         }
     }

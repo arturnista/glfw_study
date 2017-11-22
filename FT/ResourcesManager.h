@@ -30,7 +30,7 @@ public:
 
     unsigned int getTexture(std::string textureName);
     tObject getObject(std::string objectName);
-    tObject combineObjects(tObject object1, tObject object2);
+    tObject combineObjects(tObject object1, tObject object2, glm::vec3 offset);
 };
 
 #endif
