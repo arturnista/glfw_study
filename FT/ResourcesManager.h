@@ -25,6 +25,7 @@ private:
     std::map<std::string, unsigned int> textureMap;
     std::map<std::string, tObject> objectMap;
     tLight light;
+    tJson configData;
 
     unsigned int processTexture(std::string filename);
     tObject processObjectFile(std::string filename);
@@ -37,6 +38,8 @@ public:
     unsigned int getTexture(std::string textureName);
     tObject getObject(std::string objectName);
     tLight getLight();
+
+    tJson getConfigData();
 };
 
 #endif
