@@ -16,6 +16,12 @@ StateController::StateController(GLFWwindow* window, Camera* camera, ResourcesMa
 
     this->yrender = 0;
     this->gameObjectToRender = NULL;
+
+    this->light = {
+        vec3(1.0f, 1.0f, 1.0f), // Color
+        vec3(30.0f, 10.0f, 30.0f) // Position
+    };
+    this->lightDirection = true;
 }
 
 void StateController::setY(int y) {
@@ -213,17 +219,22 @@ std::vector<tStateGameObject> StateController::getObjects() {
 
 void StateController::update(float deltaTime) {
     objectsVector.at(0).gameObject->update(this->window, deltaTime);
+    if(this->lightDirection) {
+        this->light.position.x += 10.0f * deltaTime;
+        this->light.position.z += 10.0f * deltaTime;
+        if(this->light.position.x > 40) this->lightDirection = !this->lightDirection;
+    } else {
+        this->light.position.x -= 10.0f * deltaTime;
+        this->light.position.z -= 10.0f * deltaTime;
+        if(this->light.position.x < -40) this->lightDirection = !this->lightDirection;
+    }
     // for (int i = 0; i < objectsVector.size(); i++) {
     //     objectsVector.at(i).gameObject->update(this->window, deltaTime);
     // }
+    objectsVector.at(1).gameObject->setPosition(this->light.position);
 }
 
 void StateController::render(float deltaTime) {
-    tLight light = {
-        vec3(1.0f, 1.0f, 1.0f), // Color
-        vec3(30.0f, 10.0f, 0.0f) // Position
-    };
-
     glUseProgram(this->shader->getProgram());
 
 	// Apply camera position
@@ -235,8 +246,8 @@ void StateController::render(float deltaTime) {
     // shader->use("objectColor", vec3(1.0f));
 
 	// Apply lighting
-	shader->use("lightColor", light.color);
-	shader->use("lightPosition", light.position);
+	shader->use("lightColor", this->light.color);
+	shader->use("lightPosition", this->light.position);
 
     int lastType = 0;
     if(gameObjectToRender != NULL) {

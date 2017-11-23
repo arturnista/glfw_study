@@ -42,6 +42,9 @@ private:
     Camera* camera;
     Shader* shader;
 
+	tLight light;
+	bool lightDirection;
+
 	ResourcesManager* resourcesManager;
 	tObject objectToRender;
 	GameObject* gameObjectToRender;

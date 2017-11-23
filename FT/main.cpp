@@ -69,12 +69,15 @@ int main() {
 
 	// tell GL to only draw onto a pixel if the shape is closer to the viewer
 	glEnable(GL_DEPTH_TEST); // enable depth-testing
-    // glEnable(GL_CULL_FACE);
-	glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
+    glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
+
+    glFrontFace(GL_CCW);
+    glCullFace(GL_BACK);
+    glEnable(GL_CULL_FACE);
 
     printf("\nPre GameLoop actions\n\n");
 
-	glm::vec3 lightPosition = glm::vec3(30.0f, 10.0f, 0.0f);
+	glm::vec3 lightPosition = glm::vec3(30.0f, 10.0f, 30.0f);
 
     camera = new Camera(window);
     resourcesManager = new ResourcesManager();
@@ -83,9 +86,9 @@ int main() {
 
     Player* player = new Player(camera);
     stateController->addObject( player );
-	// Lamp* lampObject = new Lamp(resourcesManager);
-	// lampObject->setPosition(lightPosition);
-    // stateController->addObject( lampObject );
+	Lamp* lampObject = new Lamp(resourcesManager);
+	lampObject->setPosition(lightPosition);
+    stateController->addObject( lampObject );
 
 	float deltaTime = 0.0f;	// Time between current frame and last frame
     float lastFrame = 0.0f; // Time of last frame

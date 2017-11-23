@@ -142,57 +142,6 @@ tObject ResourcesManager::combineObjects(tObject object1, tObject object2, glm::
     textureVector.insert( textureVector.end(), object1.textureVector.begin(), object1.textureVector.end() );
     textureVector.insert( textureVector.end(), object2.textureVector.begin(), object2.textureVector.end() );
 
-    // int texCounterToRemove = 0;
-    // int texCounterToRemoveSec = 0;
-    // for (size_t firstCounter = 0; firstCounter < object1.pointsVector.size(); firstCounter += 3) {
-    //
-    //     texCounterToRemoveSec = texCounterToRemove;
-    //     for (size_t secCounter = object1.pointsVector.size(); secCounter < pointsVector.size(); secCounter += 3) {
-    //
-    //         // Remove all
-    //         if(
-    //             pointsVector.at(firstCounter) == pointsVector.at(secCounter) &&
-    //             pointsVector.at(firstCounter + 1) == pointsVector.at(secCounter + 1) &&
-    //             pointsVector.at(firstCounter + 2) == pointsVector.at(secCounter + 2)
-    //         ) {
-    //             int indexToReplace = firstCounter / 3;
-    //             int indexDuplicated = secCounter / 3;
-    //             std::cout << firstCounter << " : " << pointsVector.at(firstCounter) <<  ", " <<  pointsVector.at(firstCounter + 1) <<  ", " <<  pointsVector.at(firstCounter + 2) << '\t';
-    //             std::cout << secCounter << " : " << pointsVector.at(secCounter) <<  ", " << pointsVector.at(secCounter + 1) <<  ", " << pointsVector.at(secCounter + 2) << '\t';
-    //
-    //             pointsVector.erase( pointsVector.begin() + (secCounter) );
-    //             pointsVector.erase( pointsVector.begin() + (secCounter) );
-    //             pointsVector.erase( pointsVector.begin() + (secCounter) );
-    //
-    //             normalVector.erase( normalVector.begin() + (secCounter) );
-    //             normalVector.erase( normalVector.begin() + (secCounter) );
-    //             normalVector.erase( normalVector.begin() + (secCounter) );
-    //
-    //             if(texCounterToRemoveSec < textureVector.size()) {
-    //                 textureVector.erase( textureVector.begin() + (texCounterToRemoveSec) );
-    //                 textureVector.erase( textureVector.begin() + (texCounterToRemoveSec) );
-    //             }
-    //
-    //             // vec.erase(vec.begin() + 1);
-    //
-    //             for (size_t i = 0; i < indexVector.size(); i++) {
-    //                 if(indexVector.at(i) == indexDuplicated) {
-    //                     std::cout << "[" << i << "] = " << indexDuplicated << " to " << indexToReplace << '\n';
-    //                     indexVector.at(i) = indexToReplace;
-    //                 }
-    //             }
-    //
-    //             secCounter -= 3;
-    //             texCounterToRemoveSec -= 2;
-    //         }
-    //
-    //         texCounterToRemoveSec += 2;
-    //     }
-    //
-    //     texCounterToRemove += 2;
-    // }
-
-
     bool hasTexture = textureVector.size() > 0;
 
     int textureCounter = (pointsVector.size() / 3) * 2;
