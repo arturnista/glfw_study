@@ -4,8 +4,8 @@ Map::Map (ResourcesManager* resourcesManager, StateController* stateController) 
     this->resourcesManager = resourcesManager;
     this->stateController = stateController;
 
-    this->sizeX = 5;
-    this->sizeZ = 5;
+    this->sizeX = 10;
+    this->sizeZ = 10;
     this->height = 5;
 
     this->sizeXCreated = 0;
@@ -45,15 +45,15 @@ bool Map::createOne() {
         this->stateController->addObject( stoneObject );
     }
 
-    // float rx = 0.0f;
-    float rx = floor( rand() % this->sizeX );
+    float rx = 0.0f;
+    // float rx = floor( rand() % this->sizeX );
     this->sizeXCreated++;
     if(this->sizeX + rx <= this->sizeXCreated) {
         this->sizeXCreated = 0;
         this->sizeZCreated++;
 
-        // float rz = 0.0f;
-        float rz = floor( rand() % this->sizeZ );
+        float rz = 0.0f;
+        // float rz = floor( rand() % this->sizeZ );
         if(this->sizeZ + rz <= this->sizeZCreated) {
             this->sizeZCreated = 0;
             this->heightCreated++;

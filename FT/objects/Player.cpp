@@ -3,12 +3,13 @@
 Player::Player(Camera* camera) : GameObject(NULL, GO_TYPE_PLAYER) {
     this->camera = camera;
 
+    this->firstMouse = true;
     this->lastMouseX = 0.0f;
     this->lastMouseY = 0.0f;
     this->pitch = 0;
     this->yaw = 0;
 
-    this->mouseSens = 100.0f;
+    this->mouseSens = 10.0f;
 
     this->position = vec3(0.0f, 5.0f, 0.0f);
     camera->setPosition(this->position);
@@ -18,6 +19,12 @@ void Player::update(GLFWwindow* window, float deltaTime) {
     // Get the cursor position
     double mouseX, mouseY;
     glfwGetCursorPos(window, &mouseX, &mouseY);
+
+    if(this->firstMouse) {
+        this->lastMouseY = mouseY;
+        this->lastMouseX = mouseX;
+        this->firstMouse = false;
+    }
 
     // Compute the mouse position
     float mouseOffsetX = (mouseX - this->lastMouseX) * deltaTime * mouseSens;

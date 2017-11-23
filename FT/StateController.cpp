@@ -164,7 +164,7 @@ void StateController::jointObjects(bool reset) {
 void StateController::jointObjectsNEW(bool reset) {
 
     tObject object = objectsVector.at(1).gameObject->getObject();
-    for (size_t i = 3; i < objectsVector.size(); i++) {
+    for (size_t i = 2; i < objectsVector.size(); i++) {
         GameObject* tempGameObject = objectsVector.at(i).gameObject;
         object = this->resourcesManager->combineObjects( object, tempGameObject->getObject(), tempGameObject->getPosition() );
     }
@@ -212,9 +212,10 @@ std::vector<tStateGameObject> StateController::getObjects() {
 }
 
 void StateController::update(float deltaTime) {
-    for (int i = 0; i < objectsVector.size(); i++) {
-        objectsVector.at(i).gameObject->update(this->window, deltaTime);
-    }
+    objectsVector.at(0).gameObject->update(this->window, deltaTime);
+    // for (int i = 0; i < objectsVector.size(); i++) {
+    //     objectsVector.at(i).gameObject->update(this->window, deltaTime);
+    // }
 }
 
 void StateController::render(float deltaTime) {

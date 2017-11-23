@@ -9,7 +9,8 @@ private:
     Camera* camera;
 
     glm::vec3 position;
-
+    
+    bool firstMouse;
 	double lastMouseX;
 	double lastMouseY;
 
