@@ -26,9 +26,11 @@ struct tObject {
 	int pointsCounter;
 	GLuint *vertices;
 	int verticesCounter;
+	int index;
 
 	~tObject() {
-		// std::cout << "Delete" << '\n';
+		std::cout << "Delete" << '\t';
+		std::cout << index << '\n';
 		// delete points;
 		// delete vertices;
 	}

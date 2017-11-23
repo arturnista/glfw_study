@@ -1,6 +1,8 @@
 #include "ResourcesManager.h"
 
 ResourcesManager::ResourcesManager() {
+    this->counterObj = 0;
+
     textureMap["grass"] = this->processTexture("./assets/textures/grass.jpg");
     textureMap["stone"] = this->processTexture("./assets/textures/stone.jpg");
     textureMap["container"] = this->processTexture("./assets/textures/container.jpg");
@@ -78,7 +80,8 @@ tObject ResourcesManager::processObjectFile(std::string filename) {
     	points,
     	pointsCounter,
     	vertices,
-    	verticesCounter
+    	verticesCounter,
+        this->counterObj++
     };
 }
 
@@ -190,6 +193,9 @@ tObject ResourcesManager::combineObjects(tObject object1, tObject object2, glm::
     // cout << "face count" << " = " << verticesCounter << '\t';
     // cout << "offset (" << offset.x << ", " << offset.y << ", " << offset.z << ")" << '\n';
 
+    this->counterObj++;
+
+    std::cout << "\tCriei o " << this->counterObj << '\n';
     return {
     	pointsVector,
     	indexVector,
@@ -200,7 +206,8 @@ tObject ResourcesManager::combineObjects(tObject object1, tObject object2, glm::
     	points,
     	pointsCounter,
     	vertices,
-    	verticesCounter
+    	verticesCounter,
+        this->counterObj
     };
 }
 

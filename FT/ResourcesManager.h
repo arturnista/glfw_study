@@ -22,6 +22,8 @@ private:
     std::map<std::string, unsigned int> textureMap;
     std::map<std::string, tObject> objectMap;
 
+    int counterObj;
+
     unsigned int processTexture(std::string filename);
     tObject processObjectFile(std::string filename);
 
