@@ -1,0 +1,22 @@
+{
+    "textures": {
+        "grass": "./assets/textures/grass.jpg",
+        "stone": "./assets/textures/stone.jpg",
+        "container": "./assets/textures/container.jpg",
+        "wall": "./assets/textures/wall.jpg"
+    },
+    "objects": {
+        "grass_normal": "./assets/objects/grass_normal.obj",
+        "dirt_normal": "./assets/objects/dirt_normal.obj",
+        "stone_normal": "./assets/objects/stone_normal.obj",
+        "bunny_normal": "./assets/objects/bunny_normal.obj",
+        "cube": "./assets/objects/cube.obj"
+    },
+    "camera": {
+        "position": { "x": -5, "y": 5, "z": 5 }
+    },
+    "light": {
+        "color": { "r": 1, "g": 1, "b": 1 },
+        "position": { "x": 30, "y": 10, "z": 0 }
+    }
+}

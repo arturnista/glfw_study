@@ -16,13 +16,15 @@
 #include "common.h"
 #include "./utils/readFiles.h"
 #include "./vendor/stb_image.h"
+#include "./vendor/json.h"
+
+using tJson = nlohmann::json;
 
 class ResourcesManager {
 private:
     std::map<std::string, unsigned int> textureMap;
     std::map<std::string, tObject> objectMap;
-
-    int counterObj;
+    tLight light;
 
     unsigned int processTexture(std::string filename);
     tObject processObjectFile(std::string filename);
@@ -30,9 +32,11 @@ private:
 public:
     ResourcesManager ();
 
+    tObject combineObjects(tObject object1, tObject object2, glm::vec3 offset);
+
     unsigned int getTexture(std::string textureName);
     tObject getObject(std::string objectName);
-    tObject combineObjects(tObject object1, tObject object2, glm::vec3 offset);
+    tLight getLight();
 };
 
 #endif

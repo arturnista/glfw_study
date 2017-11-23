@@ -1,16 +1,29 @@
 #include "ResourcesManager.h"
 
 ResourcesManager::ResourcesManager() {
-    textureMap["grass"] = this->processTexture("./assets/textures/grass.jpg");
-    textureMap["stone"] = this->processTexture("./assets/textures/stone.jpg");
-    textureMap["container"] = this->processTexture("./assets/textures/container.jpg");
-    textureMap["wall"] = this->processTexture("./assets/textures/wall.jpg");
+    tJson confiData = readConfigFile();
 
-    objectMap["grass_normal"] = this->processObjectFile("./assets/objects/grass_normal.obj");
-    objectMap["dirt_normal"] = this->processObjectFile("./assets/objects/dirt_normal.obj");
-    objectMap["stone_normal"] = this->processObjectFile("./assets/objects/stone_normal.obj");
-    objectMap["bunny_normal"] = this->processObjectFile("./assets/objects/bunny_normal.obj");
-    objectMap["cube"] = this->processObjectFile("./assets/objects/cube.obj");
+    // example for an object
+    for (auto& x : tJson::iterator_wrapper(confiData)) {
+        if(x.key().compare("textures") == 0) {
+            for (auto& texture : tJson::iterator_wrapper(x.value())) {
+                textureMap[texture.key()] = this->processTexture(texture.value());
+            }
+        } else if(x.key().compare("objects") == 0) {
+            for (auto& object : tJson::iterator_wrapper(x.value())) {
+                objectMap[object.key()] = this->processObjectFile(object.value());
+            }
+        }
+    }
+
+    this->light = {
+        glm::vec3(confiData["light"]["color"]["r"], confiData["light"]["color"]["g"], confiData["light"]["color"]["b"]), // Color
+        glm::vec3(confiData["light"]["position"]["x"], confiData["light"]["position"]["y"], confiData["light"]["position"]["z"]) // Position
+    };
+}
+
+tJson ResourcesManager::getConfigData() {
+
 }
 
 tObject ResourcesManager::processObjectFile(std::string filename) {
@@ -205,4 +218,8 @@ tObject ResourcesManager::getObject(std::string objectName) {
 
 unsigned int ResourcesManager::getTexture(std::string textureName) {
     return this->textureMap[textureName];
+}
+
+tLight ResourcesManager::getLight() {
+    return this->light;
 }

@@ -34,6 +34,9 @@ StateController* stateController;
 ResourcesManager* resourcesManager;
 Map* mapCont;
 
+int depthState = 0;
+int cullState = 0;
+
 int main() {
   	srand (time(NULL));
 	// start GL context and O/S window using the GLFW helper library
@@ -71,9 +74,9 @@ int main() {
 	glEnable(GL_DEPTH_TEST); // enable depth-testing
     glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
 
-    glFrontFace(GL_CCW);
-    glCullFace(GL_BACK);
-    glEnable(GL_CULL_FACE);
+    // glEnable(GL_CULL_FACE);
+    // glCullFace(GL_BACK);
+    // glFrontFace(GL_CCW);
 
     printf("\nPre GameLoop actions\n\n");
 
@@ -86,9 +89,9 @@ int main() {
 
     Player* player = new Player(camera);
     stateController->addObject( player );
-	Lamp* lampObject = new Lamp(resourcesManager);
-	lampObject->setPosition(lightPosition);
-    stateController->addObject( lampObject );
+	// Lamp* lampObject = new Lamp(resourcesManager);
+	// lampObject->setPosition(lightPosition);
+    // stateController->addObject( lampObject );
 
 	float deltaTime = 0.0f;	// Time between current frame and last frame
     float lastFrame = 0.0f; // Time of last frame
@@ -139,18 +142,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	if ((key == GLFW_KEY_ESCAPE || key == GLFW_KEY_Q) && action == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, GL_TRUE);
 	}
-
-    if(key == GLFW_KEY_F && action == GLFW_PRESS) {
-        stateController->jointObjects();
-    }
-
-    if(key == GLFW_KEY_V && action == GLFW_PRESS) {
-        stateController->jointObjectsNEW();
-    }
-
-    if(key == GLFW_KEY_R && action == GLFW_PRESS) {
-        stateController->jointObjects(true);
-    }
 
     if(key == GLFW_KEY_COMMA && action == GLFW_PRESS) {
         stateController->setY(stateController->getY() - 1);

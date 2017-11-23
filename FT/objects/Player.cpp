@@ -11,7 +11,7 @@ Player::Player(Camera* camera) : GameObject(NULL, GO_TYPE_PLAYER) {
 
     this->mouseSens = 10.0f;
 
-    this->position = vec3(0.0f, 5.0f, 0.0f);
+    this->position = vec3(-5.0f, 5.0f, 5.0f);
     camera->setPosition(this->position);
 }
 

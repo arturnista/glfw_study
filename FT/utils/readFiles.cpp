@@ -22,6 +22,17 @@ const char* readFile(string filename) {
 	return writable;
 }
 
+tJson readConfigFile() {
+	// read a JSON file
+	string filename = "config.json";
+	std::ifstream openedFile(filename.c_str());
+
+	tJson configData;
+	openedFile >> configData;
+
+	return configData;
+}
+
 void readObjFile(string filename,
 					vector<GLfloat>& pointsVector,
 					vector<GLuint>& indexVector,

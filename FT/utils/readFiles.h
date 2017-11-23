@@ -11,9 +11,14 @@
 #include <vector>
 #include <math.h>
 
+#include "../vendor/json.h"
+
+using tJson = nlohmann::json;
 using namespace std;
 
 const char* readFile(string filename);
+
+tJson readConfigFile();
 
 void readObjFile(string filename,
 					vector<GLfloat>& pointsVector,
