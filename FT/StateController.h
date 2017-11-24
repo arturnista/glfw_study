@@ -42,7 +42,6 @@ private:
     Shader* shader;
 
 	tLight light;
-	bool lightDirection;
 
 	ResourcesManager* resourcesManager;
 	tObject groundObject;
@@ -57,7 +56,6 @@ public:
 	int getY();
 
 	void jointObjects(bool reset = false);
-	void jointObjectsNEW(bool reset = false);
     void update(float deltaTime);
     void render(float deltaTime);
 };

@@ -17,7 +17,6 @@ StateController::StateController(GLFWwindow* window, Camera* camera, ResourcesMa
     this->groundGameObject = NULL;
 
     this->light = rm->getLight();
-    this->lightDirection = true;
 }
 
 void StateController::jointObjects(bool reset) {

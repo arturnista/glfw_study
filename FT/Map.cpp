@@ -4,9 +4,9 @@ Map::Map (ResourcesManager* resourcesManager, StateController* stateController) 
     this->resourcesManager = resourcesManager;
     this->stateController = stateController;
 
-    this->sizeX = 20;
-    this->sizeZ = 20;
-    this->height = 5;
+    this->sizeX = 40;
+    this->sizeZ = 40;
+    this->height = 1;
 
     this->sizeXCreated = 0;
     this->sizeZCreated = 0;
@@ -58,7 +58,6 @@ bool Map::createOne() {
             this->sizeZCreated = 0;
             this->heightCreated++;
             // this->stateController->jointObjects();
-            // this->stateController->jointObjectsNEW();
 
             if(this->height <= this->heightCreated) {
                 this->finished = true;

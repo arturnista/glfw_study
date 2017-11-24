@@ -84,6 +84,7 @@ int main() {
     stateController = new StateController(window, camera, resourcesManager);
     mapCont = new Map(resourcesManager, stateController);
     // mapCont->create();
+    bool mapFinished = false;
 
     Player* player = new Player(camera, resourcesManager);
     stateController->addObject( player );
@@ -96,6 +97,7 @@ int main() {
     int frames = 0;
 
     printf("\nGameLoop actions\n\n");
+
 	while (!glfwWindowShouldClose(window)) {
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -118,7 +120,10 @@ int main() {
 		/*
 			Objects update
 		*/
-        mapCont->create(1);
+        if(!mapFinished) {
+            bool ret = mapCont->create(1);
+            if(!ret) mapFinished = true;
+        }
         stateController->update(deltaTime);
         stateController->render(deltaTime);
 

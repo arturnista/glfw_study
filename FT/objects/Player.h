@@ -19,7 +19,11 @@ private:
 	double lastMouseY;
 
 	float pitch;
-	float yaw;
+    float yaw;
+	float pitchLimit;
+
+    float aeho;
+    int aehoDirection;
 
     float mouseSens;
 

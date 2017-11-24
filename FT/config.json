@@ -13,10 +13,10 @@
         "cube": "./assets/objects/cube.obj"
     },
     "player": {
-        "position": { "x": -5, "y": 20, "z": 5 }
+        "position": { "x": -5, "y": 1, "z": 5 }
     },
     "light": {
         "color": { "r": 1, "g": 1, "b": 1 },
-        "position": { "x": 30, "y": 10, "z": 0 }
+        "position": { "x": 15, "y": 10, "z": 15 }
     }
 }
