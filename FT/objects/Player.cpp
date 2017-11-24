@@ -1,6 +1,6 @@
 #include "Player.h"
 
-Player::Player(Camera* camera) : GameObject(NULL, GO_TYPE_PLAYER) {
+Player::Player(Camera* camera, ResourcesManager* rm) : GameObject(rm, GO_TYPE_PLAYER) {
     this->camera = camera;
 
     this->firstMouse = true;
@@ -9,9 +9,14 @@ Player::Player(Camera* camera) : GameObject(NULL, GO_TYPE_PLAYER) {
     this->pitch = 0;
     this->yaw = 0;
 
-    this->mouseSens = 10.0f;
+    this->mouseSens = 0.5f;
+    tJson confiData = rm->getConfigData();
 
-    this->position = vec3(-5.0f, 5.0f, 5.0f);
+    this->position = vec3(
+        confiData["player"]["position"]["x"],
+        confiData["player"]["position"]["y"],
+        confiData["player"]["position"]["z"]
+    );
     camera->setPosition(this->position);
 }
 
@@ -27,8 +32,8 @@ void Player::update(GLFWwindow* window, float deltaTime) {
     }
 
     // Compute the mouse position
-    float mouseOffsetX = (mouseX - this->lastMouseX) * deltaTime * mouseSens;
-    float mouseOffsetY = (this->lastMouseY - mouseY) * deltaTime * mouseSens;
+    float mouseOffsetX = (mouseX - this->lastMouseX) * mouseSens;
+    float mouseOffsetY = (this->lastMouseY - mouseY) * mouseSens;
     this->lastMouseY = mouseY;
     this->lastMouseX = mouseX;
 

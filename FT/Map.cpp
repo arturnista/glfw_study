@@ -4,8 +4,8 @@ Map::Map (ResourcesManager* resourcesManager, StateController* stateController) 
     this->resourcesManager = resourcesManager;
     this->stateController = stateController;
 
-    this->sizeX = 10;
-    this->sizeZ = 10;
+    this->sizeX = 20;
+    this->sizeZ = 20;
     this->height = 5;
 
     this->sizeXCreated = 0;

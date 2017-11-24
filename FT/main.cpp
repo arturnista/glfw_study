@@ -23,7 +23,6 @@
 #include "Camera.h"
 #include "./objects/Lamp.h"
 #include "./objects/Player.h"
-#include "./objects/Bunny.h"
 #include "Map.h"
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
@@ -74,24 +73,22 @@ int main() {
 	glEnable(GL_DEPTH_TEST); // enable depth-testing
     glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
 
-    // glEnable(GL_CULL_FACE);
+    glEnable(GL_CULL_FACE);
     // glCullFace(GL_BACK);
     // glFrontFace(GL_CCW);
 
     printf("\nPre GameLoop actions\n\n");
 
-	glm::vec3 lightPosition = glm::vec3(30.0f, 10.0f, 30.0f);
-
     camera = new Camera(window);
     resourcesManager = new ResourcesManager();
     stateController = new StateController(window, camera, resourcesManager);
     mapCont = new Map(resourcesManager, stateController);
+    // mapCont->create();
 
-    Player* player = new Player(camera);
+    Player* player = new Player(camera, resourcesManager);
     stateController->addObject( player );
-	// Lamp* lampObject = new Lamp(resourcesManager);
-	// lampObject->setPosition(lightPosition);
-    // stateController->addObject( lampObject );
+	Lamp* lampObject = new Lamp(resourcesManager);
+    stateController->addObject( lampObject );
 
 	float deltaTime = 0.0f;	// Time between current frame and last frame
     float lastFrame = 0.0f; // Time of last frame
@@ -143,13 +140,16 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		glfwSetWindowShouldClose(window, GL_TRUE);
 	}
 
-    if(key == GLFW_KEY_COMMA && action == GLFW_PRESS) {
-        stateController->setY(stateController->getY() - 1);
-    }
+	if (key == GLFW_KEY_V && action == GLFW_PRESS) {
+        glDisable(GL_CULL_FACE);
+        std::cout << "glDisable == GL_CULL_FACE" << '\n';
+	}
 
-    if(key == GLFW_KEY_PERIOD && action == GLFW_PRESS) {
-        stateController->setY(stateController->getY() + 1);
-    }
+	if (key == GLFW_KEY_F && action == GLFW_PRESS) {
+        glEnable(GL_CULL_FACE);
+        std::cout << "glEnable == GL_CULL_FACE" << '\n';
+	}
+
 
     if(key == GLFW_KEY_G && action == GLFW_PRESS) {
         float x = floor( rand() % 25 );

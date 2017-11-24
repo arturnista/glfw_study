@@ -12,8 +12,8 @@
         "bunny_normal": "./assets/objects/bunny_normal.obj",
         "cube": "./assets/objects/cube.obj"
     },
-    "camera": {
-        "position": { "x": -5, "y": 5, "z": 5 }
+    "player": {
+        "position": { "x": -5, "y": 20, "z": 5 }
     },
     "light": {
         "color": { "r": 1, "g": 1, "b": 1 },

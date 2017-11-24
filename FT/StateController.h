@@ -13,7 +13,6 @@
 #include "./objects/GameObject.h"
 
 #include "./objects/Grass.h"
-#include "./objects/Bunny.h"
 #include "./objects/Dirt.h"
 #include "./objects/Stone.h"
 #include "./objects/Lamp.h"
@@ -46,11 +45,8 @@ private:
 	bool lightDirection;
 
 	ResourcesManager* resourcesManager;
-	tObject objectToRender;
-	GameObject* gameObjectToRender;
-
-	int yrender;
-
+	tObject groundObject;
+	GameObject* groundGameObject;
 public:
     StateController (GLFWwindow* window, Camera* camera, ResourcesManager* rm);
 

@@ -30,6 +30,13 @@ private:
     unsigned int processTexture(std::string filename);
     tObject processObjectFile(std::string filename);
 
+    tObject processObject(
+        vector<GLfloat>& pointsVector,
+        vector<GLuint>& indexVector,
+        vector<GLfloat>& normalVector,
+        vector<GLfloat>& textureVector
+    );
+
 public:
     ResourcesManager ();
 

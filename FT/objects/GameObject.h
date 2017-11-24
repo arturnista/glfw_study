@@ -16,12 +16,9 @@
 #include "../ResourcesManager.h"
 #include "../common.h"
 
-const int GO_TYPE_GRASS = 1;
-const int GO_TYPE_BUNNY = 2;
-const int GO_TYPE_DIRT = 3;
-const int GO_TYPE_PLAYER = 4;
-const int GO_TYPE_STONE = 5;
-const int GO_TYPE_LAMP = 6;
+const int GO_TYPE_PLAYER = 0;
+const int GO_TYPE_LAMP = 1;
+const int GO_TYPE_GROUND = 2;
 
 using namespace std;
 using namespace glm;

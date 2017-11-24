@@ -1,10 +1,10 @@
 #include "ResourcesManager.h"
 
 ResourcesManager::ResourcesManager() {
-    tJson confiData = readConfigFile();
+    tJson configData = readConfigFile();
 
     // example for an object
-    for (auto& x : tJson::iterator_wrapper(confiData)) {
+    for (auto& x : tJson::iterator_wrapper(configData)) {
         if(x.key().compare("textures") == 0) {
             for (auto& texture : tJson::iterator_wrapper(x.value())) {
                 textureMap[texture.key()] = this->processTexture(texture.value());
@@ -17,82 +17,10 @@ ResourcesManager::ResourcesManager() {
     }
 
     this->light = {
-        glm::vec3(confiData["light"]["color"]["r"], confiData["light"]["color"]["g"], confiData["light"]["color"]["b"]), // Color
-        glm::vec3(confiData["light"]["position"]["x"], confiData["light"]["position"]["y"], confiData["light"]["position"]["z"]) // Position
+        glm::vec3(configData["light"]["color"]["r"], configData["light"]["color"]["g"], configData["light"]["color"]["b"]), // Color
+        glm::vec3(configData["light"]["position"]["x"], configData["light"]["position"]["y"], configData["light"]["position"]["z"]) // Position
     };
-}
-
-tJson ResourcesManager::getConfigData() {
-
-}
-
-tObject ResourcesManager::processObjectFile(std::string filename) {
-	std::vector<GLfloat> pointsVector = {};
-	std::vector<GLuint> indexVector = {};
-	std::vector<GLfloat> normalVector = {};
-	std::vector<GLfloat> textureVector = {};
-
-	readObjFile(filename, pointsVector, indexVector, normalVector, textureVector);
-
-	bool hasTexture = textureVector.size() > 0;
-
-	int textureCounter = (pointsVector.size() / 3) * 2;
-	int pointsCounter = pointsVector.size() * 2 + textureCounter;
-	int verticesCounter = indexVector.size();
-
-	GLfloat *points = new GLfloat[pointsCounter];
-
-	int itemsPerPoint = 8;
-
-	int counter = 0;
-	int texCounter = 0;
-	for (size_t i = 0; i < pointsCounter; i += itemsPerPoint) {
-		// Position
-		points[i + 0] = pointsVector.at(counter);
-		points[i + 1] = pointsVector.at(counter + 1);
-		points[i + 2] = pointsVector.at(counter + 2);
-
-		if(normalVector.size() > 0) {
-			points[i + 3] = normalVector.at(counter);
-			points[i + 4] = normalVector.at(counter + 1);
-			points[i + 5] = normalVector.at(counter + 2);
-		} else {
-			points[i + 3] = 1.0f;
-			points[i + 4] = 0.0f;
-			points[i + 5] = 0.0f;
-		}
-
-		if(hasTexture) {
-			points[i + 6] = textureVector.at(texCounter);
-			points[i + 7] = textureVector.at(texCounter + 1);
-		} else {
-			points[i + 6] = 0.0f;
-			points[i + 7] = 0.0f;
-		}
-
-		texCounter += 2;
-		counter += 3;
-	}
-
-	GLuint *vertices = new GLuint[verticesCounter];
-	for (size_t i = 0; i < verticesCounter; i++) vertices[i] = indexVector.at(i) - 1;
-
-
-    cout << "Object: " << filename << "\t";
-    cout << "vertex count" << " = " << pointsVector.size() << '\t';
-    cout << "face count" << " = " << verticesCounter << '\n';
-    return {
-    	pointsVector,
-    	indexVector,
-    	normalVector,
-    	textureVector,
-    	hasTexture,
-        itemsPerPoint,
-    	points,
-    	pointsCounter,
-    	vertices,
-    	verticesCounter
-    };
+    this->configData = configData;
 }
 
 unsigned int ResourcesManager::processTexture(std::string filename) {
@@ -121,6 +49,21 @@ unsigned int ResourcesManager::processTexture(std::string filename) {
     cout << "Texture: " << filename << "\t";
     cout << "Size (" << width << ", " << height << ")" << '\n';
     return texture;
+}
+
+tObject ResourcesManager::processObjectFile(std::string filename) {
+	std::vector<GLfloat> pointsVector = {};
+	std::vector<GLuint> indexVector = {};
+	std::vector<GLfloat> normalVector = {};
+	std::vector<GLfloat> textureVector = {};
+
+	readObjFile(filename, pointsVector, indexVector, normalVector, textureVector);
+
+    cout << "Object: " << filename << "\t";
+    cout << "vertex count" << " = " << pointsVector.size() << '\t';
+    cout << "face count" << " = " << indexVector.size() << '\n';
+
+    return processObject(pointsVector, indexVector, normalVector, textureVector);
 }
 
 tObject ResourcesManager::combineObjects(tObject object1, tObject object2, glm::vec3 offset) {
@@ -155,6 +98,11 @@ tObject ResourcesManager::combineObjects(tObject object1, tObject object2, glm::
     textureVector.insert( textureVector.end(), object1.textureVector.begin(), object1.textureVector.end() );
     textureVector.insert( textureVector.end(), object2.textureVector.begin(), object2.textureVector.end() );
 
+    return processObject(pointsVector, indexVector, normalVector, textureVector);
+}
+
+tObject ResourcesManager::processObject( vector<GLfloat>& pointsVector, vector<GLuint>& indexVector, vector<GLfloat>& normalVector, vector<GLfloat>& textureVector ) {
+
     bool hasTexture = textureVector.size() > 0;
 
     int textureCounter = (pointsVector.size() / 3) * 2;
@@ -173,24 +121,23 @@ tObject ResourcesManager::combineObjects(tObject object1, tObject object2, glm::
 		points[i + 1] = pointsVector.at(counter + 1);
 		points[i + 2] = pointsVector.at(counter + 2);
 
-		if(normalVector.size() > 0) {
+		if(normalVector.size() > 0 && counter + 3 < normalVector.size()) {
 			points[i + 3] = normalVector.at(counter);
 			points[i + 4] = normalVector.at(counter + 1);
 			points[i + 5] = normalVector.at(counter + 2);
 		} else {
-			points[i + 3] = 1.0f;
+            points[i + 3] = 1.0f;
 			points[i + 4] = 0.0f;
 			points[i + 5] = 0.0f;
 		}
 
-		if(hasTexture) {
+		if(hasTexture && texCounter + 1 < textureVector.size()) {
 			points[i + 6] = textureVector.at(texCounter);
 			points[i + 7] = textureVector.at(texCounter + 1);
 		} else {
 			points[i + 6] = 0.0f;
 			points[i + 7] = 0.0f;
 		}
-
 		texCounter += 2;
 		counter += 3;
 	}
@@ -222,4 +169,8 @@ unsigned int ResourcesManager::getTexture(std::string textureName) {
 
 tLight ResourcesManager::getLight() {
     return this->light;
+}
+
+tJson ResourcesManager::getConfigData() {
+    return this->configData;
 }

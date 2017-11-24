@@ -3,13 +3,17 @@
 
 #include "GameObject.h"
 #include "../Camera.h"
+#include "../ResourcesManager.h"
+#include "../vendor/json.h"
+
+using tJson = nlohmann::json;
 
 class Player : public GameObject {
 private:
     Camera* camera;
 
     glm::vec3 position;
-    
+
     bool firstMouse;
 	double lastMouseX;
 	double lastMouseY;
@@ -20,7 +24,7 @@ private:
     float mouseSens;
 
 public:
-    Player (Camera* camera);
+    Player (Camera* camera, ResourcesManager* rm);
 
     void update(GLFWwindow* window, float deltaTime);
 };
