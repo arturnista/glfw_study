@@ -1,6 +1,6 @@
 {
     "textures": {
-        "grass": "./assets/textures/grass.jpg",
+        "objects": "./assets/textures/objects.jpg",
         "stone": "./assets/textures/stone.jpg",
         "container": "./assets/textures/container.jpg",
         "wall": "./assets/textures/wall.jpg"
@@ -9,6 +9,7 @@
         "grass_normal": "./assets/objects/grass_normal.obj",
         "dirt_normal": "./assets/objects/dirt_normal.obj",
         "stone_normal": "./assets/objects/stone_normal.obj",
+        "objective_normal": "./assets/objects/objective_normal.obj",
         "bunny_normal": "./assets/objects/bunny_normal.obj",
         "cube": "./assets/objects/cube.obj"
     },
@@ -30,7 +31,7 @@
                 }
             ],
             "objective": {
-                "position": { "x": 20, "y": 0, "z": 20 },
+                "position": { "x": 40, "y": 1, "z": 40 }
             }
         }, {
             "player": {
@@ -49,7 +50,7 @@
                 }
             ],
             "objective": {
-                "position": { "x": 20, "y": 0, "z": 20 },
+                "position": { "x": 40, "y": 1, "z": 40 }
             }
         }
     ],

@@ -249,6 +249,9 @@ void GameObject::render(Shader* shader) {
 	// Apply the model, view and projection on the shader created
 	mat4 model;
 	model = translate(model, this->position);
+	model = rotate(model, this->rotation.x, vec3(1.0f, 0.0f, 0.0f));
+    model = rotate(model, this->rotation.y, vec3(0.0f, 1.0f, 0.0f));
+    model = rotate(model, this->rotation.z, vec3(0.0f, 0.0f, 1.0f));
 
 	if(this->size.x != 1.0f || this->size.y != 1.0f || this->size.z != 1.0f) {
 		model = scale(model, this->size);

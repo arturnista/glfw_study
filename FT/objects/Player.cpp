@@ -40,15 +40,7 @@ bool Player::isGrounded() {
 
     groundPos.y = round( groundPos.y );
 
-    try {
-        GameObject* groundGo = this->stateController->getObjectByPosition(groundPos).gameObject;
-        if(groundGo->getType() == GO_TYPE_GROUND) {
-            return true;
-        }
-        return false;
-    } catch(int e) {
-        return false;
-    }
+    return this->stateController->hasGroundAtPosition(groundPos);
 }
 
 void Player::applyPhysics(float deltaTime) {
@@ -71,32 +63,32 @@ void Player::moveTo(glm::vec3 position) {
     nextPos.y = round(nextPos.y);
     nextPos.z = round(nextPos.z);
 
-    try {
-        this->stateController->getObjectByPosition(nextPos);
-
-        nextPos.x = round(nextPos.x);
-        nextPos.y = round(nextPos.y);
-        nextPos.z = round(this->position.z);
-        try {
-            this->stateController->getObjectByPosition(nextPos);
-
-            nextPos.x = round(this->position.x);
-            nextPos.y = round(nextPos.y);
-            nextPos.z = round(nextPos.z);
-            try {
-                this->stateController->getObjectByPosition(nextPos);
-            } catch(int e) {
-                glm::vec3 xPosition = glm::vec3( position );
-                xPosition.x = this->position.x;
-                this->position = xPosition;
-            }
-        } catch(int e) {
-            glm::vec3 zPosition = glm::vec3( position );
-            zPosition.z = this->position.z;
-            this->position = zPosition;
-        }
-    } catch(int e) {
+    bool hasGround = false;
+    hasGround = this->stateController->hasGroundAtPosition(nextPos);
+    if(!hasGround) {
         this->position = position;
+    }
+
+    nextPos.x = round(nextPos.x);
+    nextPos.y = round(nextPos.y);
+    nextPos.z = round(this->position.z);
+
+    hasGround = this->stateController->hasGroundAtPosition(nextPos);
+    if(!hasGround) {
+        glm::vec3 zPosition = glm::vec3( position );
+        zPosition.z = this->position.z;
+        this->position = zPosition;
+    }
+
+    nextPos.x = round(this->position.x);
+    nextPos.y = round(nextPos.y);
+    nextPos.z = round(nextPos.z);
+
+    hasGround = this->stateController->hasGroundAtPosition(nextPos);
+    if(!hasGround) {
+        glm::vec3 xPosition = glm::vec3( position );
+        xPosition.x = this->position.x;
+        this->position = xPosition;
     }
 }
 

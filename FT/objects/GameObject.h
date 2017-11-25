@@ -20,6 +20,7 @@ const int GO_TYPE_PLAYER = 0;
 const int GO_TYPE_LAMP = 1;
 const int GO_TYPE_GROUND = 2;
 const int GO_TYPE_ENEMY = 3;
+const int GO_TYPE_OBJECTIVE = 4;
 
 using namespace std;
 using namespace glm;

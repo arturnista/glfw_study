@@ -40,6 +40,14 @@ void LevelController::nextLevel() {
         stateController->addObject( enemy );
     }
 
+    Objective* objective = new Objective(resourcesManager, stateController);
+    objective->setPosition(vec3(
+        levelConfig["objective"]["position"]["x"],
+        levelConfig["objective"]["position"]["y"],
+        levelConfig["objective"]["position"]["z"]
+    ));
+    stateController->addObject( objective );
+
 	Lamp* lampObject = new Lamp(resourcesManager);
     stateController->addObject( lampObject );
 }

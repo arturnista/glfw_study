@@ -24,6 +24,10 @@ void Map::reset() {
 }
 
 bool Map::create(int amount) {
+    float totalToCreate = this->sizeX * this->sizeZ;
+    int created = 0;
+    float lastPerc = 0.0f;
+
     if(amount > 0) {
         for (int i = 0; i < amount; i++) {
             bool ret = this->createOne();
@@ -31,7 +35,14 @@ bool Map::create(int amount) {
         }
         return true;
     } else {
-        while (this->createOne()) { }
+        while (this->createOne()) {
+            created++;
+            int perc = floor((created / totalToCreate) * 100);
+            if(perc % 5 == 0 && perc != lastPerc) {
+                lastPerc = perc;
+                std::cout << "Mapa " << perc << "%%" << '\n';
+            }
+        }
         return false;
     }
 }
@@ -54,11 +65,6 @@ bool Map::createOne() {
     }
 
     this->sizeXCreated++;
-    if(this->sizeXCreated > 20 && this->sizeZCreated > 20) {
-        this->heightCreated = 1;
-    } else {
-        this->heightCreated = 0;
-    }
     if(this->sizeX <= this->sizeXCreated) {
         this->sizeXCreated = 0;
         this->sizeZCreated++;
@@ -67,6 +73,12 @@ bool Map::createOne() {
             this->sizeZCreated = 0;
             this->finished = true;
         }
+    }
+
+    if(this->sizeXCreated > 20 && this->sizeZCreated > 20 && this->sizeXCreated < 40 && this->sizeZCreated < 40) {
+        this->heightCreated = 1;
+    } else {
+        this->heightCreated = 0;
     }
 
     // float rx = 0.0f;

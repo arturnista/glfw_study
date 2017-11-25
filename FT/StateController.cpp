@@ -30,7 +30,7 @@ void StateController::jointObjects(bool reset) {
     }
 
     GameObject* go = new GameObject(this->resourcesManager, GO_TYPE_GROUND, object, 1.0f, vec3(1.0f));
-    go->setTextureName("grass");
+    go->setTextureName("objects");
     objectsToRenderList.clear();
     objectsToRenderList.push_back({ go, true });
 
@@ -65,28 +65,31 @@ void StateController::addObject(GameObject* object) {
         type != GO_TYPE_PLAYER
     };
 
-    objectsVector.push_back(structObject);
-
     unsigned long key = hashVec3(object->getPosition());
-    objectsMapByPosition[key] = objectsVector.size() - 1;
-    if(type == GO_TYPE_PLAYER) {
-        playerIndex = objectsVector.size() - 1;
-    }
-
     if(type == GO_TYPE_GROUND) {
+        objectsMapByPosition[key] = GROUND_INDEX;
+
         if(this->groundGameObject == NULL) {
             this->groundObject = object->getObject();
         } else {
             this->groundObject = this->resourcesManager->combineObjects( this->groundObject, object->getObject(), object->getPosition() );
         }
 
+        delete object;
         delete this->groundGameObject;
 
         GameObject* go = new GameObject(this->resourcesManager, GO_TYPE_GROUND, this->groundObject, 1.0f, vec3(1.0f));
-        go->setTextureName("grass");
+        go->setTextureName("objects");
         this->groundGameObject = go;
     } else {
+        objectsVector.push_back(structObject);
         objectsToRenderList.push_back( structObject );
+
+        objectsMapByPosition[key] = objectsVector.size() - 1;
+
+        if(type == GO_TYPE_PLAYER) {
+            playerIndex = objectsVector.size() - 1;
+        }
     }
 }
 
@@ -98,27 +101,15 @@ GameObject* StateController::getPlayer() {
     return objectsVector.at(this->playerIndex).gameObject;
 }
 
-tStateGameObject StateController::getObjectByPosition(glm::vec3 position) {
+bool StateController::hasGroundAtPosition(glm::vec3 position) {
     int idx = objectsMapByPosition[ hashVec3(position) ];
-    if(idx < objectsVector.size()) {
-        if(idx == 0) {
-            glm::vec3 posToCompare = objectsVector.at(0).gameObject->getPosition();
-            if( posToCompare.x == position.x && posToCompare.y == position.y && posToCompare.z == position.z ) {
-                return objectsVector.at(idx);
-            } else {
-                throw 1;
-            }
-        }
-        return objectsVector.at(idx);
-    }
-    throw 1;
+    return idx == GROUND_INDEX;
 }
 
 void StateController::update(float deltaTime) {
     for (size_t i = 0; i < objectsVector.size(); i++) {
         GameObject* go = objectsVector.at(i).gameObject;
         if(go == NULL) {
-            std::cout << "[" << i << "]" << "Ta null" << '\n';
             continue;
         }
         if(go->getType() != GO_TYPE_GROUND) {

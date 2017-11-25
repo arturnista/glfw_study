@@ -32,6 +32,8 @@ struct tStateGameObject {
 
 typedef struct tStateGameObject tStateGameObject;
 
+const int GROUND_INDEX = -5;
+
 class StateController {
 private:
 	std::vector<tStateGameObject> objectsVector;
@@ -54,7 +56,7 @@ public:
 	void reset();
     void addObject(GameObject* object);
 	std::vector<tStateGameObject> getObjects();
-	tStateGameObject getObjectByPosition(glm::vec3 position);
+	bool hasGroundAtPosition(glm::vec3 position);
     GameObject* getPlayer();
 
 	void jointObjects(bool reset = false);

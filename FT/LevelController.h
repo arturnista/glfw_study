@@ -17,6 +17,7 @@
 
 #include "./objects/Enemy.h"
 #include "./objects/Player.h"
+#include "./objects/Objective.h"
 #include "./vendor/json.h"
 #include "./utils/delay.h"
 

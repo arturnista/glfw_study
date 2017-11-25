@@ -1,7 +1,7 @@
 #include "Enemy.h"
 
 Enemy::Enemy(ResourcesManager* rm, StateController* stateController) : GameObject(rm, GO_TYPE_ENEMY, "stone_normal", vec3(1.0f), vec3(2.0f)) {
-    this->setTextureName("grass");
+    this->setTextureName("objects");
     this->stateController = stateController;
 
     this->velocity = 0.0f;
@@ -23,15 +23,7 @@ bool Enemy::isGrounded() {
 
     groundPos.y = round( groundPos.y );
 
-    try {
-        GameObject* groundGo = this->stateController->getObjectByPosition(groundPos).gameObject;
-        if(groundGo->getType() == GO_TYPE_GROUND) {
-            return true;
-        }
-        return false;
-    } catch(int e) {
-        return false;
-    }
+    return this->stateController->hasGroundAtPosition(groundPos);
 }
 
 void Enemy::applyPhysics(float deltaTime) {
@@ -54,32 +46,32 @@ void Enemy::moveTo(glm::vec3 position) {
     nextPos.y = round(nextPos.y);
     nextPos.z = round(nextPos.z);
 
-    try {
-        this->stateController->getObjectByPosition(nextPos);
-
-        nextPos.x = round(nextPos.x);
-        nextPos.y = round(nextPos.y);
-        nextPos.z = round(this->position.z);
-        try {
-            this->stateController->getObjectByPosition(nextPos);
-
-            nextPos.x = round(this->position.x);
-            nextPos.y = round(nextPos.y);
-            nextPos.z = round(nextPos.z);
-            try {
-                this->stateController->getObjectByPosition(nextPos);
-            } catch(int e) {
-                glm::vec3 xPosition = glm::vec3( position );
-                xPosition.x = this->position.x;
-                this->position = xPosition;
-            }
-        } catch(int e) {
-            glm::vec3 zPosition = glm::vec3( position );
-            zPosition.z = this->position.z;
-            this->position = zPosition;
-        }
-    } catch(int e) {
+    bool hasGround = false;
+    hasGround = this->stateController->hasGroundAtPosition(nextPos);
+    if(!hasGround) {
         this->position = position;
+    }
+
+    nextPos.x = round(nextPos.x);
+    nextPos.y = round(nextPos.y);
+    nextPos.z = round(this->position.z);
+
+    hasGround = this->stateController->hasGroundAtPosition(nextPos);
+    if(!hasGround) {
+        glm::vec3 zPosition = glm::vec3( position );
+        zPosition.z = this->position.z;
+        this->position = zPosition;
+    }
+
+    nextPos.x = round(this->position.x);
+    nextPos.y = round(nextPos.y);
+    nextPos.z = round(nextPos.z);
+
+    hasGround = this->stateController->hasGroundAtPosition(nextPos);
+    if(!hasGround) {
+        glm::vec3 xPosition = glm::vec3( position );
+        xPosition.x = this->position.x;
+        this->position = xPosition;
     }
 }
 
@@ -107,7 +99,7 @@ void Enemy::update(GLFWwindow* window, float deltaTime) {
     float playerDistance = sqrt(
         pow(playerPos.x - this->position.x, 2) -
         sqrt(
-            pow(playerPos.y - this->position.y, 2) - 
+            pow(playerPos.y - this->position.y, 2) -
             pow(playerPos.z - this->position.z, 2)
         )
     );
