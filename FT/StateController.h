@@ -48,8 +48,10 @@ private:
 	tObject groundObject;
 	GameObject* groundGameObject;
 public:
+	bool onde_deu_erro;
     StateController (GLFWwindow* window, Camera* camera, ResourcesManager* rm);
 
+	void reset();
     void addObject(GameObject* object);
 	std::vector<tStateGameObject> getObjects();
 	tStateGameObject getObjectByPosition(glm::vec3 position);

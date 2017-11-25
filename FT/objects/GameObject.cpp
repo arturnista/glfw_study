@@ -236,15 +236,6 @@ void GameObject::render(Camera* camera, tLight light) {
 		glBindTexture(GL_TEXTURE_2D, this->resourcesManager->getTexture(this->textureName));
 		this->shader->use("outTexture", 0);
 	}
-// 	GLfloat mat_ambient[] = { 0.7, 0.7, 0.7, 1.0 };
-// 	GLfloat mat_diffuse[] = { 0.1, 0.5, 0.8, 1.0 };
-// 	GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
-// 	GLfloat shinyness[] = { 5.0 };
-//
-// 	glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
-// 	glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-// 	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-//  glMaterialfv(GL_FRONT, GL_SHININESS, shinyness);
 
 	glBindVertexArray(this->VAO);
 	glDrawElements(GL_TRIANGLES, this->vertexCounter, GL_UNSIGNED_INT, 0);

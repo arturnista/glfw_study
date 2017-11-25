@@ -40,6 +40,23 @@ void StateController::jointObjects(bool reset) {
     this->groundGameObject = go;
 }
 
+void StateController::reset() {
+    if(this->groundGameObject != NULL) {
+        delete this->groundGameObject;
+        this->groundGameObject = NULL;
+    }
+    this->groundObject = {};
+
+    for (size_t i = 0; i < objectsVector.size(); i++) {
+        delete objectsVector.at(i).gameObject;
+        objectsVector.at(i).gameObject = NULL;
+    }
+
+    objectsVector.clear();
+    objectsToRenderList.clear();
+    objectsMapByPosition.clear();
+}
+
 void StateController::addObject(GameObject* object) {
     int type = object->getType();
 
@@ -100,6 +117,10 @@ tStateGameObject StateController::getObjectByPosition(glm::vec3 position) {
 void StateController::update(float deltaTime) {
     for (size_t i = 0; i < objectsVector.size(); i++) {
         GameObject* go = objectsVector.at(i).gameObject;
+        if(go == NULL) {
+            std::cout << "[" << i << "]" << "Ta null" << '\n';
+            continue;
+        }
         if(go->getType() != GO_TYPE_GROUND) {
             go->update(this->window, deltaTime);
         }

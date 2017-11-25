@@ -18,14 +18,15 @@ Player::Player(Camera* camera, ResourcesManager* rm, StateController* stateContr
     this->mouseSens = 0.5f;
     tJson confiData = rm->getConfigData();
 
-    this->position = vec3(
-        confiData["player"]["position"]["x"],
-        confiData["player"]["position"]["y"],
-        confiData["player"]["position"]["z"]
-    );
+    this->position = vec3(0.0f);
     camera->setPosition(this->position);
 
     this->stateController = stateController;
+}
+
+void Player::setPosition(vec3 position) {
+    this->position = position;
+    camera->setPosition(this->position);
 }
 
 bool Player::isGrounded() {

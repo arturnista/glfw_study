@@ -15,6 +15,14 @@ Map::Map (ResourcesManager* resourcesManager, StateController* stateController) 
     this->finished = false;
 }
 
+void Map::reset() {
+    this->sizeXCreated = 0;
+    this->sizeZCreated = 0;
+    this->heightCreated = 0;
+
+    this->finished = false;
+}
+
 bool Map::create(int amount) {
     if(amount > 0) {
         for (int i = 0; i < amount; i++) {
@@ -23,7 +31,7 @@ bool Map::create(int amount) {
         }
         return true;
     } else {
-        while (this->createOne()) {}
+        while (this->createOne()) { }
         return false;
     }
 }
@@ -80,8 +88,4 @@ bool Map::createOne() {
     //     }
     // }
     return true;
-}
-
-void Map::breakItem(glm::vec3 position) {
-
 }

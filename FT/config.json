@@ -18,6 +18,41 @@
     "enemy": {
         "position": { "x": 3, "y": 10, "z": 3 }
     },
+    "levels": [
+        {
+            "player": {
+                "position": { "x": 10, "y": 2, "z": 10 }
+            },
+            "enemies": [
+                {
+                    "position": { "x": 3, "y": 10, "z": 3 },
+                    "speed": 0.5
+                }
+            ],
+            "objective": {
+                "position": { "x": 20, "y": 0, "z": 20 },
+            }
+        }, {
+            "player": {
+                "position": { "x": 10, "y": 2, "z": 10 }
+            },
+            "enemies": [
+                {
+                    "position": { "x": 3, "y": 10, "z": 3 },
+                    "speed": 0.5
+                }, {
+                    "position": { "x": 3, "y": 10, "z": 13 },
+                    "speed": 1
+                }, {
+                    "position": { "x": 13, "y": 10, "z": 3 },
+                    "speed": 1.5
+                }
+            ],
+            "objective": {
+                "position": { "x": 20, "y": 0, "z": 20 },
+            }
+        }
+    ],
     "light": {
         "color": { "r": 1, "g": 1, "b": 1 },
         "position": { "x": 15, "y": 10, "z": 15 }

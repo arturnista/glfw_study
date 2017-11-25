@@ -13,6 +13,7 @@ private:
     StateController* stateController;
 
     float velocity;
+    float moveSpeed;
     bool isGrounded();
     void applyPhysics(float deltaTime);
     void moveTo(glm::vec3 position);
@@ -20,6 +21,7 @@ private:
 public:
     Enemy (ResourcesManager* rm, StateController* stateController);
 
+    void setSpeed(float speed);
     void update(GLFWwindow* window, float deltaTime);
 };
 

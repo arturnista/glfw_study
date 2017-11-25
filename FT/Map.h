@@ -28,9 +28,9 @@ private:
 
 public:
     Map (ResourcesManager* resourcesManager, StateController* stateController);
+    void reset();
     bool create(int amount = 0);
     bool createOne();
-    void breakItem(glm::vec3 position);
 };
 
 #endif

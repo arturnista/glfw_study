@@ -21,6 +21,7 @@
 #include "Shader.h"
 #include "ResourcesManager.h"
 #include "Camera.h"
+#include "LevelController.h"
 #include "./objects/Lamp.h"
 #include "./objects/Player.h"
 #include "./objects/Enemy.h"
@@ -33,9 +34,9 @@ Camera* camera;
 StateController* stateController;
 ResourcesManager* resourcesManager;
 Map* mapCont;
+LevelController* levelController;
 
-int depthState = 0;
-int cullState = 0;
+bool setNextLevel = false;
 
 int main() {
   	srand (time(NULL));
@@ -84,24 +85,25 @@ int main() {
     resourcesManager = new ResourcesManager();
     stateController = new StateController(window, camera, resourcesManager);
     mapCont = new Map(resourcesManager, stateController);
+
+    levelController = new LevelController(window, resourcesManager, stateController, mapCont, camera);
+    levelController->nextLevel();
+
     // mapCont->create();
     bool mapFinished = false;
 
-    Player* player = new Player(camera, resourcesManager, stateController);
-    stateController->addObject( player );
-    Enemy* enemy = new Enemy(resourcesManager, stateController);
-    stateController->addObject( enemy );
-	Lamp* lampObject = new Lamp(resourcesManager);
-    stateController->addObject( lampObject );
-
 	float deltaTime = 0.0f;	// Time between current frame and last frame
-    float lastFrame = 0.0f; // Time of last frame
+    float lastFrame = glfwGetTime(); // Time of last frame
 	float timePassed = 0.0f; // Time of last frame
     int frames = 0;
 
     printf("\nGameLoop actions\n\n");
-
 	while (!glfwWindowShouldClose(window)) {
+        if(setNextLevel) {
+            levelController->nextLevel();
+            setNextLevel = false;
+            lastFrame = glfwGetTime();
+        }
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -123,10 +125,6 @@ int main() {
 		/*
 			Objects update
 		*/
-        if(!mapFinished) {
-            bool ret = mapCont->create(1);
-            if(!ret) mapFinished = true;
-        }
         stateController->update(deltaTime);
         stateController->render(deltaTime);
 
@@ -148,23 +146,9 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		glfwSetWindowShouldClose(window, GL_TRUE);
 	}
 
-	if (key == GLFW_KEY_V && action == GLFW_PRESS) {
-        glDisable(GL_CULL_FACE);
-        std::cout << "glDisable == GL_CULL_FACE" << '\n';
+	if (key == GLFW_KEY_R && action == GLFW_PRESS) {
+		setNextLevel = true;
 	}
-
-	if (key == GLFW_KEY_F && action == GLFW_PRESS) {
-        glEnable(GL_CULL_FACE);
-        std::cout << "glEnable == GL_CULL_FACE" << '\n';
-	}
-
-
-    if(key == GLFW_KEY_G && action == GLFW_PRESS) {
-        float x = floor( rand() % 25 );
-        float y = floor( rand() % 25 );
-        float z = floor( rand() % 5 );
-        mapCont->breakItem(glm::vec3(x, y, z));
-    }
 }
 
 // Is called whenever the mouse moves

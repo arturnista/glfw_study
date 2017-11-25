@@ -5,14 +5,11 @@ Enemy::Enemy(ResourcesManager* rm, StateController* stateController) : GameObjec
     this->stateController = stateController;
 
     this->velocity = 0.0f;
+    this->position = vec3(0.0f);
+}
 
-    tJson confiData = rm->getConfigData();
-
-    this->position = vec3(
-        confiData["enemy"]["position"]["x"],
-        confiData["enemy"]["position"]["y"],
-        confiData["enemy"]["position"]["z"]
-    );
+void Enemy::setSpeed(float speed) {
+    this->moveSpeed = speed;
 }
 
 bool Enemy::isGrounded() {
@@ -88,7 +85,7 @@ void Enemy::moveTo(glm::vec3 position) {
 
 
 void Enemy::update(GLFWwindow* window, float deltaTime) {
-    float enemySpeed = 0.5f * deltaTime;
+    float enemySpeed = this->moveSpeed * deltaTime;
     glm::vec3 nextPosition = glm::vec3(this->position);
 
     glm::vec3 enemyFrontMovement = glm::vec3(1, 0, 0);
@@ -105,6 +102,18 @@ void Enemy::update(GLFWwindow* window, float deltaTime) {
         nextPosition.z += enemySpeed;
     } else if(playerPos.z < nextPosition.z) {
         nextPosition.z -= enemySpeed;
+    }
+
+    float playerDistance = sqrt(
+        pow(playerPos.x - this->position.x, 2) -
+        sqrt(
+            pow(playerPos.y - this->position.y, 2) - 
+            pow(playerPos.z - this->position.z, 2)
+        )
+    );
+
+    if(playerDistance < 1) {
+        std::cout << "PERDEU CUZAo" << '\n';
     }
 
     this->moveTo(nextPosition);

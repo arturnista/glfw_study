@@ -36,6 +36,7 @@ private:
 public:
     Player (Camera* camera, ResourcesManager* rm, StateController* stateController);
 
+    void setPosition(vec3 position);
     void update(GLFWwindow* window, float deltaTime);
 };
 
