@@ -11,8 +11,8 @@ tHash hashNumber(long v) {
 }
 
 tHash hashVec3(glm::vec3 v) {
-	tHash vl1 = hashNumber( floor( v.x ) );
-	tHash vl2 = hashNumber( hashNumber( floor( v.y ) ) );
-	tHash vl3 = hashNumber( hashNumber( hashNumber( floor( v.z ) ) ) );
+	tHash vl1 = hashNumber( round( v.x ) );
+	tHash vl2 = hashNumber( hashNumber( round( v.y ) ) );
+	tHash vl3 = hashNumber( hashNumber( hashNumber( round( v.z ) ) ) );
 	return hashNumber( vl1 + vl2 + vl3 );
 }

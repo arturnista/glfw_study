@@ -23,6 +23,7 @@
 #include "Camera.h"
 #include "./objects/Lamp.h"
 #include "./objects/Player.h"
+#include "./objects/Enemy.h"
 #include "Map.h"
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
@@ -86,8 +87,10 @@ int main() {
     // mapCont->create();
     bool mapFinished = false;
 
-    Player* player = new Player(camera, resourcesManager);
+    Player* player = new Player(camera, resourcesManager, stateController);
     stateController->addObject( player );
+    Enemy* enemy = new Enemy(resourcesManager, stateController);
+    stateController->addObject( enemy );
 	Lamp* lampObject = new Lamp(resourcesManager);
     stateController->addObject( lampObject );
 

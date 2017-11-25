@@ -45,25 +45,40 @@ bool Map::createOne() {
         this->stateController->addObject( stoneObject );
     }
 
-    float rx = 0.0f;
-    // float rx = floor( rand() % this->sizeX );
     this->sizeXCreated++;
-    if(this->sizeX + rx <= this->sizeXCreated) {
+    if(this->sizeXCreated > 20 && this->sizeZCreated > 20) {
+        this->heightCreated = 1;
+    } else {
+        this->heightCreated = 0;
+    }
+    if(this->sizeX <= this->sizeXCreated) {
         this->sizeXCreated = 0;
         this->sizeZCreated++;
 
-        float rz = 0.0f;
-        // float rz = floor( rand() % this->sizeZ );
-        if(this->sizeZ + rz <= this->sizeZCreated) {
+        if(this->sizeZ <= this->sizeZCreated) {
             this->sizeZCreated = 0;
-            this->heightCreated++;
-            // this->stateController->jointObjects();
-
-            if(this->height <= this->heightCreated) {
-                this->finished = true;
-            }
+            this->finished = true;
         }
     }
+
+    // float rx = 0.0f;
+    // // float rx = floor( rand() % this->sizeX );
+    // if(this->sizeX + rx <= this->sizeXCreated) {
+    //     this->sizeXCreated = 0;
+    //     this->sizeZCreated++;
+    //
+    //     float rz = 0.0f;
+    //     // float rz = floor( rand() % this->sizeZ );
+    //     if(this->sizeZ + rz <= this->sizeZCreated) {
+    //         this->sizeZCreated = 0;
+    //         this->heightCreated++;
+    //         // this->stateController->jointObjects();
+    //
+    //         if(this->height <= this->heightCreated) {
+    //             this->finished = true;
+    //         }
+    //     }
+    // }
     return true;
 }
 

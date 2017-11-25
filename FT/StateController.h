@@ -50,10 +50,8 @@ public:
     StateController (GLFWwindow* window, Camera* camera, ResourcesManager* rm);
 
     void addObject(GameObject* object);
-    std::vector<tStateGameObject> getObjects();
-
-	void setY(int y);
-	int getY();
+	std::vector<tStateGameObject> getObjects();
+    tStateGameObject getObjectByPosition(glm::vec3 position);
 
 	void jointObjects(bool reset = false);
     void update(float deltaTime);

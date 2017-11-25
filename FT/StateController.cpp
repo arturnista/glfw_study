@@ -74,8 +74,29 @@ std::vector<tStateGameObject> StateController::getObjects() {
     return objectsVector;
 }
 
+tStateGameObject StateController::getObjectByPosition(glm::vec3 position) {
+    int idx = objectsMapByPosition[ hashVec3(position) ];
+    if(idx < objectsVector.size()) {
+        if(idx == 0) {
+            glm::vec3 posToCompare = objectsVector.at(0).gameObject->getPosition();
+            if( posToCompare.x == position.x && posToCompare.y == position.y && posToCompare.z == position.z ) {
+                return objectsVector.at(idx);
+            } else {
+                throw 1;
+            }
+        }
+        return objectsVector.at(idx);
+    }
+    throw 1;
+}
+
 void StateController::update(float deltaTime) {
-    objectsVector.at(0).gameObject->update(this->window, deltaTime);
+    for (size_t i = 0; i < objectsVector.size(); i++) {
+        GameObject* go = objectsVector.at(i).gameObject;
+        if(go->getType() != GO_TYPE_GROUND) {
+            go->update(this->window, deltaTime);
+        }
+    }
 }
 
 void StateController::render(float deltaTime) {
@@ -108,7 +129,6 @@ void StateController::render(float deltaTime) {
                 lastType = type;
                 go.gameObject->renderTexture(this->shader);
             }
-
             go.gameObject->render(this->shader);
         }
     }

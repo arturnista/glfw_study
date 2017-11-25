@@ -1,32 +1,16 @@
-#ifndef __PLAYER_HEADER__
-#define __PLAYER_HEADER__ 1
+#ifndef __ENEMY_HEADER__
+#define __ENEMY_HEADER__ 1
 
 #include "GameObject.h"
-#include "../Camera.h"
 #include "../ResourcesManager.h"
 #include "../StateController.h"
 #include "../vendor/json.h"
 
 using tJson = nlohmann::json;
 
-class Player : public GameObject {
+class Enemy : public GameObject {
 private:
-    Camera* camera;
-
     glm::vec3 position;
-
-    bool firstMouse;
-	double lastMouseX;
-	double lastMouseY;
-
-	float pitch;
-    float yaw;
-	float pitchLimit;
-
-    float headBobbing;
-    int headBobbingDirection;
-
-    float mouseSens;
 
     StateController* stateController;
 
@@ -36,7 +20,7 @@ private:
     void moveTo(glm::vec3 position);
 
 public:
-    Player (Camera* camera, ResourcesManager* rm, StateController* stateController);
+    Enemy (ResourcesManager* rm, StateController* stateController);
 
     void update(GLFWwindow* window, float deltaTime);
 };
