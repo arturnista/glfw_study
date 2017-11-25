@@ -52,6 +52,9 @@ void StateController::addObject(GameObject* object) {
 
     unsigned long key = hashVec3(object->getPosition());
     objectsMapByPosition[key] = objectsVector.size() - 1;
+    if(type == GO_TYPE_PLAYER) {
+        playerIndex = objectsVector.size() - 1;
+    }
 
     if(type == GO_TYPE_GROUND) {
         if(this->groundGameObject == NULL) {
@@ -72,6 +75,10 @@ void StateController::addObject(GameObject* object) {
 
 std::vector<tStateGameObject> StateController::getObjects() {
     return objectsVector;
+}
+
+GameObject* StateController::getPlayer() {
+    return objectsVector.at(this->playerIndex).gameObject;
 }
 
 tStateGameObject StateController::getObjectByPosition(glm::vec3 position) {

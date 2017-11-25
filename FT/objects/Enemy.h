@@ -10,8 +10,6 @@ using tJson = nlohmann::json;
 
 class Enemy : public GameObject {
 private:
-    glm::vec3 position;
-
     StateController* stateController;
 
     float velocity;

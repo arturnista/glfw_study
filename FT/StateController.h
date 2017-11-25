@@ -42,6 +42,7 @@ private:
     Shader* shader;
 
 	tLight light;
+	int playerIndex;
 
 	ResourcesManager* resourcesManager;
 	tObject groundObject;
@@ -51,7 +52,8 @@ public:
 
     void addObject(GameObject* object);
 	std::vector<tStateGameObject> getObjects();
-    tStateGameObject getObjectByPosition(glm::vec3 position);
+	tStateGameObject getObjectByPosition(glm::vec3 position);
+    GameObject* getPlayer();
 
 	void jointObjects(bool reset = false);
     void update(float deltaTime);

@@ -1,7 +1,7 @@
 #include "Enemy.h"
 
-Enemy::Enemy(ResourcesManager* rm, StateController* stateController) : GameObject(rm, GO_TYPE_ENEMY, "cube", vec3(1.0f), vec3(1.0f)) {
-    // this->setTextureName("grass");
+Enemy::Enemy(ResourcesManager* rm, StateController* stateController) : GameObject(rm, GO_TYPE_ENEMY, "stone_normal", vec3(1.0f), vec3(2.0f)) {
+    this->setTextureName("grass");
     this->stateController = stateController;
 
     this->velocity = 0.0f;
@@ -27,8 +27,11 @@ bool Enemy::isGrounded() {
     groundPos.y = round( groundPos.y );
 
     try {
-        this->stateController->getObjectByPosition(groundPos);
-        return true;
+        GameObject* groundGo = this->stateController->getObjectByPosition(groundPos).gameObject;
+        if(groundGo->getType() == GO_TYPE_GROUND) {
+            return true;
+        }
+        return false;
     } catch(int e) {
         return false;
     }
@@ -85,25 +88,25 @@ void Enemy::moveTo(glm::vec3 position) {
 
 
 void Enemy::update(GLFWwindow* window, float deltaTime) {
-    float enemySpeed = 10.0f * deltaTime;
+    float enemySpeed = 0.5f * deltaTime;
     glm::vec3 nextPosition = glm::vec3(this->position);
 
     glm::vec3 enemyFrontMovement = glm::vec3(1, 0, 0);
+    GameObject* player = this->stateController->getPlayer();
+    glm::vec3 playerPos = player->getPosition();
 
-    // if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-    //     nextPosition += enemySpeed * enemyFrontMovement;
-    // } else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-    //     nextPosition -= enemySpeed * enemyFrontMovement;
-    // }
-    //
-    // if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-    //     nextPosition -= normalize(cross(enemyFrontMovement, glm::vec3(0, 1, 0))) * enemySpeed;
-    // } else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-    //     nextPosition += normalize(cross(enemyFrontMovement, glm::vec3(0, 1, 0))) * enemySpeed;
-    // }
+    if(playerPos.x > nextPosition.x) {
+        nextPosition.x += enemySpeed;
+    } else if(playerPos.x < nextPosition.x) {
+        nextPosition.x -= enemySpeed;
+    }
+
+    if(playerPos.z > nextPosition.z) {
+        nextPosition.z += enemySpeed;
+    } else if(playerPos.z < nextPosition.z) {
+        nextPosition.z -= enemySpeed;
+    }
 
     this->moveTo(nextPosition);
     this->applyPhysics(deltaTime);
-
-    // std::cout << glm::to_string(this->position) << '\n';
 }

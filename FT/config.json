@@ -13,7 +13,7 @@
         "cube": "./assets/objects/cube.obj"
     },
     "player": {
-        "position": { "x": 5, "y": 10, "z": 5 }
+        "position": { "x": 8, "y": 10, "z": 8 }
     },
     "enemy": {
         "position": { "x": 3, "y": 10, "z": 3 }

@@ -40,8 +40,11 @@ bool Player::isGrounded() {
     groundPos.y = round( groundPos.y );
 
     try {
-        this->stateController->getObjectByPosition(groundPos);
-        return true;
+        GameObject* groundGo = this->stateController->getObjectByPosition(groundPos).gameObject;
+        if(groundGo->getType() == GO_TYPE_GROUND) {
+            return true;
+        }
+        return false;
     } catch(int e) {
         return false;
     }
