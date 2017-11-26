@@ -14,37 +14,38 @@ StateController::StateController(GLFWwindow* window, Camera* camera, ResourcesMa
     this->resourcesManager = rm;
     this->shader = new Shader("texture");
 
-    this->groundGameObject = NULL;
-
     this->light = rm->getLight();
+    this->currentGOIndex = -1;
+    this->groundObjectsCombined = 0;
 }
 
 void StateController::jointObjects(bool reset) {
 
-    tObject object = objectsVector.at(1).gameObject->getObject();
-    for (size_t i = 2; i < objectsVector.size(); i++) {
-        GameObject* tempGameObject = objectsVector.at(i).gameObject;
-        if(tempGameObject->getType() == GO_TYPE_GROUND) {
-            object = this->resourcesManager->combineObjects( object, tempGameObject->getObject(), tempGameObject->getPosition() );
-        }
-    }
-
-    GameObject* go = new GameObject(this->resourcesManager, GO_TYPE_GROUND, object, 1.0f, vec3(1.0f));
-    go->setTextureName("objects");
-    objectsToRenderList.clear();
-    objectsToRenderList.push_back({ go, true });
-
-    this->groundObject = object;
-
-    delete this->groundGameObject;
-    this->groundGameObject = go;
+    // tObject object = objectsVector.at(1).gameObject->getObject();
+    // for (size_t i = 2; i < objectsVector.size(); i++) {
+    //     GameObject* tempGameObject = objectsVector.at(i).gameObject;
+    //     if(tempGameObject->getType() == GO_TYPE_GROUND) {
+    //         object = this->resourcesManager->combineObjects( object, tempGameObject->getObject(), tempGameObject->getPosition() );
+    //     }
+    // }
+    //
+    // GameObject* go = new GameObject(this->resourcesManager, GO_TYPE_GROUND, object, 1.0f, vec3(1.0f));
+    // go->setTextureName("objects");
+    // objectsToRenderList.clear();
+    // objectsToRenderList.push_back({ go, true });
+    //
+    // this->groundObject = object;
+    //
+    // delete this->groundGameObject;
+    // this->groundGameObject = go;
 }
 
 void StateController::reset() {
-    if(this->groundGameObject != NULL) {
-        delete this->groundGameObject;
-        this->groundGameObject = NULL;
+    for (size_t i = 0; i < groundGameObjectVector.size(); i++) {
+        delete groundGameObjectVector.at(i);
+        groundGameObjectVector.at(i) = NULL;
     }
+    this->groundGameObjectVector.clear();
     this->groundObject = {};
 
     for (size_t i = 0; i < objectsVector.size(); i++) {
@@ -69,18 +70,30 @@ void StateController::addObject(GameObject* object) {
     if(type == GO_TYPE_GROUND) {
         objectsMapByPosition[key] = GROUND_INDEX;
 
-        if(this->groundGameObject == NULL) {
+        if(this->groundObjectsCombined == 0 || this->groundObjectsCombined > 1000) {
             this->groundObject = object->getObject();
+
+            GameObject* go = new GameObject(this->resourcesManager, GO_TYPE_GROUND, this->groundObject, 1.0f, vec3(1.0f));
+            go->setTextureName("objects");
+
+            groundGameObjectVector.push_back(go);
+
+            this->groundObjectsCombined = 1;
+            this->currentGOIndex++;
         } else {
             this->groundObject = this->resourcesManager->combineObjects( this->groundObject, object->getObject(), object->getPosition() );
+
+            GameObject* go = new GameObject(this->resourcesManager, GO_TYPE_GROUND, this->groundObject, 1.0f, vec3(1.0f));
+            go->setTextureName("objects");
+
+            delete groundGameObjectVector.at(this->currentGOIndex);
+            groundGameObjectVector.at(this->currentGOIndex) = go;
+
+            this->groundObjectsCombined++;
         }
 
         delete object;
-        delete this->groundGameObject;
 
-        GameObject* go = new GameObject(this->resourcesManager, GO_TYPE_GROUND, this->groundObject, 1.0f, vec3(1.0f));
-        go->setTextureName("objects");
-        this->groundGameObject = go;
     } else {
         objectsVector.push_back(structObject);
         objectsToRenderList.push_back( structObject );
@@ -133,10 +146,15 @@ void StateController::render(float deltaTime) {
 	shader->use("lightColor", this->light.color);
 	shader->use("lightPosition", this->light.position);
 
+    // if(groundGameObject != NULL) {
+    //     groundGameObject->renderTexture(this->shader);
+    //     groundGameObject->render(this->shader);
+    // }
+
     int lastType = 0;
-    if(groundGameObject != NULL) {
-        groundGameObject->renderTexture(this->shader);
-        groundGameObject->render(this->shader);
+    for (size_t i = 0; i < groundGameObjectVector.size(); i++) {
+        groundGameObjectVector.at(i)->renderTexture(this->shader);
+        groundGameObjectVector.at(i)->render(this->shader);
     }
 
     std::list<tStateGameObject>::const_iterator renderIterator;

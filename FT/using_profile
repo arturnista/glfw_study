@@ -1,0 +1,2 @@
+./build_profile.sh
+gprof ./build/app.out gmon.out | gprof2dot.py | dot -Tpng -o output.png

@@ -48,7 +48,9 @@ private:
 
 	ResourcesManager* resourcesManager;
 	tObject groundObject;
-	GameObject* groundGameObject;
+	std::vector<GameObject*> groundGameObjectVector;
+	int currentGOIndex;
+	int groundObjectsCombined;
 public:
 	bool onde_deu_erro;
     StateController (GLFWwindow* window, Camera* camera, ResourcesManager* rm);
