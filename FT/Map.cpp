@@ -47,6 +47,12 @@ bool Map::create(int amount) {
     }
 }
 
+void Map::createAt(glm::vec3 position) {
+    Stone* stoneObject = new Stone(this->resourcesManager);
+    stoneObject->setPosition(position);
+    this->stateController->addObject( stoneObject );
+}
+
 bool Map::createOne() {
     if(this->finished) return false;
 
@@ -54,7 +60,7 @@ bool Map::createOne() {
         Grass* grassObject = new Grass(this->resourcesManager);
         grassObject->setPosition(vec3(this->sizeXCreated, this->heightCreated * -1.0f, this->sizeZCreated));
         this->stateController->addObject( grassObject );
-    } else if(this->heightCreated < 3) {
+    } else if(this->heightCreated < 2) {
         Dirt* dirtObject = new Dirt(this->resourcesManager);
         dirtObject->setPosition(vec3(this->sizeXCreated, this->heightCreated * -1.0f, this->sizeZCreated));
         this->stateController->addObject( dirtObject );
@@ -76,28 +82,13 @@ bool Map::createOne() {
     }
 
     if(this->sizeXCreated > 20 && this->sizeZCreated > 20 && this->sizeXCreated < 40 && this->sizeZCreated < 40) {
-        this->heightCreated = 1;
+        if(this->sizeXCreated > 25 && this->sizeZCreated > 25 && this->sizeXCreated < 35 && this->sizeZCreated < 35) {
+            this->heightCreated = 2;
+        } else {
+            this->heightCreated = 1;
+        }
     } else {
         this->heightCreated = 0;
     }
-
-    // float rx = 0.0f;
-    // // float rx = floor( rand() % this->sizeX );
-    // if(this->sizeX + rx <= this->sizeXCreated) {
-    //     this->sizeXCreated = 0;
-    //     this->sizeZCreated++;
-    //
-    //     float rz = 0.0f;
-    //     // float rz = floor( rand() % this->sizeZ );
-    //     if(this->sizeZ + rz <= this->sizeZCreated) {
-    //         this->sizeZCreated = 0;
-    //         this->heightCreated++;
-    //         // this->stateController->jointObjects();
-    //
-    //         if(this->height <= this->heightCreated) {
-    //             this->finished = true;
-    //         }
-    //     }
-    // }
     return true;
 }

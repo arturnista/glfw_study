@@ -48,6 +48,9 @@ void StateController::reset() {
     this->groundGameObjectVector.clear();
     this->groundObject = {};
 
+    this->currentGOIndex = -1;
+    this->groundObjectsCombined = 0;
+
     for (size_t i = 0; i < objectsVector.size(); i++) {
         delete objectsVector.at(i).gameObject;
         objectsVector.at(i).gameObject = NULL;
@@ -102,6 +105,8 @@ void StateController::addObject(GameObject* object) {
 
         if(type == GO_TYPE_PLAYER) {
             playerIndex = objectsVector.size() - 1;
+        } else if(type == GO_TYPE_OBJECTIVE) {
+            objectiveIndex = objectsVector.size() - 1;
         }
     }
 }
@@ -112,6 +117,10 @@ std::vector<tStateGameObject> StateController::getObjects() {
 
 GameObject* StateController::getPlayer() {
     return objectsVector.at(this->playerIndex).gameObject;
+}
+
+GameObject* StateController::getObjective() {
+    return objectsVector.at(this->objectiveIndex).gameObject;
 }
 
 bool StateController::hasGroundAtPosition(glm::vec3 position) {

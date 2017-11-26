@@ -45,6 +45,7 @@ private:
 
 	tLight light;
 	int playerIndex;
+	int objectiveIndex;
 
 	ResourcesManager* resourcesManager;
 	tObject groundObject;
@@ -52,14 +53,14 @@ private:
 	int currentGOIndex;
 	int groundObjectsCombined;
 public:
-	bool onde_deu_erro;
     StateController (GLFWwindow* window, Camera* camera, ResourcesManager* rm);
 
 	void reset();
     void addObject(GameObject* object);
 	std::vector<tStateGameObject> getObjects();
 	bool hasGroundAtPosition(glm::vec3 position);
-    GameObject* getPlayer();
+	GameObject* getPlayer();
+    GameObject* getObjective();
 
 	void jointObjects(bool reset = false);
     void update(float deltaTime);
