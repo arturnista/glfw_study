@@ -118,11 +118,11 @@ int main() {
             glm::vec3 objectivePos = stateController->getObjective()->getPosition();
             float playerDistance = sqrt(
                 abs(
-                    pow(playerPos.y - objectivePos.y, 2) -
+                    pow(playerPos.z - objectivePos.z, 2) -
                     sqrt(
                         abs(
                             pow(playerPos.x - objectivePos.x, 2) -
-                            pow(playerPos.z - objectivePos.z, 2)
+                            pow(playerPos.y - objectivePos.y, 2)
                         )
                     )
                 )
