@@ -37,7 +37,6 @@ private:
 	int currentLevel;
 public:
     LevelController (GLFWwindow* window, ResourcesManager* rm, StateController* sc, Map* m, Camera* c);
-
 	void restart();
 	bool nextLevel();
 };

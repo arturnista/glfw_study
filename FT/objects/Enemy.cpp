@@ -104,8 +104,8 @@ void Enemy::update(GLFWwindow* window, float deltaTime) {
         )
     );
 
-    if(playerDistance < 1) {
-        std::cout << "PERDEU CUZAo" << '\n';
+    if(playerDistance < .3f) {
+        std::cout << "YOU LOST!" << '\n';
     }
 
     this->moveTo(nextPosition);

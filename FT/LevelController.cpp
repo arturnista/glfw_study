@@ -12,12 +12,17 @@ LevelController::LevelController(GLFWwindow* window, ResourcesManager* rm, State
 }
 
 void LevelController::restart() {
-    tJson levelConfig = this->configData[this->currentLevel];
-    this->stateController->getPlayer()->setPosition(vec3(
-        levelConfig["player"]["position"]["x"],
-        levelConfig["player"]["position"]["y"],
-        levelConfig["player"]["position"]["z"]
-    ));
+
+    if(this->currentLevel < this->configData.size()) {
+        tJson levelConfig = this->configData[this->currentLevel];
+        this->stateController->getPlayer()->setPosition(vec3(
+            levelConfig["player"]["position"]["x"],
+            levelConfig["player"]["position"]["y"],
+            levelConfig["player"]["position"]["z"]
+        ));
+    } else {
+        this->stateController->getPlayer()->setPosition(vec3(5, 10, 5));
+    }
 }
 
 bool LevelController::nextLevel() {
@@ -71,7 +76,7 @@ bool LevelController::nextLevel() {
         this->map->create();
 
         Player* player = new Player(camera, resourcesManager, stateController);
-        player->setPosition(vec3(5, 5, 5));
+        player->setPosition(vec3(5, 10, 5));
         stateController->addObject( player );
 
     	Lamp* lampObject = new Lamp(resourcesManager);

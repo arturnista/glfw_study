@@ -83,7 +83,6 @@ int main() {
 
     glEnable(GL_CULL_FACE);
 
-
     printf("\nPre GameLoop actions\n\n");
 
     camera = new Camera(window);
@@ -103,19 +102,29 @@ int main() {
     int frames = 0;
 
     printf("\nGameLoop actions\n\n");
+
 	while (!glfwWindowShouldClose(window)) {
 
+        // Clear the screen
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+
+        glm::vec3 playerPos = stateController->getPlayer()->getPosition();
+        if(playerPos.y < -5) {
+            levelController->restart();
+        }
+
         if(!gameFinished) {
-            glm::vec3 playerPos = stateController->getPlayer()->getPosition();
-            if(playerPos.y < -5) {
-                levelController->restart();
-            }
             glm::vec3 objectivePos = stateController->getObjective()->getPosition();
             float playerDistance = sqrt(
-                pow(playerPos.x - objectivePos.x, 2) -
-                sqrt(
+                abs(
                     pow(playerPos.y - objectivePos.y, 2) -
-                    pow(playerPos.z - objectivePos.z, 2)
+                    sqrt(
+                        abs(
+                            pow(playerPos.x - objectivePos.x, 2) -
+                            pow(playerPos.z - objectivePos.z, 2)
+                        )
+                    )
                 )
             );
             if(playerDistance < .2f) {
@@ -128,9 +137,6 @@ int main() {
             setNextLevel = false;
             lastFrame = glfwGetTime();
         }
-		// Clear the screen
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
 		// Compute the delta time
 		float currentFrame = glfwGetTime();

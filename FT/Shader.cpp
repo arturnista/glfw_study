@@ -21,6 +21,10 @@ Shader::Shader (string shaderName) {
     glDeleteShader(fragmentShader);
 }
 
+Shader::~Shader () {
+    glDeleteProgram(shaderProgramme);
+}
+
 
 GLuint Shader::getProgram() {
     return shaderProgramme;

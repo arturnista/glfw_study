@@ -17,6 +17,7 @@ private:
     void compileShader(GLuint shader);
 public:
     Shader (string shaderName);
+    ~Shader ();
 
     GLuint getProgram();
 

@@ -14,6 +14,7 @@ Player::Player(Camera* camera, ResourcesManager* rm, StateController* stateContr
     this->headBobbing = 0.0f;
 
     this->velocity = 0.0f;
+    this->isFirstFrame = true;
 
     this->mouseSens = 0.5f;
     tJson confiData = rm->getConfigData();
@@ -94,6 +95,10 @@ void Player::moveTo(glm::vec3 position) {
 
 
 void Player::update(GLFWwindow* window, float deltaTime) {
+    if(this->isFirstFrame) {
+        deltaTime = 0.0f;
+        this->isFirstFrame = false;
+    }
     // Get the cursor position
     double mouseX, mouseY;
     glfwGetCursorPos(window, &mouseX, &mouseY);

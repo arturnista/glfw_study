@@ -117,6 +117,12 @@ GameObject::GameObject (ResourcesManager* rm, int type, string fn, vec3 size, ve
 	this->resourcesManager = rm;
 }
 
+GameObject::~GameObject () {
+	if(this->shader != NULL) delete this->shader;
+	// if(this->objectData.points != NULL) delete this->objectData.points;
+	// if(this->objectData.vertices != NULL) delete this->objectData.vertices;
+}
+
 void GameObject::update(GLFWwindow* window, float deltaTime) {}
 
 int GameObject::getType() {

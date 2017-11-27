@@ -29,6 +29,8 @@ private:
     StateController* stateController;
 
     float velocity;
+    bool isFirstFrame;
+
     bool isGrounded();
     void applyPhysics(float deltaTime);
     void moveTo(glm::vec3 position);

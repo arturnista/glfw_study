@@ -53,6 +53,8 @@ public:
 	GameObject (ResourcesManager* rm, int type, string filename, float size, vec3 color);
     GameObject (ResourcesManager* rm, int type, string filename, vec3 size, vec3 color);
 
+	~GameObject ();
+
 	int getType();
 
 	GLuint getVAO();
