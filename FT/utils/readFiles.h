@@ -11,12 +11,20 @@
 #include <vector>
 #include <math.h>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include "../vendor/json.h"
 
 using tJson = nlohmann::json;
 using namespace std;
 
 const char* readFile(string filename);
+
+tJson readSaveFile();
+
+void writeSaveFile(glm::vec3 pos, int level);
 
 tJson readConfigFile();
 

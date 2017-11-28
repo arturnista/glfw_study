@@ -56,11 +56,12 @@ public:
     StateController (GLFWwindow* window, Camera* camera, ResourcesManager* rm);
 
 	void reset();
-    void addObject(GameObject* object);
+    int addObject(GameObject* object);
 	std::vector<tStateGameObject> getObjects();
 	bool hasGroundAtPosition(glm::vec3 position);
 	GameObject* getPlayer();
     GameObject* getObjective();
+	GameObject* getGameObject(int idx);
 
 	void jointObjects(bool reset = false);
     void update(float deltaTime);

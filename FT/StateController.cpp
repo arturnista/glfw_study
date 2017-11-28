@@ -61,9 +61,9 @@ void StateController::reset() {
     objectsMapByPosition.clear();
 }
 
-void StateController::addObject(GameObject* object) {
+int StateController::addObject(GameObject* object) {
     int type = object->getType();
-
+    int idx = GROUND_INDEX;
     tStateGameObject structObject = {
         object,
         type != GO_TYPE_PLAYER
@@ -101,7 +101,8 @@ void StateController::addObject(GameObject* object) {
         objectsVector.push_back(structObject);
         objectsToRenderList.push_back( structObject );
 
-        objectsMapByPosition[key] = objectsVector.size() - 1;
+        idx = objectsVector.size() - 1;
+        objectsMapByPosition[key] = idx;
 
         if(type == GO_TYPE_PLAYER) {
             playerIndex = objectsVector.size() - 1;
@@ -109,10 +110,16 @@ void StateController::addObject(GameObject* object) {
             objectiveIndex = objectsVector.size() - 1;
         }
     }
+
+    return idx;
 }
 
 std::vector<tStateGameObject> StateController::getObjects() {
     return objectsVector;
+}
+
+GameObject* StateController::getGameObject(int idx) {
+    return objectsVector.at(idx).gameObject;
 }
 
 GameObject* StateController::getPlayer() {

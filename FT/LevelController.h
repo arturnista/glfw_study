@@ -18,8 +18,10 @@
 #include "./objects/Enemy.h"
 #include "./objects/Player.h"
 #include "./objects/Objective.h"
+#include "./objects/Teletransport.h"
 #include "./vendor/json.h"
 #include "./utils/delay.h"
+#include "./utils/readFiles.h"
 
 #include "common.h"
 
@@ -33,10 +35,23 @@ private:
 	GLFWwindow* window;
 	Camera* camera;
 
+	int state;
+
 	tJson configData;
 	int currentLevel;
+
+	bool loadLevel(glm::vec3 pos, bool usePlayer);
 public:
     LevelController (GLFWwindow* window, ResourcesManager* rm, StateController* sc, Map* m, Camera* c);
+
+	int getCurrentLevel();
+
+	int home();
+
+	bool loadSaved();
+
+	void playground();
+
 	void restart();
 	bool nextLevel();
 };

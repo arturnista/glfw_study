@@ -27,6 +27,7 @@
 #include "./objects/Lamp.h"
 #include "./objects/Player.h"
 #include "./objects/Enemy.h"
+#include "./utils/readFiles.h"
 #include "Map.h"
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
@@ -42,6 +43,13 @@ bool setNextLevel = false;
 
 void setupGUI(GLFWwindow* window);
 void rendererFn(ImDrawData* draw_data);
+
+const int START = 0;
+const int PLAYGROUND = 1;
+const int GAME = 2;
+const int RESTART = 3;
+
+int gameState = START;
 
 int main() {
   	srand (time(NULL));
@@ -91,10 +99,9 @@ int main() {
     mapCont = new Map(resourcesManager, stateController);
 
     levelController = new LevelController(window, resourcesManager, stateController, mapCont, camera);
-    levelController->nextLevel();
+    int tpPlaygroundIndex = levelController->home();
 
     // mapCont->create();
-    bool gameFinished = false;
 
 	float deltaTime = 0.0f;	// Time between current frame and last frame
     float lastFrame = glfwGetTime(); // Time of last frame
@@ -114,28 +121,54 @@ int main() {
             levelController->restart();
         }
 
-        if(!gameFinished) {
+        if(gameState == START) {
+            glm::vec3 tpPos = stateController->getGameObject(tpPlaygroundIndex)->getPosition();
+            float tpDistance = distance(playerPos, tpPos);
+            if(tpDistance < 1) {
+                gameState = PLAYGROUND;
+                levelController->playground();
+                continue;
+            }
+
+            glm::vec3 gamePos = stateController->getGameObject(tpPlaygroundIndex + 1)->getPosition();
+            float gameDistance = distance(playerPos, gamePos);
+            if(gameDistance < 1) {
+                gameState = GAME;
+                levelController->nextLevel();
+                setNextLevel = false;
+                continue;
+            }
+
+            glm::vec3 loadPos = stateController->getGameObject(tpPlaygroundIndex + 2)->getPosition();
+            float loadDistance = distance(playerPos, loadPos);
+            if(loadDistance < 1) {
+                gameState = GAME;
+                levelController->loadSaved();
+                setNextLevel = false;
+                continue;
+            }
+
+        } else if(gameState == GAME) {
             glm::vec3 objectivePos = stateController->getObjective()->getPosition();
-            float playerDistance = sqrt(
-                abs(
-                    pow(playerPos.z - objectivePos.z, 2) -
-                    sqrt(
-                        abs(
-                            pow(playerPos.x - objectivePos.x, 2) -
-                            pow(playerPos.y - objectivePos.y, 2)
-                        )
-                    )
-                )
-            );
-            if(playerDistance < .2f) {
+            float playerDistance = distance(playerPos, objectivePos);
+            if(playerDistance < 1) {
                 setNextLevel = true;
+            }
+
+            if(setNextLevel) {
+                bool gameFinished = levelController->nextLevel();
+                if(gameFinished) {
+                    gameState = START;
+                    tpPlaygroundIndex = levelController->home();
+                }
+                setNextLevel = false;
+                lastFrame = glfwGetTime();
             }
         }
 
-        if(setNextLevel) {
-            gameFinished = levelController->nextLevel();
-            setNextLevel = false;
-            lastFrame = glfwGetTime();
+        if(gameState != START && glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
+            gameState = START;
+            tpPlaygroundIndex = levelController->home();
         }
 
 		// Compute the delta time
@@ -175,6 +208,10 @@ int main() {
 		glfwSwapBuffers(window);
 	}
 
+    if(gameState == GAME) {
+        writeSaveFile(stateController->getPlayer()->getPosition(), levelController->getCurrentLevel());
+    }
+
 	// Close GL context and any other GLFW resources
 	glfwTerminate();
 	return 0;
@@ -184,10 +221,6 @@ int main() {
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode) {
 	if ((key == GLFW_KEY_ESCAPE || key == GLFW_KEY_Q) && action == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, GL_TRUE);
-	}
-
-	if (key == GLFW_KEY_R && action == GLFW_PRESS) {
-		setNextLevel = true;
 	}
 }
 

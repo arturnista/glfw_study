@@ -33,6 +33,30 @@ tJson readConfigFile() {
 	return configData;
 }
 
+tJson readSaveFile() {
+	// read a JSON file
+	string filename = "saveFile.json";
+	std::ifstream openedFile(filename.c_str());
+
+	tJson saved;
+	openedFile >> saved;
+
+	return saved;
+}
+
+void writeSaveFile(glm::vec3 pos, int level) {
+	tJson jPos = {
+		{ "x", pos.x },
+		{ "y", pos.y },
+		{ "z", pos.z }
+	};
+	tJson j2;
+	j2["position"] = jPos;
+	j2["level"] = level;
+	std::ofstream o("saveFile.json");
+	o << std::setw(4) << j2 << std::endl;
+}
+
 void readObjFile(string filename,
 					vector<GLfloat>& pointsVector,
 					vector<GLuint>& indexVector,

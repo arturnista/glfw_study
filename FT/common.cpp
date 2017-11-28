@@ -1,5 +1,13 @@
 #include "common.h"
 
+float distance(glm::vec3 pos1, glm::vec3 pos2) {
+	return sqrt(
+		pow(pos1.y - pos2.y, 2) +
+		pow(pos1.x - pos2.x, 2) +
+		pow(pos1.z - pos2.z, 2)
+	);
+}
+
 tHash hashNumber(long v) {
 	tHash h = v;
 	h ^= h >> 16;

@@ -29,6 +29,8 @@ struct tObject {
 };
 typedef struct tObject tObject;
 
+float distance(glm::vec3 pos1, glm::vec3 pos2);
+
 tHash hashNumber(long v);
 
 tHash hashVec3(glm::vec3 v);
