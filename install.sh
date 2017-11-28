@@ -5,6 +5,7 @@ make
 make install
 sudo apt-get install libglew-dev
 sudo apt-get install libglm-dev
+sudo apt-get install libglfw3-dev
 
 echo ""
 echo ""
