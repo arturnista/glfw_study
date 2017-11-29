@@ -172,6 +172,11 @@ int main() {
             tpPlaygroundIndex = levelController->home();
         }
 
+        if(gameState == GAME && glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) {
+            writeSaveFile(stateController->getPlayer()->getPosition(), levelController->getCurrentLevel());
+            std::cout << " ** Game Saved **" << '\n';
+        }
+
 		// Compute the delta time
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
