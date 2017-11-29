@@ -3,17 +3,10 @@
 ResourcesManager::ResourcesManager() {
     tJson configData = readConfigFile();
 
-    // example for an object
-    for (auto& x : tJson::iterator_wrapper(configData)) {
-        if(x.key().compare("textures") == 0) {
-            for (auto& texture : tJson::iterator_wrapper(x.value())) {
-                textureMap[texture.key()] = this->processTexture(texture.value());
-            }
-        } else if(x.key().compare("objects") == 0) {
-            for (auto& object : tJson::iterator_wrapper(x.value())) {
-                objectMap[object.key()] = this->processObjectFile(object.value());
-            }
-        }
+    // Iterate thru objects
+    tJson objects = configData["objects"];
+    for (auto& obj : tJson::iterator_wrapper(configData["objects"])) {
+        objectMap[obj.key()] = this->processObjectFile(obj.value());
     }
 
     this->light = {
@@ -56,14 +49,24 @@ tObject ResourcesManager::processObjectFile(std::string filename) {
 	std::vector<GLuint> indexVector = {};
 	std::vector<GLfloat> normalVector = {};
 	std::vector<GLfloat> textureVector = {};
+    std::string materialName = "";
+    std::string textureName;
 
-	readObjFile(filename, pointsVector, indexVector, normalVector, textureVector);
+    readObjFile(filename, pointsVector, indexVector, normalVector, textureVector, materialName);
+    if(materialName.length() > 0) {
+        materialName = "./assets/materials/" + materialName;
+        readMtlFile(materialName, textureName);
+        if(textureMap[textureName] == 0) {
+            textureMap[textureName] = this->processTexture("./assets/textures/" + textureName);
+        }
+    }
 
     cout << "Object: " << filename << "\t";
+    std::cout << "texture" << " = " << textureName << '\t';
     cout << "vertex count" << " = " << pointsVector.size() << '\t';
     cout << "face count" << " = " << indexVector.size() << '\n';
 
-    return processObject(pointsVector, indexVector, normalVector, textureVector);
+    return processObject(pointsVector, indexVector, normalVector, textureVector, textureName);
 }
 
 tObject ResourcesManager::combineObjects(tObject object1, tObject object2, glm::vec3 offset) {
@@ -97,11 +100,11 @@ tObject ResourcesManager::combineObjects(tObject object1, tObject object2, glm::
     textureVector.reserve( object1.textureVector.size() + object2.textureVector.size() );
     textureVector.insert( textureVector.end(), object1.textureVector.begin(), object1.textureVector.end() );
     textureVector.insert( textureVector.end(), object2.textureVector.begin(), object2.textureVector.end() );
-
-    return processObject(pointsVector, indexVector, normalVector, textureVector);
+    // std::cout << "Tex " << object1.textureName << '\n';
+    return processObject(pointsVector, indexVector, normalVector, textureVector, object1.textureName);
 }
 
-tObject ResourcesManager::processObject( vector<GLfloat>& pointsVector, vector<GLuint>& indexVector, vector<GLfloat>& normalVector, vector<GLfloat>& textureVector ) {
+tObject ResourcesManager::processObject( vector<GLfloat>& pointsVector, vector<GLuint>& indexVector, vector<GLfloat>& normalVector, vector<GLfloat>& textureVector, std::string textureName ) {
 
     bool hasTexture = textureVector.size() > 0;
 
@@ -155,7 +158,8 @@ tObject ResourcesManager::processObject( vector<GLfloat>& pointsVector, vector<G
     	points,
     	pointsCounter,
     	vertices,
-    	verticesCounter
+    	verticesCounter,
+        textureName
     };
 }
 

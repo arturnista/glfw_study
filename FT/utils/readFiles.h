@@ -28,10 +28,12 @@ void writeSaveFile(glm::vec3 pos, int level);
 
 tJson readConfigFile();
 
+void readMtlFile(string filename, string& textureName);
 void readObjFile(string filename,
 					vector<GLfloat>& pointsVector,
 					vector<GLuint>& indexVector,
 					vector<GLfloat>& normalVector,
-					vector<GLfloat>& textureVector);
+					vector<GLfloat>& textureVector,
+					std::string& materialName);
 
 #endif

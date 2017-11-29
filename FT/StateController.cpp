@@ -75,9 +75,13 @@ int StateController::addObject(GameObject* object) {
 
         if(this->groundObjectsCombined == 0 || this->groundObjectsCombined > 1000) {
             this->groundObject = object->getObject();
+            for (size_t i = this->groundObject.pointsVector.size(); i < this->groundObject.pointsVector.size(); i += 3) {
+        	    this->groundObject.pointsVector.at(i) += object->getPosition().x;
+        		this->groundObject.pointsVector.at(i + 1) += object->getPosition().y;
+        		this->groundObject.pointsVector.at(i + 2) += object->getPosition().z;
+            }
 
             GameObject* go = new GameObject(this->resourcesManager, GO_TYPE_GROUND, this->groundObject, 1.0f, vec3(1.0f));
-            go->setTextureName("objects");
 
             groundGameObjectVector.push_back(go);
 
@@ -87,7 +91,6 @@ int StateController::addObject(GameObject* object) {
             this->groundObject = this->resourcesManager->combineObjects( this->groundObject, object->getObject(), object->getPosition() );
 
             GameObject* go = new GameObject(this->resourcesManager, GO_TYPE_GROUND, this->groundObject, 1.0f, vec3(1.0f));
-            go->setTextureName("objects");
 
             delete groundGameObjectVector.at(this->currentGOIndex);
             groundGameObjectVector.at(this->currentGOIndex) = go;

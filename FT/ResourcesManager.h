@@ -34,7 +34,8 @@ private:
         vector<GLfloat>& pointsVector,
         vector<GLuint>& indexVector,
         vector<GLfloat>& normalVector,
-        vector<GLfloat>& textureVector
+        vector<GLfloat>& textureVector,
+        std::string materialName
     );
 
 public:

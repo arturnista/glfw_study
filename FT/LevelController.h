@@ -19,6 +19,7 @@
 #include "./objects/Player.h"
 #include "./objects/Objective.h"
 #include "./objects/Teletransport.h"
+#include "./objects/Cow.h"
 #include "./vendor/json.h"
 #include "./utils/delay.h"
 #include "./utils/readFiles.h"

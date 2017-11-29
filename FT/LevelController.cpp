@@ -87,6 +87,10 @@ void LevelController::playground() {
     player->setPosition(vec3(5, 10, 5));
     stateController->addObject( player );
 
+    Cow* cow = new Cow(resourcesManager);
+    cow->setPosition(vec3(20, 1, 20));
+    stateController->addObject( cow );
+
 	Lamp* lampObject = new Lamp(resourcesManager);
     stateController->addObject( lampObject );
 }

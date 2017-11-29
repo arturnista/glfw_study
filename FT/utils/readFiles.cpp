@@ -57,11 +57,29 @@ void writeSaveFile(glm::vec3 pos, int level) {
 	o << std::setw(4) << j2 << std::endl;
 }
 
+void readMtlFile(std::string filename, std::string& textureName) {
+	std::string line;
+	ifstream openedFile(filename.c_str());
+	if (openedFile.is_open()) {
+		while(!openedFile.eof()) {
+			openedFile >> line;
+			if(openedFile.eof()) break;
+
+			if(line.compare("map_Kd") == 0) {
+				openedFile >> textureName;
+			}
+
+		}
+		openedFile.close();
+	}
+}
+
 void readObjFile(string filename,
 					vector<GLfloat>& pointsVector,
 					vector<GLuint>& indexVector,
 					vector<GLfloat>& normalVector,
-					vector<GLfloat>& textureVector) {
+					vector<GLfloat>& textureVector,
+					std::string& materialName) {
 	ifstream openedFile(filename.c_str());
 	if (openedFile.is_open()) {
 		string line;
@@ -85,6 +103,8 @@ void readObjFile(string filename,
 				normalVector.push_back( stof(strNumber) );
 				openedFile >> strNumber;
 				normalVector.push_back( stof(strNumber) );
+			} else if(line.compare("mtllib") == 0) {
+				openedFile >> materialName;
 			} else if(line.compare("vt") == 0) {
 				openedFile >> strNumber;
 				textureVector.push_back( stof(strNumber) );

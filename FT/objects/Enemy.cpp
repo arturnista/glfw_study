@@ -1,7 +1,7 @@
 #include "Enemy.h"
 
 Enemy::Enemy(ResourcesManager* rm, StateController* stateController) : GameObject(rm, GO_TYPE_ENEMY, "stone_normal", vec3(1.0f), vec3(2.0f)) {
-    this->setTextureName("objects");
+    
     this->stateController = stateController;
 
     this->velocity = 0.0f;

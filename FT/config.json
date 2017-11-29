@@ -1,16 +1,10 @@
 {
-    "textures": {
-        "objects": "./assets/textures/objects.jpg",
-        "stone": "./assets/textures/stone.jpg",
-        "container": "./assets/textures/container.jpg",
-        "wall": "./assets/textures/wall.jpg"
-    },
     "objects": {
+        "cow": "./assets/objects/uvmappedcow.obj",
         "grass_normal": "./assets/objects/grass_normal.obj",
         "dirt_normal": "./assets/objects/dirt_normal.obj",
         "stone_normal": "./assets/objects/stone_normal.obj",
         "objective_normal": "./assets/objects/objective_normal.obj",
-        "bunny_normal": "./assets/objects/bunny_normal.obj",
         "cube": "./assets/objects/cube.obj"
     },
     "levels": [

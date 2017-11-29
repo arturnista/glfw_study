@@ -61,6 +61,7 @@ GameObject::GameObject (ResourcesManager* rm, int type, tObject objectData, vec3
 	this->setPosition(vec3(0.0f));
 
 	this->color = color;
+	this->setTextureName(this->objectData.textureName);
 
 	this->shader = new Shader("texture");
 	this->resourcesManager = rm;
@@ -112,6 +113,8 @@ GameObject::GameObject (ResourcesManager* rm, int type, string fn, vec3 size, ve
 	this->setPosition(vec3(0.0f));
 
 	this->color = color;
+
+	this->setTextureName(this->objectData.textureName);
 
 	this->shader = new Shader("texture");
 	this->resourcesManager = rm;

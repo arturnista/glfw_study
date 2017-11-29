@@ -26,6 +26,7 @@ struct tObject {
 	int pointsCounter;
 	GLuint *vertices;
 	int verticesCounter;
+	std::string textureName;
 };
 typedef struct tObject tObject;
 

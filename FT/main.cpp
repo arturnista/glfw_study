@@ -110,6 +110,7 @@ int main() {
 
     printf("\nGameLoop actions\n\n");
 
+    // while (false) {
 	while (!glfwWindowShouldClose(window)) {
 
         // Clear the screen
